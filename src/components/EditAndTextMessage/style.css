@@ -1,0 +1,24 @@
+.ant-tag {
+    margin-bottom: 8px;
+}
+
+.send_target {
+    margin-bottom: 40px;
+}
+
+.editing_area {
+    margin-bottom: 100px;
+}
+
+.ant-drawer-body {
+    position: relative;
+}
+
+.comfirm-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+}
+.ant-row {
+    margin-top: 6px;
+}
