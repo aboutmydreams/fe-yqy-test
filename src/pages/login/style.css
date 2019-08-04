@@ -26,7 +26,7 @@ body {
 }
 
 .logo-img {
-  width: 80px;
+  width: 110px;
   height: auto;
   margin: 0 auto;
 }
@@ -37,19 +37,4 @@ body {
 
 .input {
   height: 40px;
-}
-
-.btn {
-  display: block;
-  margin-bottom: 16px;
-  width: 320px;
-  height: 40px;
-}
-
-.made-with-love {
-  position: absolute;
-  bottom: 20px;
-  right: 40px;
-  font-size: 20px;
-  color: rgb(180, 180, 180);
 }
