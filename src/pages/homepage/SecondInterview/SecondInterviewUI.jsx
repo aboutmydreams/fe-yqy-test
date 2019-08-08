@@ -1,10 +1,11 @@
 import React from "react";
-import { Table, Divider, message, Input, Button, Form, Modal } from "antd";
+import { Table, Tag, message } from "antd";
 import axios from "axios";
 
 import "./style.css";
-import { string } from "postcss-selector-parser";
 import EditModleUI from "./EditModle";
+import Addbutton from "./AddModle";
+import Deletebutton from "./DeleteModle";
 
 class SecondInterviewUI extends React.Component {
   constructor(props) {
@@ -26,21 +27,19 @@ class SecondInterviewUI extends React.Component {
           dataIndex: "img_link",
           key: "img_link",
           render: text => {
-            let textlist = text.split("a");
-            console.log(textlist);
             if (text.search(";") !== -1) {
               let textList = text.split(";");
-              var i;
-              var myText = "";
-              for (i = 0; i < textList.length; i++) {
-                myText += (
-                  <img className="commodity" src={textList[i]} alt="shop" />
+              let imgList = [];
+              for (let imgSrc of textList) {
+                imgList.push(
+                  <img className="commodity" src={imgSrc} alt="shop" />
                 );
               }
-              text = myText;
+              text = imgList;
             } else {
               text = <img className="commodity" src={text} alt="shop" />;
             }
+            // console.log(text);
             return <div>{text}</div>;
           }
         },
@@ -48,64 +47,36 @@ class SecondInterviewUI extends React.Component {
           title: "价格",
           key: "price",
           dataIndex: "price",
-          render: text => (
-            <span>
-              {text}
-              {/* {tags.map(tag => {
-                let color = tag.length > 5 ? "geekblue" : "green";
-                if (tag === "loser") {
-                  color = "volcano";
-                }
-                return (
-                  <Tag color={color} key={tag}>
-                    {tag.toUpperCase()}
-                  </Tag>
-                );
-              })} */}
-            </span>
-          )
+          render: text => {
+            let texts = text.split(";");
+            return (
+              <span>
+                {texts.map(tag => {
+                  let color = tag.length > 3 ? "geekblue" : "green";
+                  if (tag === "loser") {
+                    color = "volcano";
+                  }
+                  return (
+                    <Tag color={color} key={tag}>
+                      {tag.toUpperCase()}
+                    </Tag>
+                  );
+                })}
+              </span>
+            );
+          }
         },
         {
           title: "操作",
           key: "action",
-          render: (text, record) => (
-            <span>
-              <a href="javascript:;">设为推荐 {record.key}</a>
-              <Divider type="vertical" />
-              <Modal
-                visible={this.state.visible}
-                title="编辑"
-                onOk={this.handleOk}
-                onCancel={this.handleCancel}
-                footer={[
-                  <Button key="back" onClick={this.handleCancel}>
-                    取消
-                  </Button>,
-                  <Button
-                    key="submit"
-                    type="primary"
-                    loading={this.state.loading}
-                    onClick={this.handleOk}
-                  >
-                    确认
-                  </Button>
-                ]}
-              >
-                <Form.Item>
-                  <Input
-                    placeholder="链接地址"
-                    className="input"
-                    value={this.state.inputValue}
-                    onChange={this.inputChange.bind(this)}
-                    autoComplete="current-password"
-                  />
-                </Form.Item>
-              </Modal>
-              <button onClick={this.showModal}>编辑</button>
-              <Divider type="vertical" />
-              <a href="javascript:;">删除</a>
-            </span>
-          )
+          render: (text, record) => {
+            return (
+              <span>
+                <EditModleUI text={text} />
+                <Deletebutton text={text} />
+              </span>
+            );
+          }
         }
       ],
 
@@ -115,7 +86,6 @@ class SecondInterviewUI extends React.Component {
 
   componentDidMount() {
     let token = localStorage.getItem("token");
-    // console.log(token);
     axios
       .get("http://127.0.0.1:5000/shop/edit?token=" + token)
       .then(res => this.setState({ data: res.data["data"] }));
@@ -126,12 +96,8 @@ class SecondInterviewUI extends React.Component {
       visible: true
     });
   };
-  handleOk = () => {
-    // let token = localStorage.getItem("token");
-    // // console.log("-----" + token);
-    // let url = this.state.inputValue;
-    // this.setState({ loading: true, imgurl: url });
 
+  handleOk = () => {
     setTimeout(() => {
       this.setState({ loading: false, visible: false });
       message.success("修改图片地址成功");
@@ -151,6 +117,7 @@ class SecondInterviewUI extends React.Component {
   render() {
     return (
       <div>
+        <Addbutton />
         <Table
           columns={this.state.columns}
           dataSource={this.state.data}

@@ -9,7 +9,7 @@ const { Text } = Typography;
 
 // 增加
 
-class EditModleUI extends Component {
+class Addbutton extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -25,39 +25,25 @@ class EditModleUI extends Component {
       inputChangeAddDetail: ""
     };
   }
-
-  componentDidMount() {
-    let shop = this.props.text;
-    this.setState({
-      inputValueAddName: shop.name,
-      inputValueAddLink: shop.img_link,
-      inputValueAddPrice: shop.price,
-      inputValueAddDetail: shop.shop_detail,
-      inputChangeAddName: shop.name,
-      inputChangeAddLink: shop.img_link,
-      inputChangeAddPrice: shop.price,
-      inputChangeAddDetail: shop.shop_detail
-    });
-  }
   windowsOpen = () => {
     window.open("https://sm.ms/");
   };
   handleOkAdd = () => {
+    console.log("4444444");
+    console.log(this.state.inputValueAddName);
     let jsonData = {
-      key: this.props.text.key,
       name: this.state.inputValueAddName,
       price: this.state.inputValueAddPrice,
       img_link: this.state.inputValueAddLink,
       shop_detail: this.state.inputValueAddDetail
     };
-    console.log(this.props.text.key);
     let token = localStorage.getItem("token");
     this.setState({ loadingAdd: true });
     axios
-      .put("http://127.0.0.1:5000/shop/edit?token=" + token, jsonData)
+      .post("http://127.0.0.1:5000/shop/edit?token=" + token, jsonData)
       .then(res => {
         if (res.data["code"] === 1) {
-          message.success("商品修改成功");
+          message.success("商品添加成功");
         } else if (res.data["code"] === 0) {
           message.error("操作失败" + res.data["error"]);
         }
@@ -161,15 +147,15 @@ class EditModleUI extends Component {
           </Form.Item>
         </Modal>
         <Button
-          className="EditModleUI"
+          className="addButton"
           type="primary"
           onClick={this.showModalAdd}
         >
-          编辑
+          添加商品
         </Button>
       </div>
     );
   }
 }
 
-export default EditModleUI;
+export default Addbutton;
