@@ -1,10 +1,8 @@
-import React from 'react'
-import RealTimeDataUI from './RealTimeDataUI'
+import React from "react";
+import RealTimeDataUI from "./RealTimeDataUI";
 
 const RealTimeData = () => {
-  return (
-    <RealTimeDataUI />
-  )
-}
+  return <RealTimeDataUI />;
+};
 
-export default RealTimeData
+export default RealTimeData;

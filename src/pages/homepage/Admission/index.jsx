@@ -1,10 +1,8 @@
-import React from 'react'
-import AdmissionUI from './AdmissionUI'
+import React from "react";
+import AdmissionUI from "./AdmissionUI";
 
 const Admission = () => {
-  return (
-    <AdmissionUI />
-  )
-}
+  return <AdmissionUI />;
+};
 
-export default Admission
+export default Admission;

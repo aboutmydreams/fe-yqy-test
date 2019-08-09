@@ -1,10 +1,8 @@
-import React from 'react'
-import MailboxUI from './MailboxUI'
+import React from "react";
+import MailboxUI from "./MailboxUI";
 
 const Mailbox = () => {
-  return (
-    <MailboxUI />
-  )
-}
+  return <MailboxUI />;
+};
 
-export default  Mailbox
+export default Mailbox;

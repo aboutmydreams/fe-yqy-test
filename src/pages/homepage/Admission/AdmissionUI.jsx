@@ -1,9 +1,7 @@
-import React from 'react'
+import React from "react";
 
 const AdmissionUI = () => {
-  return (
-    <div>Admission!</div>
-  )
-}
+  return <div>Admission!</div>;
+};
 
-export default AdmissionUI
+export default AdmissionUI;

@@ -54,7 +54,7 @@ class EditModleUI extends Component {
     let token = localStorage.getItem("token");
     this.setState({ loadingAdd: true });
     axios
-      .put("http://127.0.0.1:5000/shop/edit?token=" + token, jsonData)
+      .put("/api/shop/edit?token=" + token, jsonData)
       .then(res => {
         if (res.data["code"] === 1) {
           message.success("商品修改成功");

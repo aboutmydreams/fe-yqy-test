@@ -25,7 +25,7 @@ class Deletebutton extends Component {
     console.log(jsonData);
 
     axios
-      .delete("http://127.0.0.1:5000/shop/edit?token=" + token, {
+      .delete("/api/shop/edit?token=" + token, {
         data: jsonData
       })
       .then(res => {

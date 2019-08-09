@@ -40,7 +40,7 @@ class Addbutton extends Component {
     let token = localStorage.getItem("token");
     this.setState({ loadingAdd: true });
     axios
-      .post("http://127.0.0.1:5000/shop/edit?token=" + token, jsonData)
+      .post("/api/shop/edit?token=" + token, jsonData)
       .then(res => {
         if (res.data["code"] === 1) {
           message.success("商品添加成功");

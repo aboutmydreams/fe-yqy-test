@@ -7,7 +7,7 @@ import Axios from "axios";
 function AppRouter() {
   let me = false;
   let token = localStorage.getItem("token");
-  Axios.get("http://127.0.0.1:5000/me?token=" + token).then(res => {
+  Axios.get("/api/me?token=" + token).then(res => {
     // console.log(res.data);
     if (res.data !== "Flase") {
       me = true;

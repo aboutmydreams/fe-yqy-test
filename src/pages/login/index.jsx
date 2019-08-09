@@ -10,7 +10,7 @@ const Login = () => {
   const onLogin = ({ username, password }) => {
     console.log(username, password);
     axios
-      .post("http://127.0.0.1:5000/admin/login", {
+      .post("/api/admin/login", {
         username: username,
         password: password
       })
