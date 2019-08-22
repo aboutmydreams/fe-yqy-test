@@ -10,7 +10,7 @@ const Login = () => {
   const onLogin = ({ username, password }) => {
     console.log(username, password);
     axios
-      .post("/api/admin/login", {
+      .post("http://59.110.237.244/api/admin/login", {
         username: username,
         password: password
       })
@@ -18,6 +18,7 @@ const Login = () => {
         console.log(res.data["code"]);
         if (res.data["code"] === 1) {
           localStorage.setItem("token", res.data["token"]);
+          // this.props.history.push("home");
           window.location.replace("/home");
         } else {
           message.error("用户名或密码错误");

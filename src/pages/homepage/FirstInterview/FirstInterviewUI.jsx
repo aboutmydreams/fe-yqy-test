@@ -17,7 +17,7 @@ class FirstInterviewUI extends React.Component {
   state = {
     loading: false,
     visible: false,
-    imgurl: "/api/startimg/url",
+    imgurl: "http://59.110.237.244/api/startimg/url",
     inputValue: ""
   };
 
@@ -30,7 +30,7 @@ class FirstInterviewUI extends React.Component {
 
   componentDidMount() {
     axios
-      .get("/api/startimgurl")
+      .get("http://59.110.237.244/api/startimgurl")
       .then(res => this.setState({ imgurl: res.data["url"] }));
   }
 
@@ -52,7 +52,12 @@ class FirstInterviewUI extends React.Component {
 
     setTimeout(() => {
       axios
-        .get("/api/startimg/change?token=" + token + "&url=" + url)
+        .get(
+          "http://59.110.237.244/api/startimg/change?token=" +
+            token +
+            "&url=" +
+            url
+        )
         .then(res => this.setState({ imgurl: res.data["url"] }));
       this.setState({ loading: false, visible: false });
       message.success("修改图片地址成功");
@@ -101,7 +106,11 @@ class FirstInterviewUI extends React.Component {
             </Row>
             <br />
             <Title level={4}>图片预览</Title>
-            <img className="startimg" src={"/api/startimgget"} alt="start" />
+            <img
+              className="startimg"
+              src={"http://59.110.237.244/api/startimgget"}
+              alt="start"
+            />
           </div>
         </div>
         <Modal

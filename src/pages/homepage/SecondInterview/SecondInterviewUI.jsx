@@ -87,7 +87,7 @@ class SecondInterviewUI extends React.Component {
   componentDidMount() {
     let token = localStorage.getItem("token");
     axios
-      .get("/api/shop/edit?token=" + token)
+      .get("http://59.110.237.244/api/shop/edit?token=" + token)
       .then(res => this.setState({ data: res.data["data"] }));
   }
 

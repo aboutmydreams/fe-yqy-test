@@ -7,20 +7,24 @@ import Axios from "axios";
 function AppRouter() {
   let me = false;
   let token = localStorage.getItem("token");
-  Axios.get("/api/me?token=" + token).then(res => {
-    // console.log(res.data);
-    if (res.data !== "Flase") {
-      me = true;
-    } else {
-      me = false;
-    }
-  });
+  Axios.get("http://59.110.237.244/api/me?token=" + token)
+    .then(res => {
+      // console.log(res.data);
+      if (res.data !== "Flase") {
+        me = true;
+      } else {
+        me = false;
+      }
+    })
+    .catch(error => {
+      console.log(error);
+    });
   return (
     <Router>
       {/* Login page */}
-      <Route exact path="/login/" component={Login} />
+      <Route exact path="/login" component={Login} />
       {/* Basic home page */}
-      <Route path="/home/" component={Homepage} />
+      <Route path="/home" component={Homepage} />
       <Route
         exact
         path="/"

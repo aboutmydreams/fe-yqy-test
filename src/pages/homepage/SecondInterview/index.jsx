@@ -1,10 +1,9 @@
-import React from 'react'
-import SecondInterviewUI from './SecondInterviewUI'
+import React from "react";
+import SecondInterviewUI from "./SecondInterviewUI";
 
 const SecondInterview = () => {
-  return (
-    <SecondInterviewUI />
-  )
-}
+  
+  return <SecondInterviewUI />;
+};
 
-export default SecondInterview
+export default SecondInterview;
