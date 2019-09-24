@@ -1,8 +1,8 @@
 import React from "react";
-import MailboxUI from "./MailboxUI";
+import FinanUI from "./FinanUI";
 
-const Mailbox = () => {
-  return <MailboxUI />;
+const Finan = () => {
+  return <FinanUI />;
 };
 
-export default Mailbox;
+export default Finan;

@@ -4,10 +4,11 @@ import axios from "axios";
 
 import "./style.css";
 import EditModleUI from "./EditModle";
-import Addbutton from "./AddModle";
 import Deletebutton from "./DeleteModle";
+// import Addbutton from "./AddModle";
+// import Deletebutton from "./DeleteModle";
 
-class SecondInterviewUI extends React.Component {
+class FinanUI extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -17,54 +18,51 @@ class SecondInterviewUI extends React.Component {
       inputChange: "",
       columns: [
         {
-          title: "商品名称",
+          title: "姓名",
           dataIndex: "name",
           key: "name",
           render: text => <p>{text}</p>
         },
         {
-          title: "图片链接地址",
-          dataIndex: "img_link",
-          key: "img_link",
+          title: "公司名",
+          dataIndex: "company_name",
+          key: "company_name",
+          render: text => (
+            <Tag color={text.length > 4 ? "green" : "red"}>{text}</Tag>
+          )
+        },
+        {
+          title: "手机号",
+          dataIndex: "phone",
+          key: "phone",
+          render: text => <p>{text}</p>
+        },
+        {
+          title: "公司地址",
+          dataIndex: "company_address",
+          key: "company_address",
+          render: text => <p>{text}</p>
+        },
+        {
+          title: "融资金额",
+          dataIndex: "finance_num",
+          key: "finance_num",
           render: text => {
-            if (text.search(";") !== -1) {
-              let textList = text.split(";");
-              let imgList = [];
-              for (let imgSrc of textList) {
-                imgList.push(
-                  <img className="commodity" src={imgSrc} alt="shop" />
-                );
-              }
-              text = imgList;
-            } else {
-              text = <img className="commodity" src={text} alt="shop" />;
-            }
             // console.log(text);
             return <div>{text}</div>;
           }
         },
         {
-          title: "价格",
-          key: "price",
-          dataIndex: "price",
-          render: text => {
-            let texts = text.split(";");
-            return (
-              <span>
-                {texts.map(tag => {
-                  let color = tag.length > 3 ? "geekblue" : "green";
-                  if (tag === "loser") {
-                    color = "volcano";
-                  }
-                  return (
-                    <Tag color={color} key={tag}>
-                      {tag.toUpperCase()}
-                    </Tag>
-                  );
-                })}
-              </span>
-            );
-          }
+          title: "用途",
+          dataIndex: "how_use",
+          key: "how_use",
+          render: text => <p>{text}</p>
+        },
+        {
+          title: "备注",
+          dataIndex: "other_things",
+          key: "other_things",
+          render: text => <p>{text}</p>
         },
         {
           title: "操作",
@@ -72,8 +70,8 @@ class SecondInterviewUI extends React.Component {
           render: (text, record) => {
             return (
               <span>
-                <EditModleUI text={text} />
                 <Deletebutton text={text} />
+                {/* <Deletebutton text={text} /> */}
               </span>
             );
           }
@@ -87,7 +85,7 @@ class SecondInterviewUI extends React.Component {
   componentDidMount() {
     let token = localStorage.getItem("token");
     axios
-      .get("http://59.110.237.244/api/shop/edit?token=" + token)
+      .get("http://59.110.237.244/api/finance?token=" + token)
       .then(res => this.setState({ data: res.data["data"] }));
   }
 
@@ -117,7 +115,7 @@ class SecondInterviewUI extends React.Component {
   render() {
     return (
       <div>
-        <Addbutton />
+        {/* <Addbutton /> */}
         <Table
           columns={this.state.columns}
           dataSource={this.state.data}
@@ -128,4 +126,4 @@ class SecondInterviewUI extends React.Component {
   }
 }
 
-export default SecondInterviewUI;
+export default FinanUI;

@@ -28,19 +28,20 @@ const Homepage = props => {
             <Link to="/home/">实时数据</Link>
           </Menu.Item>
           <Menu.Item key="1">
-            <Link to="/home/SignUpForExam/">广告管理</Link>
+            <Link to="/home/AdManage/">广告管理</Link>
           </Menu.Item>
           <Menu.Item key="2">
-            <Link to="/home/FirstInterview/">启动页管理</Link>
+            <Link to="/home/Startimg/">启动页管理</Link>
           </Menu.Item>
           <Menu.Item key="3">
-            <Link to="/home/SecondInterview/">商品管理</Link>
+            <Link to="/home/ShopManage/">商品管理</Link>
           </Menu.Item>
           <Menu.Item key="4">
             <Link to="/home/Admission/">审核</Link>
           </Menu.Item>
+
           <Menu.Item key="5">
-            <Link to="/home/Mailbox/">企业官网</Link>
+            <Link to="/home/Mailbox/">融资管理</Link>
           </Menu.Item>
         </Menu>
       </Header>

@@ -13,7 +13,7 @@ import "./style1.css";
 import axios from "axios";
 const { Title } = Typography;
 
-class FirstInterviewUI extends React.Component {
+class StartimgUI extends React.Component {
   state = {
     loading: false,
     visible: false,
@@ -147,4 +147,4 @@ class FirstInterviewUI extends React.Component {
   }
 }
 
-export default FirstInterviewUI;
+export default StartimgUI;
