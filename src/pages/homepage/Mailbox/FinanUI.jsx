@@ -3,7 +3,6 @@ import { Table, Tag, message } from "antd";
 import axios from "axios";
 
 import "./style.css";
-import EditModleUI from "./EditModle";
 import Deletebutton from "./DeleteModle";
 // import Addbutton from "./AddModle";
 // import Deletebutton from "./DeleteModle";

@@ -1,5 +1,6 @@
 import React, { useState, Fragment } from "react";
 import { Typography, Input, Button, Row, Col } from "antd";
+import "./style.css";
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -23,17 +24,17 @@ const ContentItem = props => {
         </Col>
         <Col span={6}>
           {edit ? (
-            <Button type='primary' onClick={toggleEdit} icon='edit'>
+            <Button type="primary" onClick={toggleEdit} icon="edit">
               编辑内容
             </Button>
           ) : (
             <Button
-              type='default'
+              type="default"
               onClick={() => {
                 toggleEdit();
                 props.submit(desc);
               }}
-              icon='check'
+              icon="check"
             >
               保存修改
             </Button>
@@ -48,10 +49,12 @@ const ContentItem = props => {
         </Row>
       ) : (
         <Row>
-          <Col span={8}>
+          <Col span={24}>
             <TextArea
-              size='middle'
-              prefix='snippets'
+              rows={6}
+              size="large"
+              prefix="snippets"
+              className="input-long"
               defaultValue={desc}
               autoSize
               onChange={handleChange}
