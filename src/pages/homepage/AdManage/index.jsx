@@ -1,13 +1,30 @@
 import React from "react";
-import SignUpForExamUI from "./SignUpForExamUI";
-import { message } from "antd";
+import AdManageUI from "./AdManageUI";
 
-const SignUpForExam = () => {
-  const onButtonClick = () => {
-    message.success("login");
-  };
+const mockData = [
+  {
+    title: "广告系列1",
+    imgList: ["http://59.110.237.244/api/startimgget"]
+  },
+  {
+    title: "广告系列2",
+    imgList: [
+      "http://59.110.237.244/api/startimgget",
+      "http://59.110.237.244/api/startimgget"
+    ]
+  },
+  {
+    title: "广告系列3",
+    imgList: [
+      "http://59.110.237.244/api/startimgget",
+      "http://59.110.237.244/api/startimgget",
+      "http://59.110.237.244/api/startimgget"
+    ]
+  }
+];
 
-  return <SignUpForExamUI onButtonClick={onButtonClick} />;
+const AdManage = () => {
+  return <AdManageUI {...mockData}/>;
 };
 
-export default SignUpForExam;
+export default AdManage;

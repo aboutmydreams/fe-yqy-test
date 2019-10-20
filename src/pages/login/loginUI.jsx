@@ -15,17 +15,17 @@ const LoginUI = props => {
       }
     });
   };
-
+  //用于和表单双向绑定
   const { getFieldDecorator } = props.form;
 
   return (
-    <div className="wrapper">
-      <div className="container">
-        <div className="content">
+    <div className='wrapper'>
+      <div className='container'>
+        <div className='content'>
           <img
-            className="logo-img"
+            className='logo-img'
             src={"https://i.loli.net/2019/07/28/5d3d61ec2f6dd44203.png"}
-            alt="logo"
+            alt='logo'
           />
           <Title level={2} style={{ color: "#262626" }}>
             优企云
@@ -34,23 +34,21 @@ const LoginUI = props => {
             选择优企云，业务天下寻
           </Text>
           <Form onSubmit={handleSubmit}>
-            <div className="inputBox">
+            <div className='inputBox'>
               <Form.Item>
                 {getFieldDecorator("username", {
-                  rules: [
-                    { required: true, message: "Please input your username!" }
-                  ]
+                  rules: [{ required: true, message: "请输入用户名" }]
                 })(
                   <Input
                     prefix={
                       <Icon
-                        type="user"
+                        type='user'
                         style={{ color: "rgb(140, 140, 140)" }}
                       />
                     }
-                    placeholder="账号"
-                    className="input"
-                    autoComplete="current-password"
+                    placeholder='账号'
+                    className='input'
+                    autoComplete='current-password'
                   />
                 )}
               </Form.Item>
@@ -63,24 +61,21 @@ const LoginUI = props => {
                   <Input
                     prefix={
                       <Icon
-                        type="lock"
+                        type='lock'
                         style={{ color: "rgb(140, 140, 140)" }}
                       />
                     }
-                    placeholder="密码"
-                    className="input"
-                    type="password"
-                    autoComplete="current-password"
+                    placeholder='密码'
+                    className='input'
+                    type='password'
+                    autoComplete='current-password'
                   />
                 )}
               </Form.Item>
             </div>
-            <Button type="primary" className="btn" htmlType="submit" block>
+            <Button type='primary' className='btn' htmlType='submit' block>
               登录
             </Button>
-            {/* <Button block type="default" className="btn">
-              <a href="http://www.baidu.com">忘记密码</a>
-            </Button> */}
           </Form>
         </div>
       </div>

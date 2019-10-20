@@ -2,34 +2,26 @@ import React from "react";
 import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
 import Homepage from "../pages/homepage/layout";
 import Login from "../pages/login";
-import Axios from "axios";
-
+import { get } from "../request/http";
 function AppRouter() {
   let me = false;
   let token = localStorage.getItem("token");
-  Axios.get("http://59.110.237.244/api/me?token=" + token)
-    .then(res => {
-      // console.log(res.data);
-      if (res.data !== "Flase") {
-        me = true;
-      } else {
-        me = false;
-      }
-    })
-    .catch(error => {
-      console.log(error);
-    });
+  get(`/me?token=${token}`, null, {}).then(res => {
+    console.log(res);
+    //应该让它返回一个布尔值？
+    res.data.ans ? (me = true) : (me = false);
+  });
   return (
     <Router>
       {/* Login page */}
-      <Route exact path="/login" component={Login} />
+      <Route exact path='/login' component={Login} />
       {/* Basic home page */}
-      <Route path="/home" component={Homepage} />
+      <Route path='/home' component={Homepage} />
       <Route
         exact
-        path="/"
+        path='/'
         render={() =>
-          me ? <Redirect to="/home" /> : <Redirect to="/login/" />
+          me ? <Redirect to='/home/' /> : <Redirect to='/login/' />
         }
       />
     </Router>

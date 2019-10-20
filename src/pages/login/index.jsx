@@ -15,11 +15,11 @@ const Login = () => {
         password: password
       })
       .then(res => {
-        console.log(res.data["code"]);
         if (res.data["code"] === 1) {
           localStorage.setItem("token", res.data["token"]);
-          // this.props.history.push("home");
-          window.location.replace("/home");
+          message.success(`欢迎，${username}!`, [0.7], () => {
+            window.location.replace("/home");
+          });
         } else {
           message.error("用户名或密码错误");
         }
@@ -29,6 +29,7 @@ const Login = () => {
   const onInputChange = (e, type) => {
     let newValue = e.target.value;
     if (type === "username") {
+      //dispatchAction
       setUsername(newValue);
     } else if (type === "password") {
       setPassword(newValue);

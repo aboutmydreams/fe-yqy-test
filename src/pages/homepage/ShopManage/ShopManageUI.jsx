@@ -17,6 +17,12 @@ class ShopManageUI extends React.Component {
       inputChange: "",
       columns: [
         {
+          title: "商品编号",
+          dataIndex: "key",
+          key: "key",
+          render: text => <p>{text}</p>
+        },
+        {
           title: "商品名称",
           dataIndex: "name",
           key: "name",
@@ -32,12 +38,17 @@ class ShopManageUI extends React.Component {
               let imgList = [];
               for (let imgSrc of textList) {
                 imgList.push(
-                  <img className="commodity" src={imgSrc} alt="shop" />
+                  <img
+                    className='commodity'
+                    key={imgSrc}
+                    src={imgSrc}
+                    alt='shop'
+                  />
                 );
               }
               text = imgList;
             } else {
-              text = <img className="commodity" src={text} alt="shop" />;
+              text = <img className='commodity' src={text} alt='shop' />;
             }
             // console.log(text);
             return <div>{text}</div>;
@@ -121,7 +132,7 @@ class ShopManageUI extends React.Component {
         <Table
           columns={this.state.columns}
           dataSource={this.state.data}
-          pagination="bottom"
+          pagination='bottom'
         />
       </div>
     );
