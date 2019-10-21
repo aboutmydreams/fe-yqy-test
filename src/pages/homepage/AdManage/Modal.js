@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import { Switch, Button, Modal, Upload, Icon } from "antd";
+import React, { Component, useState } from "react";
+import { Switch, Button, Modal, Upload, Icon, Tooltip, Input } from "antd";
 
 class UpLoadCom extends Component {
   constructor(props) {
@@ -53,42 +53,9 @@ class UpLoadCom extends Component {
   }
 }
 
-// const UpLoadCom = props => {
-//   const handleChange = info => {
-//     console.log(info);
-//     let fileList = [...info.fileList];
-//     fileList = fileList.slice(-1);
-//     console.log(fileList);
-//   };
-//   const fileList = [
-//     {
-//       uid: "-1",
-//       name: "xxx.png",
-//       status: "done",
-//       url: props.currentImgUrl
-//     }
-//   ];
-//   const uploadProps = {
-//     //地址是固定的还是带上title？
-//     //同一title共享一个编辑按钮？
-//     action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
-//     listType: "picture",
-//     defaultFileList: [...fileList],
-//     onChange: handleChange
-//   };
-
-//   console.log(props);
-//   return (
-//     <Upload  accept='.bmp,.jpg,.png,.tif,.gif,.fpx,.svg,.webp' {...uploadProps}>
-//       <Button>
-//         <Icon type='upload' />
-//         请上传图片（一张）
-//       </Button>
-//     </Upload>
-//   );
-// };
-
 const ModalCom = props => {
+  let [editLinkUrl, setEditLinkUrl] = useState(true);
+  let [linkUrl, setLinkUrl] = useState("");
   return (
     <Modal
       visible={props.visible}
@@ -117,7 +84,30 @@ const ModalCom = props => {
       <br />
       <div>
         <p>在点击图片时跳转链接</p>
-        <Switch checkedChildren='开' unCheckedChildren='关' defaultChecked />
+        <Switch
+          checkedChildren='开'
+          onChange={() => {
+            setEditLinkUrl(!editLinkUrl);
+          }}
+          unCheckedChildren='关'
+          defaultChecked
+        />
+        {editLinkUrl ? (
+          <Input
+            placeholder='请输入点击图片后跳转的链接'
+            onChange={e => {
+              setLinkUrl(e.target.value);
+            }}
+            prefix={
+              <Icon type='desktop' style={{ color: "rgba(0,0,0,.25)" }} />
+            }
+            suffix={
+              <Tooltip title='请输入完整链接'>
+                <Icon type='info-circle' style={{ color: "rgba(0,0,0,.45)" }} />
+              </Tooltip>
+            }
+          />
+        ) : null}
       </div>
     </Modal>
   );

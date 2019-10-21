@@ -1,10 +1,9 @@
-import React from "react";
-import { Table, Tag, message } from "antd";
+import React, { Fragment } from "react";
+import { Table, Tag, Button, Row, Col, Input, Icon } from "antd";
 import axios from "axios";
 
 import "./style.css";
-import EditModleUI from "./EditModle";
-import Addbutton from "./AddModle";
+import EditModle from "./EditModle";
 import Deletebutton from "./DeleteModle";
 
 class ShopManageUI extends React.Component {
@@ -13,6 +12,8 @@ class ShopManageUI extends React.Component {
     this.state = {
       loading: false,
       visible: false,
+      editRecommand: false,
+      recoProduct: [1, 2, 3],
       inputValue: "",
       inputChange: "",
       columns: [
@@ -34,6 +35,7 @@ class ShopManageUI extends React.Component {
           key: "img_link",
           render: text => {
             if (text.search(";") !== -1) {
+              //如果有多张图片则转为数组
               let textList = text.split(";");
               let imgList = [];
               for (let imgSrc of textList) {
@@ -59,10 +61,12 @@ class ShopManageUI extends React.Component {
           key: "price",
           dataIndex: "price",
           render: text => {
+            //价格描述
             let texts = text.split(";");
             return (
               <span>
                 {texts.map(tag => {
+                  //配色还可以调整
                   let color = tag.length > 3 ? "geekblue" : "green";
                   if (tag === "loser") {
                     color = "volcano";
@@ -83,7 +87,7 @@ class ShopManageUI extends React.Component {
           render: (text, record) => {
             return (
               <span>
-                <EditModleUI text={text} />
+                <EditModle type='edit' text={text} />
                 <Deletebutton text={text} />
               </span>
             );
@@ -99,42 +103,64 @@ class ShopManageUI extends React.Component {
     let token = localStorage.getItem("token");
     axios
       .get("http://59.110.237.244/api/shop/edit?token=" + token)
-      .then(res => this.setState({ data: res.data["data"] }));
+      .then(res => {
+        this.setState({ data: res.data["data"] });
+        console.log(res);
+      });
   }
-
-  showModal = () => {
+  formatInput = e => {
+    let initValue = e.target.value;
+    let formattedValue = initValue.replace("，", ",");
+    //要不再加个正则确定只有数字？
+    //还是换成仅供选择的方式？
+    console.log(formattedValue);
     this.setState({
-      visible: true
+      recoProduct: formattedValue
     });
   };
-
-  handleOk = () => {
-    setTimeout(() => {
-      this.setState({ loading: false, visible: false });
-      message.success("修改图片地址成功");
-    }, 3000);
+  recommandIdx = () => {
+    //to be finished
   };
-
-  handleCancel = () => {
-    this.setState({ visible: false });
-  };
-
-  inputChange(e) {
-    this.setState({
-      inputValue: e.target.value
-    });
-  }
-
   render() {
     return (
-      <div>
-        <Addbutton />
+      <Fragment>
+        <Row>
+          <Col span={2}>
+            <EditModle
+              type='add'
+              lastIdx={this.state.data.length}
+              text={null}
+            />
+          </Col>
+          <Col span={1}></Col>
+          <Col span={6}>
+            <Input
+              value={this.state.recoProduct.toString()}
+              disabled={!this.state.editRecommand}
+              placeholder='请输入要展示在推荐位上的商品编号，以‘，’分隔'
+              prefix={<Icon type='star' />}
+              onChange={this.formatInput.bind(this)}
+            />
+          </Col>
+          {/* <Col span={1}></Col> */}
+          <Col span={4}>
+            <Button
+              type='primary'
+              onClick={() => {
+                this.setState({ editRecommand: !this.state.editRecommand });
+              }}
+            >
+              {this.state.editRecommand ? "保存设置" : "修改推荐商品"}
+            </Button>
+          </Col>
+        </Row>
+        <br />
         <Table
           columns={this.state.columns}
           dataSource={this.state.data}
           pagination='bottom'
         />
-      </div>
+      </Fragment>
     );
   }
 }
