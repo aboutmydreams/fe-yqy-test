@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from "react";
 
-import { Typography, message, Input, Button, Form, Modal } from "antd";
+import {
+  Typography,
+  message,
+  Input,
+  Button,
+  Icon,
+  Form,
+  Modal,
+  Upload
+} from "antd";
 import axios from "axios";
 
 import "./style.css";
@@ -23,12 +32,13 @@ const EditModleUI = props => {
       setLink(product.img_link);
       setPrice(product.price);
       setDetail(product.shop_detail);
+    } else {
+      setLink("");
     }
+    let linksArr = link.split(";");
+    console.log(linksArr);
     return () => {};
-  }, [props]);
-  const windowsOpen = () => {
-    window.open("https://sm.ms/");
-  };
+  }, [link, props]);
   const handleOk = () => {
     let data = {
       key: props.type === "edit" ? props.text.key : props.lastIdx + 1,
@@ -39,21 +49,39 @@ const EditModleUI = props => {
     };
     let token = localStorage.getItem("token");
     setLoading(true);
-    axios
-      .put(`http://59.110.237.244/api/shop/edit?token=${token}`, data)
-      .then(res => {
-        console.log(res);
-        res.data.code === 1
-          ? message.success("修改成功") && setVisible(false)
-          : message.error(`操作失败：${res.data.error}`);
-      })
-      .catch(err => {
-        message.error(`操作失败: ${err}`);
-      })
-      .then(() => {
-        setLoading(false);
-      });
+    props.type === "edit"
+      ? axios
+          //编辑
+          .put("http://59.110.237.244/api/shop/edit?token=" + token, data)
+          .then(res => {
+            console.log(res);
+            res.data.code === 1
+              ? message.success("修改成功") && setVisible(false)
+              : message.error(`操作失败：${res.data.error}`);
+          })
+          .catch(err => {
+            message.error(`操作失败: ${err}`);
+          })
+          .then(() => {
+            setLoading(false);
+          })
+      : axios
+          //新增
+          .post(`http://59.110.237.244/api/shop/edit?token=${token}`, data)
+          .then(res => {
+            console.log(res);
+            res.data.code === 1
+              ? message.success("修改成功") && setVisible(false)
+              : message.error(`操作失败：${res.data.error}`);
+          })
+          .catch(err => {
+            message.error(`操作失败: ${err}`);
+          })
+          .then(() => {
+            setLoading(false);
+          });
   };
+
   return (
     <div>
       <Modal
@@ -92,17 +120,20 @@ const EditModleUI = props => {
               setName(e.target.value);
             }}
           />
-          <Text strong underline mark onClick={windowsOpen}>
-            图片链接地址（;相隔）
-          </Text>
-          <Input
-            placeholder='链接地址'
-            className='input'
-            value={link}
-            onChange={e => {
-              setLink(e.target.value);
-            }}
-          />
+          {/* 这里的上传逻辑还未处理，
+          需要区分新增与编辑的上传逻辑（fileList），以及图片上传限制 */}
+          <Upload accept='.bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp'>
+            <Button>
+              <Icon type='upload' />
+              上传封面图片
+            </Button>
+          </Upload>
+          <Upload accept='.bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp'>
+            <Button>
+              <Icon type='upload' />
+              上传详情图片
+            </Button>
+          </Upload>
           <Text strong>价格设置（;相隔）</Text>
           <Input
             placeholder='价格设置（分号相隔）'
@@ -112,11 +143,12 @@ const EditModleUI = props => {
               setPrice(e.target.value);
             }}
           />
-          <Text strong>详细内容</Text>
+          <div>
+            <Text strong>详细内容 </Text>
+          </div>
           <TextArea
             rows={5}
             placeholder='详细内容'
-            className='input-long'
             value={detail}
             onChange={e => {
               setDetail(e.target.value);

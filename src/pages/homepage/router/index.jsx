@@ -6,6 +6,7 @@ import ShopManage from "../ShopManage";
 import Admission from "../Admission";
 import Mailbox from "../Mailbox";
 import Content from "../ContentManage";
+import VideoManage from "../VideoManage";
 
 const HomeRouter = () => {
   return (
@@ -16,6 +17,7 @@ const HomeRouter = () => {
         <Route path='/home/ShopManage/' component={ShopManage} />
         <Route path='/home/Admission/' component={Admission} />
         <Route path='/home/Mailbox/' component={Mailbox} />
+        <Route path='/home/VideoManage/' component={VideoManage} />
         <Route component={RealTimeData} />
       </Switch>
     </Fragment>

@@ -21,7 +21,7 @@ function AppRouter() {
         exact
         path='/'
         render={() =>
-          me ? <Redirect to='/home/' /> : <Redirect to='/login/' />
+          me ? <Redirect to='/home' /> : <Redirect to='/login/' />
         }
       />
     </Router>

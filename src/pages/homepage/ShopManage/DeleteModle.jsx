@@ -6,7 +6,8 @@ import "./style.css";
 const { confirm } = Modal;
 
 // 增加
-
+//参考 VideoManage下的DeleteModal，
+// 其实这一部分用hooks重构之后代码量是很少的，甚至二者都可以考虑合并进EditModal组件里
 class Deletebutton extends Component {
   constructor(props) {
     super(props);
@@ -64,8 +65,8 @@ class Deletebutton extends Component {
     return (
       <div>
         <Button
-          className="Deletebutton"
-          type="primary"
+          className='Deletebutton'
+          type='primary'
           onClick={this.showConfirm}
         >
           删除

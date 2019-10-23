@@ -24,17 +24,17 @@ const ContentItem = props => {
         </Col>
         <Col span={6}>
           {edit ? (
-            <Button type="primary" onClick={toggleEdit} icon="edit">
+            <Button type='primary' onClick={toggleEdit} icon='edit'>
               编辑内容
             </Button>
           ) : (
             <Button
-              type="default"
+              type='default'
               onClick={() => {
                 toggleEdit();
                 props.submit(desc);
               }}
-              icon="check"
+              icon='check'
             >
               保存修改
             </Button>
@@ -43,18 +43,18 @@ const ContentItem = props => {
       </Row>
       {edit ? (
         <Row>
-          <Col>
+          <Col span={18} style={{ lineHeightL: "6px" }}>
             <Text>{desc}</Text>
           </Col>
         </Row>
       ) : (
         <Row>
-          <Col span={24}>
+          <Col span={18}>
             <TextArea
               rows={6}
-              size="large"
-              prefix="snippets"
-              className="input-long"
+              size='large'
+              prefix='snippets'
+              className='input-long'
               defaultValue={desc}
               autoSize
               onChange={handleChange}

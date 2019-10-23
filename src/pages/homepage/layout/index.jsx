@@ -8,7 +8,7 @@ const { Header, Content } = Layout;
 const { Item } = Menu;
 const menuItem = [
   {
-    to: "/home/",
+    to: "/home",
     title: "实时数据"
   },
   {
@@ -30,13 +30,16 @@ const menuItem = [
   {
     to: "/home/MailBox",
     title: "融资管理"
+  },
+  {
+    to: "/home/VideoManage",
+    title: "视频管理"
   }
 ];
-//解决刷新之后等被选中菜单不正确显示的问题
-let currentKey = menuItem.findIndex(item => {
-  return item.to === window.location.pathname;
-});
 const Homepage = () => {
+  let currentKey = menuItem.findIndex(item => {
+    return item.to === window.location.pathname;
+  });
   console.log(currentKey);
   return (
     <Layout>
