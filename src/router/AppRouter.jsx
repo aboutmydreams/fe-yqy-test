@@ -14,14 +14,14 @@ function AppRouter() {
   return (
     <Router>
       {/* Login page */}
-      <Route exact path='/login' component={Login} />
+      <Route exact path="/login" component={Login} />
       {/* Basic home page */}
-      <Route path='/home' component={Homepage} />
+      <Route path="/home" component={Homepage} />
       <Route
         exact
-        path='/'
+        path="/"
         render={() =>
-          me ? <Redirect to='/home' /> : <Redirect to='/login/' />
+          me ? <Redirect to="/home" /> : <Redirect to="/login/" />
         }
       />
     </Router>

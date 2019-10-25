@@ -1,34 +1,44 @@
 import React, { useState, Fragment } from "react";
 import { Typography, Input, Button, Row, Col, message } from "antd";
-import Axios from "axios";
 import "./style.css";
+import axios from "axios";
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
 
 const ContentItem = props => {
-  let { title, content } = props.content;
-  let [editable, setEditable] = useState(true);
-  let [desc, setDesc] = useState(content);
-
+  let { title, key, content } = props.content;
+  let [edit, setEdit] = useState(true);
+  // let [desc, setDesc] = useState(content);
   const toggleEdit = () => {
-    setEditable(!editable);
+    setEdit(!edit);
   };
-
   const handleChange = e => {
     let result = e.target.value;
-    setDesc(result);
+    console.log(result);
+    // setDesc(result);
   };
-  const handleSubmit = (content, title) => {
-    Axios.put("http://59.110.237.244/api/system", {
-      key: title,
-      value: content
-    }).then(res => {
-      console.log(res);
-      if (res.data.code === 1) {
-        message.success("保存成功");
-      }
-    });
+
+  const uploadInfo = (key, content) => {
+    // let result = e.target.value;
+    console.log(key);
+    axios
+      .put("http://59.110.237.244/api/system?key=about_us", {
+        key: key,
+        value: content
+      })
+      .then(res => {
+        if (res.data["code"] === 1) {
+          message.success("修改成功");
+        } else if (res.data["code"] === 0) {
+          message.error("操作失败" + res.data["error"]);
+        }
+        console.log(res.data);
+      })
+      .catch(Error => {
+        message.error("操作失败，" + Error);
+      });
+    // setDesc(result);
   };
   return (
     <Fragment>
@@ -37,28 +47,29 @@ const ContentItem = props => {
           <Title level={3}>{title}</Title>
         </Col>
         <Col span={6}>
-          {editable ? (
-            <Button type='primary' onClick={toggleEdit} icon='edit'>
+          {edit ? (
+            <Button type="primary" onClick={toggleEdit} icon="edit">
               编辑内容
             </Button>
           ) : (
             <Button
-              type='default'
+              type="default"
               onClick={() => {
                 toggleEdit();
-                handleSubmit(desc, title);
+                uploadInfo(key, content);
+                // props.submit(desc);
               }}
-              icon='check'
+              icon="check"
             >
               保存修改
             </Button>
           )}
         </Col>
       </Row>
-      {editable ? (
+      {edit ? (
         <Row>
           <Col span={18} style={{ lineHeightL: "6px" }}>
-            <Text>{desc}</Text>
+            <Text>{content}</Text>
           </Col>
         </Row>
       ) : (
@@ -66,10 +77,10 @@ const ContentItem = props => {
           <Col span={18}>
             <TextArea
               rows={6}
-              size='large'
-              prefix='snippets'
-              className='input-long'
-              defaultValue={desc}
+              size="large"
+              prefix="snippets"
+              className="input-long"
+              defaultValue={content}
               autoSize
               onChange={handleChange}
             ></TextArea>
