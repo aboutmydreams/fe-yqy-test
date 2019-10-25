@@ -9,12 +9,11 @@ import {
   Input,
   message
 } from "antd";
+import axios from "axios";
 const ModalCom = props => {
-  // console.log(props);
-  //
   let [editLinkUrl, setEditLinkUrl] = useState(props.jump ? true : false);
-  let [linkUrl, setLinkUrl] = useState(editLinkUrl ? props.linkUrl : "");
-  let [currentFileList, setCurrentFileList] = useState([
+  const [linkUrl, setLinkUrl] = useState(editLinkUrl ? props.linkUrl : "");
+  const [currentFileList, setCurrentFileList] = useState([
     {
       uid: `${props.seriesIdx}-${props.listIdx}`,
       name: props.imgName,
@@ -25,18 +24,19 @@ const ModalCom = props => {
   const changePreview = props.changePreview;
   //这里的数据实际上也是来自于服务器的，是对在index.jsx中获得数据进行筛选后得到的
   const handleChange = info => {
-    //info: file fileList event
+    const token = localStorage.getItem("token");
+    axios.get("http://59.110.237.244/api/upload?token=" + token).then(res => {
+      console.log(res);
+    });
     console.log(info);
     let fileList = [...info.fileList];
     fileList = fileList.slice(-1);
+    console.log(fileList);
     setCurrentFileList(fileList);
     if (info.file.status === "done") {
-      //把服务器响应的地址回传给对应的<ImgItem />组件
-      let newImgUrl = info.file.response.url;
-      console.log(newImgUrl);
-      changePreview(newImgUrl);
     }
   };
+
   const handleRemove = () => {
     message.config({
       duration: 1.5,
@@ -49,21 +49,37 @@ const ModalCom = props => {
   };
   const handleSubmit = () => {
     //在这里执行上传图片到服务器并获取url，但可能是我打开的方式不对（雾），接口传回的是code为0的情况
-    // console.log(fileList, linkUrl);
+    console.log(currentFileList);
+  };
+
+  const beforeUpload = file => {
+    let imgFile = new FormData(); //重点在这里 如果使用 var data = {}; data.inputfile=... 这样的方式不能正常上传
+    //二进制 发送formdata
+    imgFile.append("file", file);
+    const token = localStorage.getItem("token");
+    console.log();
+    let header = { headers: { "Content-Type": "multipart/form-data" } };
+    axios
+      .post("http://59.110.237.244/api/upload?token=" + token, imgFile, header)
+      .then(res => {
+        console.log(res);
+        changePreview(res.data.url);
+      });
+    return false;
   };
   const uploadProps = {
-    action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
     listType: "picture",
-    // defaultFileList: currentFileList,
     fileList: currentFileList,
     onChange: handleChange,
-    onRemove: handleRemove
+    onRemove: handleRemove,
+    beforeUpload: beforeUpload
   };
 
   return (
     <Modal
       visible={props.visible}
       title={props.title}
+      onCancel={props.hide()}
       footer={[
         <Button
           key='back'
@@ -79,7 +95,6 @@ const ModalCom = props => {
           loading={props.loading}
           onClick={() => {
             props.handleOk();
-            handleSubmit();
           }}
         >
           确认
@@ -87,7 +102,6 @@ const ModalCom = props => {
       ]}
     >
       {/* 上传至oss https://ant.design/components/upload-cn/ */}
-
       <Fragment>
         <Upload
           accept='.bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp'

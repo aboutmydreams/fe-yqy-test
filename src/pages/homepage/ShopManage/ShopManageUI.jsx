@@ -42,7 +42,6 @@ const ShopManageUI = props => {
         } else {
           text = <img className='commodity' src={text} alt='shop' />;
         }
-        // console.log(text);
         return <div>{text}</div>;
       }
     },
@@ -107,8 +106,6 @@ const ShopManageUI = props => {
           idxArr.push(item.key);
           return true;
         });
-        // console.log(idxArr);
-        // console.log(idxArr.join(","));
         setRecoIdxStr(idxArr.join(","));
       });
     return () => {};
@@ -117,16 +114,10 @@ const ShopManageUI = props => {
   const formatInput = e => {
     let initValue = e.target.value;
     let formattedValue = initValue.replace("，", ",");
-    //要不再加个正则确定只有数字？
-    //还是换成仅供选择的方式？
-    //是否需要去重？
-
-    //更改输入框内的值
     setRecoIdxStr(formattedValue);
   };
   const submitRecoIdx = () => {
     // setRecoIdxArr(recoIdxStr.split(",").map(Number));
-
     console.log(recoIdxStr.split(",").map(Number));
     axios
       .post("http://59.110.237.244/api/shop/batch", {

@@ -1,5 +1,6 @@
 import React, { useState, Fragment } from "react";
-import { Typography, Input, Button, Row, Col } from "antd";
+import { Typography, Input, Button, Row, Col, message } from "antd";
+import Axios from "axios";
 import "./style.css";
 
 const { Title, Text } = Typography;
@@ -7,14 +8,27 @@ const { TextArea } = Input;
 
 const ContentItem = props => {
   let { title, content } = props.content;
-  let [edit, setEdit] = useState(true);
+  let [editable, setEditable] = useState(true);
   let [desc, setDesc] = useState(content);
+
   const toggleEdit = () => {
-    setEdit(!edit);
+    setEditable(!editable);
   };
+
   const handleChange = e => {
     let result = e.target.value;
     setDesc(result);
+  };
+  const handleSubmit = (content, title) => {
+    Axios.put("http://59.110.237.244/api/system", {
+      key: title,
+      value: content
+    }).then(res => {
+      console.log(res);
+      if (res.data.code === 1) {
+        message.success("保存成功");
+      }
+    });
   };
   return (
     <Fragment>
@@ -23,7 +37,7 @@ const ContentItem = props => {
           <Title level={3}>{title}</Title>
         </Col>
         <Col span={6}>
-          {edit ? (
+          {editable ? (
             <Button type='primary' onClick={toggleEdit} icon='edit'>
               编辑内容
             </Button>
@@ -32,7 +46,7 @@ const ContentItem = props => {
               type='default'
               onClick={() => {
                 toggleEdit();
-                props.submit(desc);
+                handleSubmit(desc, title);
               }}
               icon='check'
             >
@@ -41,7 +55,7 @@ const ContentItem = props => {
           )}
         </Col>
       </Row>
-      {edit ? (
+      {editable ? (
         <Row>
           <Col span={18} style={{ lineHeightL: "6px" }}>
             <Text>{desc}</Text>

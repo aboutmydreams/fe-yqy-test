@@ -52,12 +52,17 @@ class AdmissionUI extends React.Component {
               let imgList = [];
               for (let imgSrc of textList) {
                 imgList.push(
-                  <img className="commodity" src={imgSrc} alt="shop" />
+                  <img
+                    key={imgSrc}
+                    className='commodity'
+                    src={imgSrc}
+                    alt='shop'
+                  />
                 );
               }
               text = imgList;
             } else {
-              text = <img className="commodity" src={text} alt="shop" />;
+              text = <img className='commodity' src={text} alt='shop' />;
             }
             // console.log(text);
             return <div>{text}</div>;
@@ -147,7 +152,7 @@ class AdmissionUI extends React.Component {
         <Table
           columns={this.state.columns}
           dataSource={this.state.data}
-          pagination="bottom"
+          pagination='bottom'
         />
       </div>
     );

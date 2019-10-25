@@ -13,33 +13,25 @@ const { TextArea } = Input;
 const { Text } = Typography;
 
 const EditModal = props => {
-  const { info } = props;
-  console.log(props);
-  const [visible, setVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
+  let [visible, setVisible] = useState(false);
+  let [loading, setLoading] = useState(false);
+  let [title, setTitle] = useState("");
+  let [link, setLink] = useState("");
+  let [sum, setSum] = useState("");
 
-  const [title, setTitle] = useState("");
-  const [url, setUrl] = useState("");
-  const [sum, setSum] = useState("");
-  useEffect(() => {
-    let { info } = props;
-    setTitle(info.title);
-    setUrl(info.url);
-    setSum(info.summary);
-    return () => {};
-  }, [props, setSum, setTitle]);
   const onOk = () => {
-    const newInfo = {
-      video_id: info.video_id,
+    let newInfo = {
+      key: props.lastIdx + 1,
       title: title,
-      url: url,
+      video_link: link,
       summary: sum
     };
-    props.onEdit(newInfo);
+    props.onAdd(newInfo);
     setLoading(true);
     setTimeout(() => {
       setVisible(false);
       setLoading(false);
+      message.success("修改成功~");
     }, 1200);
   };
   return (
@@ -63,7 +55,6 @@ const EditModal = props => {
             key='submit'
             type='primary'
             loading={loading}
-            // loading={props.loading}
             onClick={() => {
               onOk();
             }}
@@ -91,12 +82,12 @@ const EditModal = props => {
           <Col span={24}>
             <Text>视频链接：</Text>
             <Input
-              value={url}
+              value={link}
               placeholder='请输入完整的视频链接'
               allowClear
               prefix={<Icon type='play-square' />}
               onChange={e => {
-                setUrl(e.target.value);
+                setLink(e.target.value);
               }}
             />
           </Col>
@@ -122,7 +113,7 @@ const EditModal = props => {
           setVisible(true);
         }}
       >
-        编辑
+        新增
       </Button>
     </Fragment>
   );

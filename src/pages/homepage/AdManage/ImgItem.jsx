@@ -26,18 +26,14 @@ const ImgItem = props => {
   };
   const handleChangePreview = newImgUrl => {
     setImgUrl(newImgUrl);
-    console.log(newImgUrl);
   };
   let modalProps = {
-    //需要在模态框或是其上传组件中进行处理的数据逻辑，
-    //由这个组件负责处理更改预览、切换状态
     visible: visible,
     loading: loading,
     title: title,
     imgName: props.name,
     imgStatus: props.status,
     imgUrl: imgUrl,
-    show: showModal,
     hide: hideModal,
     handleOk: handleOk,
     seriesIdx: props.seriesIdx,

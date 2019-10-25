@@ -24,6 +24,8 @@ const EditModleUI = props => {
   let [link, setLink] = useState("");
   let [price, setPrice] = useState("");
   let [detail, setDetail] = useState("");
+  let [coverImgList, setCoverImgList] = useState([]);
+  let [detailImgList, setDetailImgList] = useState([]);
 
   useEffect(() => {
     if (props.type === "edit") {
@@ -35,13 +37,12 @@ const EditModleUI = props => {
     } else {
       setLink("");
     }
-    let linksArr = link.split(";");
-    console.log(linksArr);
     return () => {};
-  }, [link, props]);
+  }, [link, name, props]);
+
   const handleOk = () => {
-    let data = {
-      key: props.type === "edit" ? props.text.key : props.lastIdx + 1,
+    let jsonData = {
+      // key: props.type === "edit" ? props.text.key : props.lastIdx + 1,
       name: name,
       price: price,
       img_link: link,
@@ -52,7 +53,9 @@ const EditModleUI = props => {
     props.type === "edit"
       ? axios
           //编辑
-          .put("http://59.110.237.244/api/shop/edit?token=" + token, data)
+          .put("http://59.110.237.244/api/shop/edit?token=" + token, {
+            data: jsonData
+          })
           .then(res => {
             console.log(res);
             res.data.code === 1
@@ -67,7 +70,7 @@ const EditModleUI = props => {
           })
       : axios
           //新增
-          .post(`http://59.110.237.244/api/shop/edit?token=${token}`, data)
+          .post(`http://59.110.237.244/api/shop/edit?token=${token}`, jsonData)
           .then(res => {
             console.log(res);
             res.data.code === 1
@@ -80,6 +83,44 @@ const EditModleUI = props => {
           .then(() => {
             setLoading(false);
           });
+  };
+
+  let fileList = [];
+  let linksArr = link.split(";");
+  linksArr.map((link, index) => {
+    let obj = {
+      uid: Math.random() * 100,
+      name: name,
+      url: link,
+      idx: index
+    };
+    fileList.push(obj);
+    return true;
+  });
+  // console.log(fileList);
+
+  const coverProps = {
+    action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
+    listType: "picture",
+    fileList: coverImgList
+  };
+  const handleCoverChange = info => {
+    console.log(info);
+    let fileList = [...info.fileList];
+    fileList = fileList.slice(-5);
+    setCoverImgList(fileList);
+    if (info.file.status === "done") {
+      // let newImgUrl = info.file.response.url;
+    }
+  };
+  const handleDetailChange = info => {
+    console.log(info);
+    let fileList = [...info.fileList];
+    fileList = fileList.slice(-5);
+    setDetailImgList(fileList);
+    if (info.file.status === "done") {
+      // let newImgUrl = info.file.response.url;
+    }
   };
 
   return (
@@ -115,30 +156,39 @@ const EditModleUI = props => {
           <Input
             placeholder='名称'
             className='input'
-            value={name}
+            defaultValue={name}
+            // value={name}
             onChange={e => {
+              console.log(e);
               setName(e.target.value);
             }}
           />
           {/* 这里的上传逻辑还未处理，
           需要区分新增与编辑的上传逻辑（fileList），以及图片上传限制 */}
-          <Upload accept='.bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp'>
+          <Upload
+            accept='.bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp'
+            {...coverProps}
+            onChange={handleCoverChange}
+          >
             <Button>
               <Icon type='upload' />
-              上传封面图片
+              上传封面图片(数量限制：5)
             </Button>
           </Upload>
-          <Upload accept='.bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp'>
+          <Upload
+            accept='.bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp'
+            onChange={handleDetailChange}
+          >
             <Button>
               <Icon type='upload' />
-              上传详情图片
+              上传详情图片(数量限制：5)
             </Button>
           </Upload>
           <Text strong>价格设置（;相隔）</Text>
           <Input
             placeholder='价格设置（分号相隔）'
             className='input'
-            value={price}
+            defaultValue={price}
             onChange={e => {
               setPrice(e.target.value);
             }}
@@ -149,7 +199,7 @@ const EditModleUI = props => {
           <TextArea
             rows={5}
             placeholder='详细内容'
-            value={detail}
+            defaultValue={detail}
             onChange={e => {
               setDetail(e.target.value);
             }}
@@ -161,6 +211,10 @@ const EditModleUI = props => {
         type='primary'
         onClick={() => {
           setVisible(true);
+          //防止re-render过多报错
+          if (props.type === "edit") {
+            setCoverImgList(fileList);
+          }
         }}
       >
         {props.type === "edit" ? "编辑" : "新增商品"}

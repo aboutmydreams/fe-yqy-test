@@ -1,23 +1,15 @@
-import React, { useState } from "react";
+import React, { Fragment } from "react";
 import { Table } from "antd";
 import EditModal from "./EditModal";
 import DelModal from "./DeleteModal";
+import AddModal from "./AddModal";
 
-const VideoManageUI = () => {
-  let data = [
-    {
-      key: 0,
-      title: "视频1",
-      video_link:
-        "https://www.google.com.hk/webhp?hl=zh-CN&sourceid=cnhp&gws_rd=ssl",
-      summary: "一段描述罢了"
-    }
-  ];
-  let columns = [
+const VideoManageUI = ({ onAdd, onEdit, videoList }) => {
+  const columns = [
     {
       title: "视频编号",
-      dataIndex: "key",
-      key: "key",
+      dataIndex: "video_id",
+      key: "video_id",
       render: text => <p>{text}</p>
     },
     {
@@ -28,8 +20,8 @@ const VideoManageUI = () => {
     },
     {
       title: "视频链接地址",
-      dataIndex: "video_link",
-      key: "video_link",
+      dataIndex: "url",
+      key: "url",
       render: text => {
         return (
           // eslint-disable-next-line react/jsx-no-target-blank
@@ -56,23 +48,19 @@ const VideoManageUI = () => {
       render: text => {
         return (
           <span>
-            <EditModal info={text} onEdit={handleEdit} />
+            <EditModal info={text} onEdit={onEdit} />
             <DelModal idx={text.key} />
           </span>
         );
       }
     }
   ];
-  let [tableData, setTableData] = useState(data);
 
-  const handleEdit = newInfo => {
-    const { key } = newInfo;
-    Object.assign(data[key], newInfo);
-    console.log(data);
-    //我啷个晓得为嘛又不更新咯...
-    setTableData(data);
-  };
-
-  return <Table columns={columns} dataSource={tableData} pagination='bottom' />;
+  return (
+    <Fragment>
+      <AddModal onAdd={onAdd} />
+      <Table columns={columns} dataSource={videoList} pagination='bottom' />
+    </Fragment>
+  );
 };
 export default VideoManageUI;

@@ -1,9 +1,15 @@
 import React, { Fragment, useState } from "react";
 import { Modal, message, Button } from "antd";
+import axios from "axios";
+
 const { confirm } = Modal;
 const DelModal = props => {
   const delVideo = () => {
     console.log("delete " + props.idx);
+    const token = localStorage.getItem("token");
+    axios.delete("http://59.110.237.244/api/video?token=" + token, {
+      video_id: props.idx
+    });
   };
   const showConfirm = () => {
     confirm({

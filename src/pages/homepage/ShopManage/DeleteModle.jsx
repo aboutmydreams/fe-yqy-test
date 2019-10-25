@@ -66,7 +66,7 @@ class Deletebutton extends Component {
       <div>
         <Button
           className='Deletebutton'
-          type='primary'
+          type='danger'
           onClick={this.showConfirm}
         >
           删除
