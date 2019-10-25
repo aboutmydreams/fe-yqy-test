@@ -10,8 +10,10 @@ import {
   message
 } from "antd";
 import axios from "axios";
+
 const ModalCom = props => {
-  let [editLinkUrl, setEditLinkUrl] = useState(props.jump ? true : false);
+  let { jump } = props;
+  const [editLinkUrl, setEditLinkUrl] = useState(jump ? true : false);
   const [linkUrl, setLinkUrl] = useState(editLinkUrl ? props.linkUrl : "");
   const [currentFileList, setCurrentFileList] = useState([
     {
@@ -53,11 +55,11 @@ const ModalCom = props => {
   };
 
   const beforeUpload = file => {
-    let imgFile = new FormData(); //重点在这里 如果使用 var data = {}; data.inputfile=... 这样的方式不能正常上传
+    let imgFile = new FormData();
     //二进制 发送formdata
     imgFile.append("file", file);
     const token = localStorage.getItem("token");
-    console.log();
+    console.log(jump);
     let header = { headers: { "Content-Type": "multipart/form-data" } };
     axios
       .post("http://59.110.237.244/api/upload?token=" + token, imgFile, header)
@@ -120,6 +122,7 @@ const ModalCom = props => {
         <Switch
           checkedChildren='开'
           onChange={() => {
+            jump = !jump;
             setEditLinkUrl(!editLinkUrl);
           }}
           unCheckedChildren='关'
