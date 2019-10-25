@@ -104,8 +104,12 @@ const EditModleUI = props => {
     listType: "picture",
     fileList: coverImgList
   };
+  const detailProps = {
+    action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
+    listType: "picture",
+    fileList: detailImgList
+  };
   const handleCoverChange = info => {
-    console.log(info);
     let fileList = [...info.fileList];
     fileList = fileList.slice(-5);
     setCoverImgList(fileList);
@@ -116,11 +120,11 @@ const EditModleUI = props => {
   const handleDetailChange = info => {
     console.log(info);
     let fileList = [...info.fileList];
-    fileList = fileList.slice(-5);
-    setDetailImgList(fileList);
-    if (info.file.status === "done") {
-      // let newImgUrl = info.file.response.url;
-    }
+    // fileList = fileList.slice(-5);
+    // setDetailImgList(fileList);
+    // if (info.file.status === "done") {
+    //   // let newImgUrl = info.file.response.url;
+    // }
   };
 
   return (
@@ -177,6 +181,7 @@ const EditModleUI = props => {
           </Upload>
           <Upload
             accept='.bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp'
+            {...detailProps}
             onChange={handleDetailChange}
           >
             <Button>
