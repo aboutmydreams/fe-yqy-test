@@ -85,29 +85,19 @@ const ShopManageUI = props => {
   ];
   useEffect(() => {
     let token = localStorage.getItem("token");
+    //获取商品列表
     axios
       .get("http://59.110.237.244/api/shop/edit?token=" + token)
       .then(res => {
         setData(res.data.data);
         console.log(res);
       });
-
-    //这一块的数据逻辑？？？我有点懵是真的，
-    // 服务器的回应是根据我传的key来决定的，那页面初始化的时候我没有key要怎么办呜呜呜
-    //感觉应该是这样的，在传参为空的情况下就能返回给我需要的那个数组（实际这样操作会发生错误 400）
-    axios
-      .post("http://59.110.237.244/api/shop/batch", {
-        keys: [1, 2, 3, 4, 5]
-      })
-      .then(res => {
-        console.log(res);
-        let idxArr = [];
-        res.data.data.map(item => {
-          idxArr.push(item.key);
-          return true;
-        });
-        setRecoIdxStr(idxArr.join(","));
-      });
+    //获取推荐商品
+    axios.get("http://59.110.237.244/api/system?key=recommand").then(res => {
+      const recoIdxArr = res.data.value.split(",");
+      console.log(recoIdxArr, Array.isArray(recoIdxArr), String(recoIdxArr));
+      setRecoIdxStr(String(recoIdxArr));
+    });
     return () => {};
   }, [recoIdxArr]);
 
@@ -117,20 +107,13 @@ const ShopManageUI = props => {
     setRecoIdxStr(formattedValue);
   };
   const submitRecoIdx = () => {
-    // setRecoIdxArr(recoIdxStr.split(",").map(Number));
-    console.log(recoIdxStr.split(",").map(Number));
     axios
-      .post("http://59.110.237.244/api/shop/batch", {
-        keys: recoIdxStr.split(",").map(Number)
+      .put("http://59.110.237.244/api/system", {
+        key: "recommand",
+        value: recoIdxStr
       })
       .then(res => {
-        console.log(res.data.data);
-        let idxArr = [];
-        res.data.data.map(item => {
-          idxArr.push(item.key);
-          return true;
-        });
-        setRecoIdxStr(idxArr.join(","));
+        console.log(res);
       });
   };
   return (

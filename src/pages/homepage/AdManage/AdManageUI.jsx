@@ -1,18 +1,18 @@
 import React, { Fragment } from "react";
 import ImgItem from "./ImgItem";
+import StartPage from "./StartPage";
 import { Row, Col, Typography } from "antd";
 const { Title } = Typography;
 
 const AdManageUI = props => {
   const { startPage } = props;
-  console.log(props);
   return (
     <Fragment>
       <Fragment>
-        <Title level={2}>{startPage.title}</Title>
+        <Title level={2}>管理启动页</Title>
         <Row>
           <Col span={6}>
-            <ImgItem {...startPage} />
+            <StartPage />
           </Col>
         </Row>
       </Fragment>

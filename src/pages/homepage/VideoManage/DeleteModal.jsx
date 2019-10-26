@@ -9,9 +9,14 @@ const DelModal = props => {
     console.log("delete " + idx);
     const token = localStorage.getItem("token");
     axios
-      .delete("http://59.110.237.244/api/video?token=" + token)
+      .delete("http://59.110.237.244/api/video?token=" + token, {
+        data: {
+          video_id: idx
+        }
+      })
       .then(res => {
         console.log(res);
+        window.location.reload();
       });
   };
   const showConfirm = () => {
