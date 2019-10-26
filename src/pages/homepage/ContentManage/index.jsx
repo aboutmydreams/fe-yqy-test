@@ -10,6 +10,7 @@ class Content extends React.Component {
       about_info_web: "",
       about_us: ""
     };
+    this.editContent = this.editContent.bind(this);
   }
 
   componentDidMount() {
@@ -29,12 +30,33 @@ class Content extends React.Component {
       })
     );
   }
-
+  editContent = (key, editedContent) => {
+    //直接this.setState({key:editContent})会新生成一个名为key的状态
+    switch (key) {
+      case "about_app":
+        this.setState({
+          about_app: editedContent
+        });
+        break;
+      case "about_info_web":
+        this.setState({
+          about_info_web: editedContent
+        });
+        break;
+      case "about_us":
+        this.setState({
+          about_us: editedContent
+        });
+        break;
+      default:
+        console.log(233);
+    }
+  };
   render() {
-    console.log(this.state.about_app);
     return (
       <div>
         <ContentItem
+          saveEdition={this.editContent}
           content={{
             title: "软件介绍",
             key: "about_app",
@@ -42,17 +64,19 @@ class Content extends React.Component {
           }}
         />
         <ContentItem
+          saveEdition={this.editContent}
           content={{
             title: "信息联网",
             key: "about_info_web",
-            content: this.state.about_app
+            content: this.state.about_info_web
           }}
         />
         <ContentItem
+          saveEdition={this.editContent}
           content={{
             title: "关于我们",
-            key: "about_app",
-            content: this.state.about_app
+            key: "about_us",
+            content: this.state.about_us
           }}
         />
       </div>

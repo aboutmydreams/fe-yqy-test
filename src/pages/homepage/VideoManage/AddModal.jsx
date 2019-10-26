@@ -12,18 +12,26 @@ import {
 const { TextArea } = Input;
 const { Text } = Typography;
 
-const EditModal = props => {
-  let [visible, setVisible] = useState(false);
-  let [loading, setLoading] = useState(false);
-  let [title, setTitle] = useState("");
-  let [link, setLink] = useState("");
-  let [sum, setSum] = useState("");
+const AddModal = props => {
+  const { lastVideo } = props;
+  let lastIdx;
+  if (lastVideo) {
+    lastIdx = lastVideo.video_id;
+    console.log(lastIdx);
+  }
+  const [visible, setVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [title, setTitle] = useState("");
+  const [link, setLink] = useState("");
+  const [sum, setSum] = useState("");
 
   const onOk = () => {
-    let newInfo = {
-      key: props.lastIdx + 1,
+    const newInfo = {
+      //idx其实穿什么都一样，服务器端在下
+      // 一次返回的会是按照video_id排列的新一位数值
+      video_id: lastIdx + 1,
       title: title,
-      video_link: link,
+      url: link,
       summary: sum
     };
     props.onAdd(newInfo);
@@ -65,10 +73,10 @@ const EditModal = props => {
       >
         <Row>
           <Col span={12}>
-            <Text>视频描述：</Text>
+            <Text>视频名称：</Text>
             <Input
               value={title}
-              placeholder='请输入视频描述'
+              placeholder='请输入视频名称'
               allowClear
               prefix={<Icon type='pushpin' />}
               onChange={e => {
@@ -76,6 +84,19 @@ const EditModal = props => {
               }}
             />
           </Col>
+          {/* <Col span={2}></Col>
+          <Col span={8}>
+            <Text>视频编号：</Text>
+            <Input
+              value={idx}
+              placeholder='请输入视频名称'
+              allowClear
+              prefix={<Icon type='pushpin' />}
+              onChange={e => {
+                setIdx(Number(e.target.value));
+              }}
+            />
+          </Col> */}
         </Row>
         <br />
         <Row>
@@ -118,4 +139,4 @@ const EditModal = props => {
     </Fragment>
   );
 };
-export default EditModal;
+export default AddModal;

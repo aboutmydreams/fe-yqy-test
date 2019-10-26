@@ -8,28 +8,26 @@ const { TextArea } = Input;
 
 const ContentItem = props => {
   let { title, key, content } = props.content;
-  let [edit, setEdit] = useState(true);
-  // let [desc, setDesc] = useState(content);
-  const toggleEdit = () => {
-    setEdit(!edit);
-  };
+  const [edit, setEdit] = useState(true);
+  const [editedContent, setEditedContent] = useState(content);
+
   const handleChange = e => {
     let result = e.target.value;
-    console.log(result);
-    // setDesc(result);
+    setEditedContent(result);
   };
 
   const uploadInfo = (key, content) => {
-    // let result = e.target.value;
     console.log(key);
     axios
-      .put("http://59.110.237.244/api/system?key=about_us", {
+      .put(`http://59.110.237.244/api/system?key=${key}`, {
         key: key,
-        value: content
+        value: editedContent
       })
       .then(res => {
+        console.log(res);
         if (res.data["code"] === 1) {
           message.success("修改成功");
+          props.saveEdition(key, editedContent);
         } else if (res.data["code"] === 0) {
           message.error("操作失败" + res.data["error"]);
         }
@@ -38,7 +36,6 @@ const ContentItem = props => {
       .catch(Error => {
         message.error("操作失败，" + Error);
       });
-    // setDesc(result);
   };
   return (
     <Fragment>
@@ -48,18 +45,23 @@ const ContentItem = props => {
         </Col>
         <Col span={6}>
           {edit ? (
-            <Button type="primary" onClick={toggleEdit} icon="edit">
+            <Button
+              type='primary'
+              onClick={() => {
+                setEdit(!edit);
+              }}
+              icon='edit'
+            >
               编辑内容
             </Button>
           ) : (
             <Button
-              type="default"
+              type='default'
               onClick={() => {
-                toggleEdit();
+                setEdit(!edit);
                 uploadInfo(key, content);
-                // props.submit(desc);
               }}
-              icon="check"
+              icon='check'
             >
               保存修改
             </Button>
@@ -77,9 +79,9 @@ const ContentItem = props => {
           <Col span={18}>
             <TextArea
               rows={6}
-              size="large"
-              prefix="snippets"
-              className="input-long"
+              size='large'
+              prefix='snippets'
+              className='input-long'
               defaultValue={content}
               autoSize
               onChange={handleChange}

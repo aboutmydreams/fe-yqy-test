@@ -13,24 +13,24 @@ const { TextArea } = Input;
 const { Text } = Typography;
 
 const EditModal = props => {
-  const { info } = props;
-  console.log(props);
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
-
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
   const [sum, setSum] = useState("");
   useEffect(() => {
-    let { info } = props;
-    setTitle(info.title);
-    setUrl(info.url);
-    setSum(info.summary);
+    const { info } = props;
+    const { url, title, summary } = info;
+    setTitle(title);
+    setUrl(url);
+    setSum(summary);
     return () => {};
-  }, [props, setSum, setTitle]);
+  }, [props]);
+
   const onOk = () => {
+    const { video_id } = props.info;
     const newInfo = {
-      video_id: info.video_id,
+      video_id: video_id,
       title: title,
       url: url,
       summary: sum

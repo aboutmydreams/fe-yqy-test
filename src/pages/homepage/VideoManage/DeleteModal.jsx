@@ -4,12 +4,18 @@ import axios from "axios";
 
 const { confirm } = Modal;
 const DelModal = props => {
+  const { idx } = props;
   const delVideo = () => {
-    console.log("delete " + props.idx);
+    console.log("delete " + idx);
     const token = localStorage.getItem("token");
-    axios.delete("http://59.110.237.244/api/video?token=" + token, {
-      video_id: props.idx
-    });
+    axios
+      .delete("http://59.110.237.244/api/video?token=" + token, {
+        //postman上字符串和数字均可，这里均不可 。。
+        video_id: `${idx}`
+      })
+      .then(res => {
+        console.log(res);
+      });
   };
   const showConfirm = () => {
     confirm({

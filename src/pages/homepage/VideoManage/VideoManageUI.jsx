@@ -4,7 +4,7 @@ import EditModal from "./EditModal";
 import DelModal from "./DeleteModal";
 import AddModal from "./AddModal";
 
-const VideoManageUI = ({ onAdd, onEdit, videoList }) => {
+const VideoManageUI = ({ onAdd, onEdit, onDelete, videoList }) => {
   const columns = [
     {
       title: "视频编号",
@@ -49,7 +49,8 @@ const VideoManageUI = ({ onAdd, onEdit, videoList }) => {
         return (
           <span>
             <EditModal info={text} onEdit={onEdit} />
-            <DelModal idx={text.key} />
+            {/* idx为该删除按钮对应的视频编号 */}
+            <DelModal idx={text.video_id} onDelete={onDelete} />
           </span>
         );
       }
@@ -58,7 +59,7 @@ const VideoManageUI = ({ onAdd, onEdit, videoList }) => {
 
   return (
     <Fragment>
-      <AddModal onAdd={onAdd} />
+      <AddModal lastVideo={videoList[videoList.length - 1]} onAdd={onAdd} />
       <Table columns={columns} dataSource={videoList} pagination='bottom' />
     </Fragment>
   );
