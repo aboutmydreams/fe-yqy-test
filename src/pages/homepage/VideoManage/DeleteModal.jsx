@@ -9,10 +9,7 @@ const DelModal = props => {
     console.log("delete " + idx);
     const token = localStorage.getItem("token");
     axios
-      .delete("http://59.110.237.244/api/video?token=" + token, {
-        //postman上字符串和数字均可，这里均不可 。。
-        video_id: `${idx}`
-      })
+      .delete("http://59.110.237.244/api/video?token=" + token)
       .then(res => {
         console.log(res);
       });
