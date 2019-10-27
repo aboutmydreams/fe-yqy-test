@@ -6,6 +6,7 @@ import { get } from "../request/http";
 function AppRouter() {
   let me = false;
   let token = localStorage.getItem("token");
+  console.log(token);
   get(`/me?token=${token}`, null, {}).then(res => {
     console.log(res);
     //应该让它返回一个布尔值？
@@ -14,14 +15,14 @@ function AppRouter() {
   return (
     <Router>
       {/* Login page */}
-      <Route exact path="/login" component={Login} />
+      <Route exact path='/login' component={Login} />
       {/* Basic home page */}
-      <Route path="/home" component={Homepage} />
+      <Route path='/home' component={Homepage} />
       <Route
         exact
-        path="/"
+        path='/'
         render={() =>
-          me ? <Redirect to="/home" /> : <Redirect to="/login/" />
+          me ? <Redirect to='/home' /> : <Redirect to='/login/' />
         }
       />
     </Router>
