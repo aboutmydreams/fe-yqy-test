@@ -46,22 +46,22 @@ const ContentItem = props => {
         <Col span={6}>
           {edit ? (
             <Button
-              type='primary'
+              type="primary"
               onClick={() => {
                 setEdit(!edit);
               }}
-              icon='edit'
+              icon="edit"
             >
               编辑内容
             </Button>
           ) : (
             <Button
-              type='default'
+              type="default"
               onClick={() => {
                 setEdit(!edit);
                 uploadInfo(key, content);
               }}
-              icon='check'
+              icon="check"
             >
               保存修改
             </Button>
@@ -79,9 +79,9 @@ const ContentItem = props => {
           <Col span={18}>
             <TextArea
               rows={6}
-              size='large'
-              prefix='snippets'
-              className='input-long'
+              size="large"
+              prefix="snippets"
+              className="input-long"
               defaultValue={content}
               autoSize
               onChange={handleChange}

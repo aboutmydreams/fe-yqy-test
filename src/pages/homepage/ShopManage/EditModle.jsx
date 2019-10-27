@@ -62,7 +62,6 @@ const EditModleUI = props => {
           };
     let token = localStorage.getItem("token");
     setLoading(true);
-    console.log(233);
     props.type === "edit"
       ? axios
           //编辑
