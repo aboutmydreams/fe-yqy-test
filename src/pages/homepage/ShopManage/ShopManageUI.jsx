@@ -35,12 +35,12 @@ const ShopManageUI = props => {
           let imgList = [];
           for (let imgSrc of textList) {
             imgList.push(
-              <img className='commodity' key={imgSrc} src={imgSrc} alt='shop' />
+              <img className="commodity" key={imgSrc} src={imgSrc} alt="shop" />
             );
           }
           text = imgList;
         } else {
-          text = <img className='commodity' src={text} alt='shop' />;
+          text = <img className="commodity" src={text} alt="shop" />;
         }
         return <div>{text}</div>;
       }
@@ -76,7 +76,7 @@ const ShopManageUI = props => {
       render: (text, record) => {
         return (
           <span>
-            <EditModle type='edit' text={text} />
+            <EditModle type="edit" text={text} />
             <Deletebutton text={text} />
           </span>
         );
@@ -94,7 +94,13 @@ const ShopManageUI = props => {
       });
     //获取推荐商品
     axios.get("http://59.110.237.244/api/system?key=recommand").then(res => {
-      const recoIdxArr = res.data.value.split(",");
+      var recoIdxArr = res.data.value;
+      if (res.data.value.search(",") === -1) {
+        recoIdxArr = res.data.value.split(",");
+      } else {
+        recoIdxArr = res.data.value;
+      }
+
       console.log(recoIdxArr, Array.isArray(recoIdxArr), String(recoIdxArr));
       setRecoIdxStr(String(recoIdxArr));
     });
@@ -120,22 +126,22 @@ const ShopManageUI = props => {
     <Fragment>
       <Row>
         <Col span={2}>
-          <EditModle type='add' lastIdx={data.length} text={null} />
+          <EditModle type="add" lastIdx={data.length} text={null} />
         </Col>
         <Col span={10}></Col>
         <Col span={10}>
           <Input
             value={recoIdxStr}
             disabled={!editRecommand}
-            placeholder='请输入要展示在推荐位上的商品编号，以‘，’分隔'
-            prefix={<Icon type='star' />}
+            placeholder="请输入要展示在推荐位上的商品编号，以‘，’分隔"
+            prefix={<Icon type="star" />}
             onChange={formatInput}
           />
         </Col>
 
         <Col span={2}>
           <Button
-            type='primary'
+            type="primary"
             onClick={() => {
               setEditRecommand(!editRecommand);
               if (editRecommand) {
@@ -149,7 +155,7 @@ const ShopManageUI = props => {
       </Row>
 
       <br />
-      <Table columns={columns} dataSource={data} pagination='bottom' />
+      <Table columns={columns} dataSource={data} pagination="bottom" />
     </Fragment>
   );
 };

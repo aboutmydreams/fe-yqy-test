@@ -22,6 +22,7 @@ const EditModleUI = props => {
   let [visible, setVisible] = useState(false);
   let [name, setName] = useState("");
   let [link, setLink] = useState("");
+  let [detailLink, setDetailLink] = useState("");
   let [price, setPrice] = useState("");
   let [detail, setDetail] = useState("");
   let [coverImgList, setCoverImgList] = useState([]);
@@ -32,6 +33,7 @@ const EditModleUI = props => {
       let product = props.text;
       setName(product.name);
       setLink(product.img_link);
+      setDetailLink(product.img_detail);
       setPrice(product.price);
       setDetail(product.shop_detail);
     } else {
@@ -41,21 +43,30 @@ const EditModleUI = props => {
   }, [link, name, props]);
 
   const handleOk = () => {
-    let jsonData = {
-      // key: props.type === "edit" ? props.text.key : props.lastIdx + 1,
-      name: name,
-      price: price,
-      img_link: link,
-      shop_detail: detail
-    };
+    let jsonData =
+      props.type === "edit"
+        ? {
+            key: props.text.key,
+            name: name,
+            price: price,
+            img_link: link,
+            img_detail: detailLink,
+            shop_detail: detail
+          }
+        : {
+            name: name,
+            price: price,
+            img_link: link,
+            img_detail: detailLink,
+            shop_detail: detail
+          };
     let token = localStorage.getItem("token");
     setLoading(true);
+    console.log(233);
     props.type === "edit"
       ? axios
           //编辑
-          .put("http://59.110.237.244/api/shop/edit?token=" + token, {
-            data: jsonData
-          })
+          .put("http://59.110.237.244/api/shop/edit?token=" + token, jsonData)
           .then(res => {
             console.log(res);
             res.data.code === 1
@@ -131,7 +142,7 @@ const EditModleUI = props => {
     <div>
       <Modal
         visible={visible}
-        title='编辑'
+        title="编辑"
         onOk={handleOk}
         onCancel={() => {
           setVisible(false);
@@ -141,13 +152,13 @@ const EditModleUI = props => {
             onClick={() => {
               setVisible(false);
             }}
-            key='back'
+            key="back"
           >
             取消
           </Button>,
           <Button
-            key='submit'
-            type='primary'
+            key="submit"
+            type="primary"
             loading={loading}
             onClick={handleOk}
           >
@@ -158,8 +169,8 @@ const EditModleUI = props => {
         <Form.Item>
           <Text strong>商品名称（不可重复）</Text>
           <Input
-            placeholder='名称'
-            className='input'
+            placeholder="名称"
+            className="input"
             defaultValue={name}
             // value={name}
             onChange={e => {
@@ -170,29 +181,29 @@ const EditModleUI = props => {
           {/* 这里的上传逻辑还未处理，
           需要区分新增与编辑的上传逻辑（fileList），以及图片上传限制 */}
           <Upload
-            accept='.bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp'
+            accept=".bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp"
             {...coverProps}
             onChange={handleCoverChange}
           >
             <Button>
-              <Icon type='upload' />
+              <Icon type="upload" />
               上传封面图片(数量限制：5)
             </Button>
           </Upload>
           <Upload
-            accept='.bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp'
+            accept=".bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp"
             {...detailProps}
             onChange={handleDetailChange}
           >
             <Button>
-              <Icon type='upload' />
+              <Icon type="upload" />
               上传详情图片(数量限制：5)
             </Button>
           </Upload>
           <Text strong>价格设置（;相隔）</Text>
           <Input
-            placeholder='价格设置（分号相隔）'
-            className='input'
+            placeholder="价格设置（分号相隔）"
+            className="input"
             defaultValue={price}
             onChange={e => {
               setPrice(e.target.value);
@@ -203,7 +214,7 @@ const EditModleUI = props => {
           </div>
           <TextArea
             rows={5}
-            placeholder='详细内容'
+            placeholder="详细内容"
             defaultValue={detail}
             onChange={e => {
               setDetail(e.target.value);
@@ -212,8 +223,8 @@ const EditModleUI = props => {
         </Form.Item>
       </Modal>
       <Button
-        className='EditModleUI'
-        type='primary'
+        className="EditModleUI"
+        type="primary"
         onClick={() => {
           setVisible(true);
           //防止re-render过多报错

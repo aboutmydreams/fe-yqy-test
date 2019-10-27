@@ -13,7 +13,7 @@ class AdManage extends Component {
     };
   }
   componentDidMount() {
-    axios.get("http://59.110.237.244/api/system?key=启动页广告").then(res => {
+    axios.get("http://59.110.237.244/api/system?key=firstAD").then(res => {
       let startCopy = JSON.parse(JSON.stringify(this.state.startImgInfo));
       const startInfo = JSON.parse(res.data.value);
       Object.assign(startCopy, startInfo);
