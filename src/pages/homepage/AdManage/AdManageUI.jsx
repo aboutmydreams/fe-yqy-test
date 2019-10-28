@@ -1,45 +1,32 @@
 import React, { Fragment } from "react";
-import ImgItem from "./ImgItem";
 import StartPage from "./StartPage";
+import AdsPage from "./AdsPage";
 import { Row, Col, Typography } from "antd";
 const { Title } = Typography;
 
 const AdManageUI = props => {
-  const { startPage } = props;
   return (
     <Fragment>
       <Fragment>
         <Title level={2}>管理启动页</Title>
         <Row>
-          <Col span={6}>
-            <StartPage />
+          <Col>
+            <StartPage title={"启动页"} idx={1} />
+          </Col>
+        </Row>
+        <Title level={2}>广告页2</Title>
+        <Row>
+          <Col>
+            <AdsPage title={"广告页2"} idx={2} keyWord={"secondAD"} />
+          </Col>
+        </Row>
+        <Title level={2}>广告页3</Title>
+        <Row>
+          <Col>
+            <AdsPage title={"广告页3"} idx={3} keyWord={"thirdAD"} />
           </Col>
         </Row>
       </Fragment>
-      {/* {props.otherPages.map((item, index) => {
-        return (
-          <Fragment key={index}>
-            <Title level={2}>{item.title}</Title>
-            <Row>
-              {item.imgList.map((imgItem, index) => {
-                const imgProps = {
-                  title: item.title,
-                  name: imgItem.name,
-                  imgUrl: imgItem.imgUrl,
-                  jump: imgItem.jumpOnClick,
-                  linkUrl: imgItem.linkUrl,
-                  listIdx: index
-                };
-                return (
-                  <Col key={index} span={6}>
-                    <ImgItem {...imgProps} />
-                  </Col>
-                );
-              })}
-            </Row>
-          </Fragment>
-        );
-      })} */}
     </Fragment>
   );
 };

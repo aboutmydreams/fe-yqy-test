@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, Fragment, useEffect } from "react";
 import {
   Typography,
   Button,
@@ -18,39 +18,34 @@ const { Title } = Typography;
 const StartPage = () => {
   const [startImgInfo, setStartImgInfo] = useState({
     title: "启动页广告",
-    idx: 1,
-    url:
-      "https://image.baidu.com/search/detail?ct=503316480&z=&tn=baiduimagedetail&ipn=d&word=%E7%91%9E%E5%85%B9&step_word=&ie=utf-8&in=&cl=2&lm=-1&st=-1&hd=&latest=&copyright=&cs=1397122558,2205839460&os=3448920624,2312190822&simid=3555761087,588185393&pn=0&rn=1&di=111650&ln=1107&fr=&fmq=1572222510843_R&ic=&s=undefined&se=&sme=&tab=0&width=&height=&face=undefined&is=0,0&istype=2&ist=&jit=&bdtype=0&spn=0&pi=0&gsm=0&hs=2&objurl=http%3A%2F%2Fimg4.18183.duoku.com%2Fuploads%2Fallimg%2F160724%2F28-160H4100111.jpg&rpstart=0&rpnum=0&adpicid=0&force=undefined",
-    jump: true,
-    linkUrl:
-      "https://image.baidu.com/search/detail?ct=503316480&z=&tn=baiduimagedetail&ipn=d&word=%E7%91%9E%E5%85%B9&step_word=&ie=utf-8&in=&cl=2&lm=-1&st=-1&hd=&latest=&copyright=&cs=1397122558,2205839460&os=3448920624,2312190822&simid=3555761087,588185393&pn=0&rn=1&di=111650&ln=1107&fr=&fmq=1572222510843_R&ic=&s=undefined&se=&sme=&tab=0&width=&height=&face=undefined&is=0,0&istype=2&ist=&jit=&bdtype=0&spn=0&pi=0&gsm=0&hs=2&objurl=http%3A%2F%2Fimg4.18183.duoku.com%2Fuploads%2Fallimg%2F160724%2F28-160H4100111.jpg&rpstart=0&rpnum=0&adpicid=0&force=undefined"
+    idx: 1
   });
-  // useEffect(() => {
-  //   axios.get("http://59.110.237.244/api/system?key=firstAD").then(res => {
-  //     let startCopy = JSON.parse(JSON.stringify(startImgInfo));
-  //     const startInfo = JSON.parse(res.data.value);
-  //     Object.assign(startCopy, startInfo);
-  //     setStartImgInfo(startCopy);
-  //   });
-  //   return () => {};
-  // }, [startImgInfo]);
+  useEffect(() => {
+    axios.get("http://59.110.237.244/api/system?key=firstAD").then(res => {
+      const startInfo = JSON.parse(res.data.value);
+      const copy = Object.assign({}, startImgInfo, startInfo);
+      setStartImgInfo(copy);
+      setImgUrl(copy.url);
+      setJump(copy.jump);
+      setLinkUrl(copy.linkUrl);
+    });
+    return () => {};
+  }, []);
   const { title } = startImgInfo;
-  // const [title, setTitle] = useState(startImgInfo.title);
-  const [jump, setJump] = useState(startImgInfo.jump ? true : false);
-  const [imgUrl, setImgUrl] = useState(startImgInfo.url);
-  console.log(startImgInfo);
-
-  const [linkUrl, setLinkUrl] = useState(jump ? startImgInfo.linkUrl : null);
+  const [imgUrl, setImgUrl] = useState("");
+  const [jump, setJump] = useState("");
+  const [linkUrl, setLinkUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
   const [fileName, setFileName] = useState("");
   const [currentFileList, setCurrentFileList] = useState([
     {
-      name: startImgInfo.name,
-      url: startImgInfo.url,
-      uid: startImgInfo.idx
+      name: fileName,
+      url: imgUrl,
+      uid: Math.random() * 100
     }
   ]);
+  //禁止移除
   const handleRemove = () => {
     message.config({
       duration: 1.5,
@@ -61,12 +56,14 @@ const StartPage = () => {
       return false;
     }
   };
+  //限制文件数量及改变列表预览
   const handleChange = info => {
+    console.log(info);
     let fileList = [...info.fileList];
     fileList = fileList.slice(-1);
     setCurrentFileList(fileList);
   };
-  // //由这一部分来处理上传到服务器
+  //由这一部分来处理上传到服务器
   const beforeUpload = file => {
     setFileName(file.name);
     let imgFile = new FormData();
@@ -83,7 +80,10 @@ const StartPage = () => {
 
     return false;
   };
+  //将新的文件信息上传到服务器
   const handleOk = () => {
+    setLoading(true);
+
     const imgInfo = {
       name: fileName,
       jump: jump,
@@ -98,15 +98,14 @@ const StartPage = () => {
       })
       .then(res => {
         console.log(res);
+        setTimeout(() => {
+          setLoading(false);
+          setVisible(false);
+          message.success("修改图片信息成功");
+        }, 1500);
+        // window.location.reload();
       });
     //优化交互
-    setLoading(true);
-    setTimeout(() => {
-      setVisible(false);
-      setLoading(false);
-      message.success("修改图片信息成功");
-    }, 1500);
-    window.location.reload();
   };
   const uploadProps = {
     listType: "picture",
@@ -124,6 +123,7 @@ const StartPage = () => {
               type='primary'
               onClick={() => {
                 setVisible(true);
+                console.log(startImgInfo);
               }}
             >
               编辑广告
@@ -134,8 +134,8 @@ const StartPage = () => {
         <Title level={4}>图片预览</Title>
         <img
           className='startimg'
-          style={{ width: "80%", height: "80%" }}
-          src={startImgInfo.url}
+          style={{ width: "200px", height: "200px" }}
+          src={imgUrl}
           alt='img'
         />
         <Modal
@@ -158,7 +158,6 @@ const StartPage = () => {
               type='primary'
               loading={loading}
               onClick={() => {
-                setVisible(false);
                 handleOk();
               }}
             >
@@ -186,7 +185,7 @@ const StartPage = () => {
               unCheckedChildren='关'
               defaultChecked={jump}
             />
-            {startImgInfo.jump ? (
+            {jump ? (
               <Input
                 value={linkUrl}
                 placeholder='请输入点击图片后跳转的链接'

@@ -61,7 +61,7 @@ const VideoManage = () => {
         }
       })
       .then(() => {
-        window.location.reload();
+        // window.location.reload();
       });
   };
   return (
