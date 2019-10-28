@@ -18,21 +18,29 @@ const { Title } = Typography;
 const StartPage = () => {
   const [startImgInfo, setStartImgInfo] = useState({
     title: "启动页广告",
-    idx: 1
+    idx: 1,
+    url:
+      "https://image.baidu.com/search/detail?ct=503316480&z=&tn=baiduimagedetail&ipn=d&word=%E7%91%9E%E5%85%B9&step_word=&ie=utf-8&in=&cl=2&lm=-1&st=-1&hd=&latest=&copyright=&cs=1397122558,2205839460&os=3448920624,2312190822&simid=3555761087,588185393&pn=0&rn=1&di=111650&ln=1107&fr=&fmq=1572222510843_R&ic=&s=undefined&se=&sme=&tab=0&width=&height=&face=undefined&is=0,0&istype=2&ist=&jit=&bdtype=0&spn=0&pi=0&gsm=0&hs=2&objurl=http%3A%2F%2Fimg4.18183.duoku.com%2Fuploads%2Fallimg%2F160724%2F28-160H4100111.jpg&rpstart=0&rpnum=0&adpicid=0&force=undefined",
+    jump: true,
+    linkUrl:
+      "https://image.baidu.com/search/detail?ct=503316480&z=&tn=baiduimagedetail&ipn=d&word=%E7%91%9E%E5%85%B9&step_word=&ie=utf-8&in=&cl=2&lm=-1&st=-1&hd=&latest=&copyright=&cs=1397122558,2205839460&os=3448920624,2312190822&simid=3555761087,588185393&pn=0&rn=1&di=111650&ln=1107&fr=&fmq=1572222510843_R&ic=&s=undefined&se=&sme=&tab=0&width=&height=&face=undefined&is=0,0&istype=2&ist=&jit=&bdtype=0&spn=0&pi=0&gsm=0&hs=2&objurl=http%3A%2F%2Fimg4.18183.duoku.com%2Fuploads%2Fallimg%2F160724%2F28-160H4100111.jpg&rpstart=0&rpnum=0&adpicid=0&force=undefined"
   });
-  axios.get("http://59.110.237.244/api/system?key=firstAD").then(res => {
-    console.log(res);
-    // const startImgInfo = JSON.parse(res.data.value);
-    setStartImgInfo(Object.assign(startImgInfo, JSON.parse(res.data.value)));
-  });
+  // useEffect(() => {
+  //   axios.get("http://59.110.237.244/api/system?key=firstAD").then(res => {
+  //     let startCopy = JSON.parse(JSON.stringify(startImgInfo));
+  //     const startInfo = JSON.parse(res.data.value);
+  //     Object.assign(startCopy, startInfo);
+  //     setStartImgInfo(startCopy);
+  //   });
+  //   return () => {};
+  // }, [startImgInfo]);
   const { title } = startImgInfo;
   // const [title, setTitle] = useState(startImgInfo.title);
   const [jump, setJump] = useState(startImgInfo.jump ? true : false);
   const [imgUrl, setImgUrl] = useState(startImgInfo.url);
-  console.log(jump, imgUrl);
   console.log(startImgInfo);
 
-  const [linkUrl, setLinkUrl] = useState(jump ? startImgInfo.linkUrl : "");
+  const [linkUrl, setLinkUrl] = useState(jump ? startImgInfo.linkUrl : null);
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
   const [fileName, setFileName] = useState("");
@@ -85,7 +93,7 @@ const StartPage = () => {
     console.log(JSON.stringify(imgInfo));
     axios
       .put("http://59.110.237.244/api/system?key=firstAD", {
-        key: "启动页广告",
+        key: "firstAD",
         value: JSON.stringify(imgInfo)
       })
       .then(res => {
@@ -127,7 +135,7 @@ const StartPage = () => {
         <img
           className='startimg'
           style={{ width: "80%", height: "80%" }}
-          src={imgUrl}
+          src={startImgInfo.url}
           alt='img'
         />
         <Modal
@@ -176,7 +184,7 @@ const StartPage = () => {
                 setJump(!jump);
               }}
               unCheckedChildren='关'
-              defaultChecked={startImgInfo.jump}
+              defaultChecked={jump}
             />
             {startImgInfo.jump ? (
               <Input

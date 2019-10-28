@@ -27,8 +27,6 @@ const AddModal = props => {
 
   const onOk = () => {
     const newInfo = {
-      //idx其实穿什么都一样，服务器端在下
-      // 一次返回的会是按照video_id排列的新一位数值
       video_id: lastIdx + 1,
       title: title,
       url: link,
@@ -84,19 +82,6 @@ const AddModal = props => {
               }}
             />
           </Col>
-          {/* <Col span={2}></Col>
-          <Col span={8}>
-            <Text>视频编号：</Text>
-            <Input
-              value={idx}
-              placeholder='请输入视频名称'
-              allowClear
-              prefix={<Icon type='pushpin' />}
-              onChange={e => {
-                setIdx(Number(e.target.value));
-              }}
-            />
-          </Col> */}
         </Row>
         <br />
         <Row>

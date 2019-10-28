@@ -21,7 +21,6 @@ const VideoManage = () => {
     axios
       .put("http://59.110.237.244/api/video?token=" + token, newInfo)
       .then(res => {
-        console.log(res);
         if (res.data.code === 1) {
           let newList = JSON.parse(JSON.stringify(videoList));
           Object.assign(newList[video_id], newInfo);
@@ -53,8 +52,17 @@ const VideoManage = () => {
       });
   };
 
-  const handleDelete = newInfo => {
-    console.log(newInfo);
+  const handleDelete = idx => {
+    const token = localStorage.getItem("token");
+    axios
+      .delete("http://59.110.237.244/api/video?token=" + token, {
+        data: {
+          video_id: idx
+        }
+      })
+      .then(() => {
+        window.location.reload();
+      });
   };
   return (
     <VideoManageUI

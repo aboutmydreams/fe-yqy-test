@@ -5,26 +5,13 @@ import axios from "axios";
 const { confirm } = Modal;
 const DelModal = props => {
   const { idx } = props;
-  const delVideo = () => {
-    console.log("delete " + idx);
-    const token = localStorage.getItem("token");
-    axios
-      .delete("http://59.110.237.244/api/video?token=" + token, {
-        data: {
-          video_id: idx
-        }
-      })
-      .then(res => {
-        console.log(res);
-        window.location.reload();
-      });
-  };
+
   const showConfirm = () => {
     confirm({
       title: "确定要删除这个视频项吗？",
       content: "确认删除后不能恢复，请谨慎操作哦",
       onOk() {
-        delVideo();
+        props.onDelete(idx);
       },
       onCancel() {
         message.success("取消删除");
