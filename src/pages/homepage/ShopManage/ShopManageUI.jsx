@@ -3,8 +3,9 @@ import { Table, Tag, Button, Row, Col, Input, Icon } from "antd";
 import axios from "axios";
 
 import "./style.css";
-import EditModle from "./EditModle";
-import Deletebutton from "./DeleteModle";
+import AddModal from "./AddModal";
+import EditModal from "./EditModal";
+import DeleteModal from "./DeleteModal";
 
 const ShopManageUI = props => {
   const [editRecommand, setEditRecommand] = useState(false);
@@ -35,12 +36,12 @@ const ShopManageUI = props => {
           let imgList = [];
           for (let imgSrc of textList) {
             imgList.push(
-              <img className="commodity" key={imgSrc} src={imgSrc} alt="shop" />
+              <img className='commodity' key={imgSrc} src={imgSrc} alt='shop' />
             );
           }
           text = imgList;
         } else {
-          text = <img className="commodity" src={text} alt="shop" />;
+          text = <img className='commodity' src={text} alt='shop' />;
         }
         return <div>{text}</div>;
       }
@@ -76,8 +77,8 @@ const ShopManageUI = props => {
       render: (text, record) => {
         return (
           <span>
-            <EditModle type="edit" text={text} />
-            <Deletebutton text={text} />
+            <EditModal productInfo={text} />
+            <DeleteModal text={text} />
           </span>
         );
       }
@@ -126,22 +127,22 @@ const ShopManageUI = props => {
     <Fragment>
       <Row>
         <Col span={2}>
-          <EditModle type="add" lastIdx={data.length} text={null} />
+          {/* <EditModal type="add" lastIdx={data.length} text={null} /> */}
         </Col>
         <Col span={10}></Col>
         <Col span={10}>
           <Input
             value={recoIdxStr}
             disabled={!editRecommand}
-            placeholder="请输入要展示在推荐位上的商品编号，以‘，’分隔"
-            prefix={<Icon type="star" />}
+            placeholder='请输入要展示在推荐位上的商品编号，以‘，’分隔'
+            prefix={<Icon type='star' />}
             onChange={formatInput}
           />
         </Col>
 
         <Col span={2}>
           <Button
-            type="primary"
+            type='primary'
             onClick={() => {
               setEditRecommand(!editRecommand);
               if (editRecommand) {
@@ -153,9 +154,9 @@ const ShopManageUI = props => {
           </Button>
         </Col>
       </Row>
-
+      <AddModal />
       <br />
-      <Table columns={columns} dataSource={data} pagination="bottom" />
+      <Table columns={columns} dataSource={data} pagination='bottom' />
     </Fragment>
   );
 };

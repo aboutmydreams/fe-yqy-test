@@ -11,48 +11,17 @@ const AdsPage = props => {
   };
   const [imgInfoList, setImgInfoList] = useState([]);
   useEffect(() => {
-    const imgInfo = [
-      {
-        name: "3-1",
-        jump: true,
-        url: "https://avatars3.githubusercontent.com/u/48507806?s=460&v=4",
-        linkUrl: "111"
-      },
-      {
-        name: "3-2",
-        jump: true,
-        url: "https://avatars3.githubusercontent.com/u/48507806?s=460&v=4",
-        linkUrl: "222"
-      },
-      {
-        name: "3-3",
-        jump: true,
-        url: "https://avatars3.githubusercontent.com/u/48507806?s=460&v=4",
-        linkUrl: "333"
-      }
-    ];
-    // axios
-    //   .put("http://59.110.237.244/api/system?key=secondAD", {
-    //     key: "secondAD",
-    //     value: JSON.stringify(imgInfo)
-    //   })
-    //   .then(res => {
-    //     console.log(res);
-    //   });
     axios
       .get(`http://59.110.237.244/api/system?key=${props.keyWord}`)
       .then(res => {
-        console.log(pageInfo.title, JSON.parse(res.data.value));
         setImgInfoList(JSON.parse(res.data.value));
       });
     return () => {};
   }, [pageInfo.title, props.keyWord]);
 
   const handleSubmitList = (idxInList, key, info) => {
-    console.log(idxInList, key, info);
     //这个逻辑不同于起始页
     imgInfoList.splice(idxInList, 1, info);
-    console.log(imgInfoList);
     axios
       .put(`http://59.110.237.244/api/system?key=${key}`, {
         key: key,

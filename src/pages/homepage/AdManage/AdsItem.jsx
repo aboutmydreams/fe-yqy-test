@@ -16,8 +16,6 @@ import axios from "axios";
 const { Title } = Typography;
 
 const AdsItem = props => {
-  console.log(props);
-
   useEffect(() => {
     setJump(props.jump);
     setLinkUrl(props.linkUrl);

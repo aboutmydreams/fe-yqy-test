@@ -1,6 +1,7 @@
-import React from "react";
+import React, { Fragment } from "react";
 import axios from "axios";
 import ContentItem from "./ContentItem";
+import { Spin } from "antd";
 
 class Content extends React.Component {
   constructor(props) {
@@ -8,7 +9,8 @@ class Content extends React.Component {
     this.state = {
       about_app: "",
       about_info_web: "",
-      about_us: ""
+      about_us: "",
+      loading: true
     };
     this.editContent = this.editContent.bind(this);
   }
@@ -54,7 +56,7 @@ class Content extends React.Component {
   };
   render() {
     return (
-      <div>
+      <Fragment>
         <ContentItem
           saveEdition={this.editContent}
           content={{
@@ -79,7 +81,7 @@ class Content extends React.Component {
             content: this.state.about_us
           }}
         />
-      </div>
+      </Fragment>
     );
   }
 }

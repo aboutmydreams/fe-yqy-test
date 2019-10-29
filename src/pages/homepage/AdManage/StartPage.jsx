@@ -13,6 +13,8 @@ import {
   Input
 } from "antd";
 import axios from "axios";
+import { get } from "../../../request/http";
+import { async } from "q";
 
 const { Title } = Typography;
 const StartPage = () => {
@@ -20,14 +22,16 @@ const StartPage = () => {
     title: "启动页广告",
     idx: 1
   });
+
   useEffect(() => {
-    axios.get("http://59.110.237.244/api/system?key=firstAD").then(res => {
-      const startInfo = JSON.parse(res.data.value);
-      const copy = Object.assign({}, startImgInfo, startInfo);
-      setStartImgInfo(copy);
-      setImgUrl(copy.url);
-      setJump(copy.jump);
-      setLinkUrl(copy.linkUrl);
+     get("http://59.110.237.244/api/system?key=firstAD", {}, {}).then(res => {
+      console.log(res);
+    const startInfo = JSON.parse(res.data.value);
+    const copy = Object.assign({}, startImgInfo, startInfo);
+    setStartImgInfo(copy);
+    setImgUrl(copy.url);
+    setJump(copy.jump);
+    setLinkUrl(copy.linkUrl);
     });
     return () => {};
   }, []);
@@ -97,15 +101,13 @@ const StartPage = () => {
         value: JSON.stringify(imgInfo)
       })
       .then(res => {
-        console.log(res);
         setTimeout(() => {
           setLoading(false);
           setVisible(false);
           message.success("修改图片信息成功");
         }, 1500);
-        // window.location.reload();
+        window.location.reload();
       });
-    //优化交互
   };
   const uploadProps = {
     listType: "picture",
@@ -123,7 +125,6 @@ const StartPage = () => {
               type='primary'
               onClick={() => {
                 setVisible(true);
-                console.log(startImgInfo);
               }}
             >
               编辑广告

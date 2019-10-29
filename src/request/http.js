@@ -1,11 +1,9 @@
 import axios from "axios";
+import { message } from "antd";
 
 axios.defaults.baseURL = "http://59.110.237.244/api";
 axios.defaults.timeout = 10000;
 axios.defaults.headers.post["Content-Type"] = "application/json;charset=UTF-8";
-
-//这个情景似乎没有必要设置取消重复请求防止服务器繁忙？
-//但还是先写个请求拦截器吧
 
 // const cancel = false;
 // let cancelToken = axios.CancelToken;
