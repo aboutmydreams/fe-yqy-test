@@ -19,6 +19,18 @@ const VideoManageUI = ({ onAdd, onEdit, onDelete, videoList }) => {
       render: text => <p>{text}</p>
     },
     {
+      title: "视频图片",
+      dataIndex: "cover",
+      key: "cover",
+      render: imgUrl => (
+        <img
+          alt='img'
+          src={imgUrl}
+          style={{ width: "100px", height: "100px" }}
+        />
+      )
+    },
+    {
       title: "视频链接地址",
       dataIndex: "url",
       key: "url",
@@ -36,19 +48,16 @@ const VideoManageUI = ({ onAdd, onEdit, onDelete, videoList }) => {
       dataIndex: "summary",
       key: "summary",
       render: text => {
-        return (
-          <p>{text}</p>
-          // eslint-disable-next-line react/jsx-no-target-blank
-        );
+        return <p>{text}</p>;
       }
     },
     {
       title: "操作",
       key: "action",
-      render: text => {
+      render: (text, record, index) => {
         return (
           <span>
-            <EditModal info={text} onEdit={onEdit} />
+            <EditModal info={text} onEdit={onEdit} idx={index} />
             {/* idx为该删除按钮对应的视频编号 */}
             <DelModal idx={text.video_id} onDelete={onDelete} />
           </span>
