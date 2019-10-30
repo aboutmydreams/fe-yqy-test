@@ -1,8 +1,9 @@
 import React, { Fragment } from "react";
-import { Table } from "antd";
+import { Table, Icon, Typography } from "antd";
 import EditModal from "./EditModal";
 import DelModal from "./DeleteModal";
 import AddModal from "./AddModal";
+const { Text } = Typography;
 
 const VideoManageUI = ({ onAdd, onEdit, onDelete, videoList }) => {
   const columns = [
@@ -10,25 +11,37 @@ const VideoManageUI = ({ onAdd, onEdit, onDelete, videoList }) => {
       title: "视频编号",
       dataIndex: "video_id",
       key: "video_id",
+      align: "center",
       render: text => <p>{text}</p>
     },
     {
       title: "视频名称",
       dataIndex: "title",
       key: "title",
+      align: "center",
       render: text => <p>{text}</p>
     },
     {
       title: "视频图片",
       dataIndex: "cover",
       key: "cover",
-      render: imgUrl => (
-        <img
-          alt='img'
-          src={imgUrl}
-          style={{ width: "100px", height: "100px" }}
-        />
-      )
+      align: "center",
+      render: imgUrl =>
+        imgUrl ? (
+          <img
+            alt='img'
+            src={imgUrl}
+            style={{ width: "100px", height: "100px" }}
+          />
+        ) : (
+          <Fragment>
+            <Icon
+              type='file-image'
+              style={{ width: "50px", height: "50px", fontSize: "38px" }}
+            ></Icon>
+            <Text>未上传图片</Text>
+          </Fragment>
+        )
     },
     {
       title: "视频链接地址",
@@ -47,6 +60,7 @@ const VideoManageUI = ({ onAdd, onEdit, onDelete, videoList }) => {
       title: "视频描述",
       dataIndex: "summary",
       key: "summary",
+      align: "center",
       render: text => {
         return <p>{text}</p>;
       }
@@ -54,6 +68,7 @@ const VideoManageUI = ({ onAdd, onEdit, onDelete, videoList }) => {
     {
       title: "操作",
       key: "action",
+      align: "center",
       render: (text, record, index) => {
         return (
           <span>
