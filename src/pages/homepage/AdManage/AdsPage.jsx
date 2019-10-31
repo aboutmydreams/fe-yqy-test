@@ -19,6 +19,7 @@ const AdsPage = props => {
     return () => {};
   }, [pageInfo.title, props.keyWord]);
 
+  //负责这一广告系列所有变更的提交
   const handleSubmitList = (idxInList, key, info) => {
     //这个逻辑不同于起始页
     imgInfoList.splice(idxInList, 1, info);

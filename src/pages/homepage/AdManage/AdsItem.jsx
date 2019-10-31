@@ -10,7 +10,8 @@ import {
   Icon,
   Tooltip,
   Switch,
-  Input
+  Input,
+  Spin
 } from "antd";
 import axios from "axios";
 const { Title } = Typography;
@@ -28,21 +29,33 @@ const AdsItem = props => {
   const [imgUrl, setImgUrl] = useState("");
   const [jump, setJump] = useState("");
   const [linkUrl, setLinkUrl] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [visible, setVisible] = useState(false);
   const [fileName, setFileName] = useState("");
   const [currentFileList, setCurrentFileList] = useState([
     {
-      name: fileName,
-      url: imgUrl,
-      uid: Math.random() * 100
+      name: props.name,
+      url: props.url,
+      uid: -1
     }
   ]);
+  //页面交互相关
+  const [submitLoading, setSubmitLoading] = useState(false);
+  const [imgLoading, setImgLoading] = useState(true);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    setImgLoading(false);
+    return () => {};
+  }, []);
+
   const handleChange = info => {
-    console.log(info);
-    let fileList = [...info.fileList];
-    fileList = fileList.slice(-1);
-    setCurrentFileList(fileList);
+    const { file, fileList } = info;
+    if (file.size / 1024 / 1024 > 1) {
+      message.error("请上传小于1MB的图片");
+      return false;
+    }
+    let newFileList = [...fileList];
+    newFileList = fileList.slice(-1);
+    setCurrentFileList(newFileList);
   };
 
   const handleRemove = () => {
@@ -57,6 +70,9 @@ const AdsItem = props => {
   };
 
   const beforeUpload = file => {
+    if (file.size / 1024 / 1024 > 1) {
+      return false;
+    }
     setFileName(file.name);
     let imgFile = new FormData();
     imgFile.append("file", file);
@@ -71,18 +87,18 @@ const AdsItem = props => {
       });
     return false;
   };
+
   const handleOk = () => {
-    setLoading(true);
+    setSubmitLoading(true);
     const imgInfo = {
       name: fileName,
       jump: jump,
       url: imgUrl,
       linkUrl: jump ? linkUrl : null
     };
-    console.log(JSON.stringify(imgInfo));
     onSubmit(idxInList, keyWord, imgInfo);
     setTimeout(() => {
-      setLoading(false);
+      setSubmitLoading(false);
       setVisible(false);
       message.success("修改图片信息成功");
     }, 1500);
@@ -112,12 +128,16 @@ const AdsItem = props => {
         </Row>
         <br />
         <Title level={4}>图片预览</Title>
-        <img
-          className='startimg'
-          style={{ width: "200px", height: "200px" }}
-          src={imgUrl}
-          alt='img'
-        />
+        {imgLoading ? (
+          <Spin />
+        ) : (
+          <img
+            className='startimg'
+            style={{ width: "200px", height: "200px" }}
+            src={imgUrl}
+            alt='img'
+          />
+        )}
         <Modal
           visible={visible}
           title={title}
@@ -136,7 +156,7 @@ const AdsItem = props => {
             <Button
               key='submit'
               type='primary'
-              loading={loading}
+              loading={submitLoading}
               onClick={() => {
                 handleOk();
               }}

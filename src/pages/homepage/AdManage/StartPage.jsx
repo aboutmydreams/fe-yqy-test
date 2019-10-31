@@ -10,11 +10,11 @@ import {
   Icon,
   Tooltip,
   Switch,
-  Input
+  Input,
+  Spin
 } from "antd";
 import axios from "axios";
 import { get } from "../../../request/http";
-import { async } from "q";
 
 const { Title } = Typography;
 const StartPage = () => {
@@ -22,12 +22,11 @@ const StartPage = () => {
     title: "启动页广告",
     idx: 1
   });
+  //页面信息相关变量
   const { title } = startImgInfo;
   const [imgUrl, setImgUrl] = useState("");
   const [jump, setJump] = useState("");
   const [linkUrl, setLinkUrl] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [visible, setVisible] = useState(false);
   const [fileName, setFileName] = useState("");
   const [currentFileList, setCurrentFileList] = useState([
     {
@@ -36,16 +35,28 @@ const StartPage = () => {
       uid: -1
     }
   ]);
+
+  //交互相关变量
+  const [submitLoading, setSubmitLoading] = useState(false);
+  const [imgLoading, setImgLoading] = useState(true);
+  const [visible, setVisible] = useState(false);
+
   useEffect(() => {
     get("http://59.110.237.244/api/system?key=firstAD", {}, {}).then(res => {
-      console.log(res);
+      setImgLoading(false);
       const startInfo = JSON.parse(res.data.value);
       const copy = Object.assign({}, startImgInfo, startInfo);
       setStartImgInfo(copy);
       setImgUrl(copy.url);
       setJump(copy.jump);
       setLinkUrl(copy.linkUrl);
-      // setCurrentFileList([])
+      setCurrentFileList([
+        {
+          uid: -1,
+          name: copy.name,
+          url: copy.url
+        }
+      ]);
     });
     return () => {};
   }, []);
@@ -80,7 +91,6 @@ const StartPage = () => {
     if (file.size / 1024 / 1024 > 1) {
       return false;
     }
-    console.log(file.size / 1024 / 1024);
     setFileName(file.name);
     let imgFile = new FormData();
     imgFile.append("file", file);
@@ -98,15 +108,13 @@ const StartPage = () => {
   };
   //将新的文件信息上传到服务器
   const handleOk = () => {
-    setLoading(true);
-
+    setSubmitLoading(true);
     const imgInfo = {
       name: fileName,
       jump: jump,
       url: imgUrl,
       linkUrl: jump ? linkUrl : null
     };
-    console.log(JSON.stringify(imgInfo));
     axios
       .put("http://59.110.237.244/api/system?key=firstAD", {
         key: "firstAD",
@@ -114,7 +122,7 @@ const StartPage = () => {
       })
       .then(res => {
         setTimeout(() => {
-          setLoading(false);
+          setSubmitLoading(false);
           setVisible(false);
           message.success("修改图片信息成功");
         }, 1500);
@@ -145,12 +153,16 @@ const StartPage = () => {
         </Row>
         <br />
         <Title level={4}>图片预览</Title>
-        <img
-          className='startimg'
-          style={{ width: "200px", height: "200px" }}
-          src={imgUrl}
-          alt='img'
-        />
+        {imgLoading ? (
+          <Spin />
+        ) : (
+          <img
+            className='startimg'
+            style={{ width: "200px", height: "200px" }}
+            src={imgUrl}
+            alt='img'
+          />
+        )}
         <Modal
           visible={visible}
           title={title}
@@ -169,7 +181,7 @@ const StartPage = () => {
             <Button
               key='submit'
               type='primary'
-              loading={loading}
+              loading={submitLoading}
               onClick={() => {
                 handleOk();
               }}
