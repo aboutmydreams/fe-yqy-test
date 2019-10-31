@@ -36,6 +36,7 @@ const menuItem = [
     title: "视频管理"
   }
 ];
+
 const Homepage = () => {
   let currentKey = menuItem.findIndex(item => {
     return item.to === window.location.pathname;

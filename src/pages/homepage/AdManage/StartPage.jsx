@@ -22,19 +22,6 @@ const StartPage = () => {
     title: "启动页广告",
     idx: 1
   });
-
-  useEffect(() => {
-     get("http://59.110.237.244/api/system?key=firstAD", {}, {}).then(res => {
-      console.log(res);
-    const startInfo = JSON.parse(res.data.value);
-    const copy = Object.assign({}, startImgInfo, startInfo);
-    setStartImgInfo(copy);
-    setImgUrl(copy.url);
-    setJump(copy.jump);
-    setLinkUrl(copy.linkUrl);
-    });
-    return () => {};
-  }, []);
   const { title } = startImgInfo;
   const [imgUrl, setImgUrl] = useState("");
   const [jump, setJump] = useState("");
@@ -46,9 +33,23 @@ const StartPage = () => {
     {
       name: fileName,
       url: imgUrl,
-      uid: Math.random() * 100
+      uid: -1
     }
   ]);
+  useEffect(() => {
+    get("http://59.110.237.244/api/system?key=firstAD", {}, {}).then(res => {
+      console.log(res);
+      const startInfo = JSON.parse(res.data.value);
+      const copy = Object.assign({}, startImgInfo, startInfo);
+      setStartImgInfo(copy);
+      setImgUrl(copy.url);
+      setJump(copy.jump);
+      setLinkUrl(copy.linkUrl);
+      // setCurrentFileList([])
+    });
+    return () => {};
+  }, []);
+
   //禁止移除
   const handleRemove = () => {
     message.config({
@@ -62,13 +63,24 @@ const StartPage = () => {
   };
   //限制文件数量及改变列表预览
   const handleChange = info => {
-    console.log(info);
-    let fileList = [...info.fileList];
-    fileList = fileList.slice(-1);
-    setCurrentFileList(fileList);
+    console.log(startImgInfo);
+    const { file, fileList } = info;
+    if (file.size / 1024 / 1024 > 1) {
+      message.error("请上传小于1MB的图片");
+      return false;
+    }
+    let newFileList = [...fileList];
+    newFileList = fileList.slice(-1);
+    setCurrentFileList(newFileList);
   };
   //由这一部分来处理上传到服务器
   const beforeUpload = file => {
+    //检测文件大小不得超过1MB
+    //还是如果超过1MB了我们再给他转一下
+    if (file.size / 1024 / 1024 > 1) {
+      return false;
+    }
+    console.log(file.size / 1024 / 1024);
     setFileName(file.name);
     let imgFile = new FormData();
     imgFile.append("file", file);
@@ -106,7 +118,7 @@ const StartPage = () => {
           setVisible(false);
           message.success("修改图片信息成功");
         }, 1500);
-        window.location.reload();
+        // window.location.reload();
       });
   };
   const uploadProps = {
@@ -172,7 +184,7 @@ const StartPage = () => {
           >
             <Button>
               <Icon type='upload' />
-              上传图片
+              上传图片(图片大小不能超过1MB)
             </Button>
           </Upload>
           <br />

@@ -10,6 +10,7 @@ const Content = () => {
   const [loadingApp, setLoadingApp] = useState(false);
   const [loadingInfoWeb, setLoadingInfoWeb] = useState(false);
   const [loadingUs, setLoadingUs] = useState(false);
+  
   //这个加载占位符的效果好像并不如预期，因为最好好像是把占位符放在内容区域
   useEffect(() => {
     axios.get("http://59.110.237.244/api/system?key=about_app").then(res => {

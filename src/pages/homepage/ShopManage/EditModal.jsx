@@ -11,13 +11,13 @@ import {
   Upload
 } from "antd";
 import axios from "axios";
+import _ from "lodash";
 
 import "./style.css";
 const { TextArea } = Input;
 const { Text } = Typography;
 
 const EditModleUI = props => {
-  console.log(props);
   let [loading, setLoading] = useState(false);
   let [visible, setVisible] = useState(false);
 
@@ -39,6 +39,11 @@ const EditModleUI = props => {
     setImgDetail(productInfo.img_detail.split(";"));
     setPrice(productInfo.price);
     setDetail(productInfo.shop_detail);
+
+    //问题：在什么位置，以何种方式填充这个列表
+    // setCoverImgList(imgLink => {
+    //   imgLink.map((link, idx) => {});
+    // });
     // imgLink.map((link, idx) => {
     //   setCoverImgList(
     //     coverImgList.push({
@@ -52,7 +57,6 @@ const EditModleUI = props => {
   }, [name, props]);
 
   //剩下这里的文件列表样式渲染未完成
-
   const handleOk = () => {
     const jsonData = {
       key: props.productInfo.key,
@@ -80,7 +84,29 @@ const EditModleUI = props => {
       });
   };
 
-  const beforeUpload = file => {};
+  const handleCoverChange = info => {
+    let fileList = [...info.fileList];
+    fileList = fileList.slice(-5);
+    setCoverImgList(fileList);
+  };
+
+  const beforeUpload = file => {
+    let imgFile = new FormData();
+    imgFile.append("file", file);
+    const token = localStorage.getItem("token");
+    let header = { headers: { "Content-Type": "multipart/form-data" } };
+    axios
+      .post("http://59.110.237.244/api/upload?token=" + token, imgFile, header)
+      .then(res => {
+        console.log(res);
+        let imgLinkCopy = _.cloneDeep(imgLink);
+        imgLinkCopy.push(res.data.url);
+        setImgLink(imgLinkCopy);
+      });
+
+    return false;
+  };
+
 
   //待解决的以及当前思路：
   //1. 将img_link(img_detail同理)转为数组，取出其中的项渲染进fileList
@@ -95,21 +121,15 @@ const EditModleUI = props => {
 
   const coverProps = {
     listType: "picture",
-    fileList: coverImgList
+    fileList: coverImgList,
+    beforeUpload: beforeUpload
   };
 
   // const detailProps = {
   //   listType: "picture",
   //   fileList: detailImgList
   // };
-  const handleCoverChange = info => {
-    let fileList = [...info.fileList];
-    fileList = fileList.slice(-5);
-    setCoverImgList(fileList);
-    if (info.file.status === "done") {
-      // let newImgUrl = info.file.response.url;
-    }
-  };
+
   // const handleDetailChange = info => {
   //   console.log(info);
   //   let fileList = [...info.fileList];
@@ -148,6 +168,7 @@ const EditModleUI = props => {
         ]}
       >
         <Form.Item>
+          {console.log(imgLink, imgDetail)}
           <Text strong>商品名称（不可重复）</Text>
           <Input
             placeholder='名称'
