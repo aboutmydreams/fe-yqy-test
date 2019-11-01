@@ -10,7 +10,6 @@ import DeleteModal from "./DeleteModal";
 const ShopManageUI = props => {
   const [editRecommand, setEditRecommand] = useState(false);
   const [data, setData] = useState([]);
-  const [recoIdxArr, setRecoIdxArr] = useState([]);
   const [recoIdxStr, setRecoIdxStr] = useState([]);
   let columns = [
     {
@@ -90,8 +89,8 @@ const ShopManageUI = props => {
     axios
       .get("http://59.110.237.244/api/shop/edit?token=" + token)
       .then(res => {
-        setData(res.data.data);
-        console.log(res);
+        const productList = res.data.data;
+        setData(productList);
       });
     //获取推荐商品
     axios.get("http://59.110.237.244/api/system?key=recommand").then(res => {
@@ -101,12 +100,10 @@ const ShopManageUI = props => {
       } else {
         recoIdxArr = res.data.value;
       }
-
-      console.log(recoIdxArr, Array.isArray(recoIdxArr), String(recoIdxArr));
       setRecoIdxStr(String(recoIdxArr));
     });
     return () => {};
-  }, [recoIdxArr]);
+  }, []);
 
   const formatInput = e => {
     let initValue = e.target.value;
@@ -123,11 +120,12 @@ const ShopManageUI = props => {
         console.log(res);
       });
   };
+
   return (
     <Fragment>
       <Row>
         <Col span={2}>
-          {/* <EditModal type="add" lastIdx={data.length} text={null} /> */}
+          <AddModal />
         </Col>
         <Col span={10}></Col>
         <Col span={10}>
@@ -154,7 +152,6 @@ const ShopManageUI = props => {
           </Button>
         </Col>
       </Row>
-      <AddModal />
       <br />
       <Table columns={columns} dataSource={data} pagination='bottom' />
     </Fragment>

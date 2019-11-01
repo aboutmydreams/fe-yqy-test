@@ -11,135 +11,206 @@ import {
   Upload
 } from "antd";
 import axios from "axios";
-import _ from "lodash";
 
 import "./style.css";
 const { TextArea } = Input;
 const { Text } = Typography;
 
-const EditModleUI = props => {
-  let [loading, setLoading] = useState(false);
-  let [visible, setVisible] = useState(false);
+const EditModal = props => {
+  // console.log(props);
+  const token = localStorage.getItem("token");
+  const [loading, setLoading] = useState(false);
+  const [visible, setVisible] = useState(false);
 
   //商品信息
-  let [name, setName] = useState("");
-  let [imgLink, setImgLink] = useState([]);
-  let [imgDetail, setImgDetail] = useState([]);
-  let [price, setPrice] = useState("");
-  let [detail, setDetail] = useState("");
-
+  const [name, setName] = useState("");
+  const [imgLink, setImgLink] = useState([]);
+  const [imgDetail, setImgDetail] = useState([]);
+  const [price, setPrice] = useState("");
+  const [detail, setDetail] = useState("");
   //编辑模态框上传组件的上传列表
-  let [coverImgList, setCoverImgList] = useState([]);
-  let [detailImgList, setDetailImgList] = useState([]);
+  const [coverImgList, setCoverImgList] = useState([]);
+  const [detailImgList, setDetailImgList] = useState([]);
 
   useEffect(() => {
+    //这个组件的imgLink始终为数组格式，只有在上传时才会转为字符串
     const { productInfo } = props;
-    setName(productInfo.name);
-    setImgLink(productInfo.img_link.split(";"));
-    setImgDetail(productInfo.img_detail.split(";"));
-    setPrice(productInfo.price);
-    setDetail(productInfo.shop_detail);
-
-    //问题：在什么位置，以何种方式填充这个列表
-    // setCoverImgList(imgLink => {
-    //   imgLink.map((link, idx) => {});
-    // });
-    // imgLink.map((link, idx) => {
-    //   setCoverImgList(
-    //     coverImgList.push({
-    //       name: name,
-    //       uid: idx,
-    //       url: link
-    //     })
-    //   );
+    const { name, img_link, img_detail, price, shop_detail } = productInfo;
+    console.log(price);
+    setName(name);
+    setImgLink(img_link.split(";"));
+    setImgDetail(img_detail.split(";"));
+    setPrice(price);
+    setDetail(shop_detail);
+    // img_link.split(";").map((link, idx) => {
+    //   coverImgList.push({
+    //     name: name,
+    //     uid: idx,
+    //     url: link
+    //   });
+    //   return true;
     // });
     return () => {};
-  }, [name, props]);
+  }, [props]);
 
-  //剩下这里的文件列表样式渲染未完成
   const handleOk = () => {
-    const jsonData = {
+    let newImgLink = [];
+    let newImgDetail = [];
+
+    coverImgList.map(item => {
+      newImgLink.push(item.url);
+      return true;
+    });
+    detailImgList.map(item => {
+      newImgDetail.push(item.url);
+      return true;
+    });
+
+    const newProductInfo = {
       key: props.productInfo.key,
       name: name,
       price: price,
-      img_link: imgLink.join(";"),
-      img_detail: imgDetail.join(";"),
+      //如果没有上传新的，则使用原本的封面/详情图片
+      img_link: newImgLink.length === 0 ? imgLink : newImgLink.join(";"),
+      img_detail:
+        newImgDetail.length === 0 ? imgDetail : newImgDetail.join(";"),
       shop_detail: detail
     };
-    let token = localStorage.getItem("token");
+
     setLoading(true);
+    //上传前校验(与新增的模块校验规则稍微不同哈)
+    if (
+      imgLink.length === 0 ||
+      imgDetail.length === 0 ||
+      name.trim().length === 0 ||
+      price.trim().length === 0 ||
+      detail.trim().length === 0
+    ) {
+      message.error({
+        content:
+          "请输入完整信息,商品名称、价格以及描述不得为空，如果不上传新的封面以及详情图片，则会采用原本的图片",
+        duration: 10
+      });
+      setLoading(false);
+      return false;
+    }
+
     axios
-      .put("http://59.110.237.244/api/shop/edit?token=" + token, jsonData)
+      .put("http://59.110.237.244/api/shop/edit?token=" + token, newProductInfo)
       .then(res => {
         console.log(res);
         res.data.code === 1
-          ? message.success("修改成功") && setVisible(false)
+          ? message.success("修改成功,请刷新列表查看") && setVisible(false)
           : message.error(`操作失败：${res.data.error}`);
+        setLoading(false);
+        //FIXME: 这里的刷新有可能发生在提示信息出现之前，是否考虑让用户手动刷新？我们提示
+        // window.location.reload();
       })
       .catch(err => {
         message.error(`操作失败: ${err}`);
-      })
-      .then(() => {
-        setLoading(false);
       });
   };
 
+  //哈哈哈！在beforeUpload里处理文件数量限制就解决了钩子函数冲突问题
+  //但为了实现实时预览以及编辑效果应该还是会用到这个钩子
   const handleCoverChange = info => {
-    let fileList = [...info.fileList];
-    fileList = fileList.slice(-5);
-    setCoverImgList(fileList);
+    // let fileList = [...info.fileList];
+    // fileList = fileList.slice(-5);
+    // setCoverImgList([...fileList]);
   };
 
-  const beforeUpload = file => {
+  const handleDetailChange = info => {
+    // let fileList = [...info.fileList];
+    // fileList = fileList.slice(-5);
+    // setDetailImgList([...fileList]);
+  };
+
+  const handleCoverRemove = file => {
+    if (coverImgList.length === 1) {
+      message.error("至少保留一张图片");
+      return false;
+    }
+  };
+  const handleDetailRemove = file => {
+    if (detailImgList.length === 1) {
+      message.error("至少保留一张照片");
+      return false;
+    }
+  };
+  //TODO:考虑把这两个方法合并一下...？
+  const beforeCoverUpload = file => {
     let imgFile = new FormData();
     imgFile.append("file", file);
-    const token = localStorage.getItem("token");
     let header = { headers: { "Content-Type": "multipart/form-data" } };
     axios
       .post("http://59.110.237.244/api/upload?token=" + token, imgFile, header)
       .then(res => {
-        console.log(res);
-        let imgLinkCopy = _.cloneDeep(imgLink);
-        imgLinkCopy.push(res.data.url);
-        setImgLink(imgLinkCopy);
+        // setImgLink([...imgLink,res.data.url])
+        if (coverImgList.length === 5) {
+          setCoverImgList([
+            ...coverImgList.slice(-4),
+            {
+              name: file.name,
+              uid: -Math.random() * 100,
+              url: res.data.url
+            }
+          ]);
+        } else {
+          setCoverImgList([
+            ...coverImgList,
+            {
+              name: file.name,
+              uid: -Math.random() * 100,
+              url: res.data.url
+            }
+          ]);
+        }
       });
-
     return false;
   };
-
-
-  //待解决的以及当前思路：
-  //1. 将img_link(img_detail同理)转为数组，取出其中的项渲染进fileList
-  //问题：map和hooks好像配合不起来？？需要换个思路，可能考虑上react-redux了
-
-  //2. 新图片上传至服务器，回传url，需要根据对应的idx更改图片的url
-  //上一步不完成这一步就卡死了，下一步同理
-
-  //3. 新的信息上传至服务器，需要把fileList的url取出来打包好上传
-
-  //只要第一步解决了map和hooks就能完成，但是已经试了好多方法，待解决，这次我有信心拉
+  const beforeDetailUpload = file => {
+    let imgFile = new FormData();
+    imgFile.append("file", file);
+    let header = { headers: { "Content-Type": "multipart/form-data" } };
+    axios
+      .post("http://59.110.237.244/api/upload?token=" + token, imgFile, header)
+      .then(res => {
+        // setImgLink([...imgLink,res.data.url])
+        if (detailImgList.length === 5) {
+          setDetailImgList([
+            ...detailImgList.slice(-4),
+            {
+              name: file.name,
+              uid: -Math.random() * 100,
+              url: res.data.url
+            }
+          ]);
+        } else {
+          setDetailImgList([
+            ...detailImgList,
+            {
+              name: file.name,
+              uid: -Math.random() * 100,
+              url: res.data.url
+            }
+          ]);
+        }
+      });
+    return false;
+  };
 
   const coverProps = {
     listType: "picture",
     fileList: coverImgList,
-    beforeUpload: beforeUpload
+    beforeUpload: beforeCoverUpload,
+    onRemove: handleCoverRemove
   };
-
-  // const detailProps = {
-  //   listType: "picture",
-  //   fileList: detailImgList
-  // };
-
-  // const handleDetailChange = info => {
-  //   console.log(info);
-  //   let fileList = [...info.fileList];
-  //   // fileList = fileList.slice(-5);
-  //   // setDetailImgList(fileList);
-  //   // if (info.file.status === "done") {
-  //   //   // let newImgUrl = info.file.response.url;
-  //   // }
-  // };
-
+  const detailProps = {
+    listType: "picture",
+    fileList: detailImgList,
+    beforeUpload: beforeDetailUpload,
+    onRemove: handleDetailRemove
+  };
   return (
     <div>
       <Modal
@@ -168,7 +239,6 @@ const EditModleUI = props => {
         ]}
       >
         <Form.Item>
-          {console.log(imgLink, imgDetail)}
           <Text strong>商品名称（不可重复）</Text>
           <Input
             placeholder='名称'
@@ -178,27 +248,24 @@ const EditModleUI = props => {
               setName(e.target.value);
             }}
           />
-          {console.log(coverProps)}
           <Upload
             accept='.bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp'
             {...coverProps}
-            onChange={handleCoverChange}
           >
             <Button>
               <Icon type='upload' />
               上传封面图片(数量限制：5)
             </Button>
           </Upload>
-          {/* <Upload
+          <Upload
             accept='.bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp'
             {...detailProps}
-            onChange={handleDetailChange}
           >
             <Button>
               <Icon type='upload' />
               上传详情图片(数量限制：5)
             </Button>
-          </Upload> */}
+          </Upload>
           <Text strong>价格设置（;相隔）</Text>
           <Input
             placeholder='价格设置（分号相隔）'
@@ -226,7 +293,6 @@ const EditModleUI = props => {
         type='primary'
         onClick={() => {
           setVisible(true);
-          //防止re-render过多报错
         }}
       >
         编辑
@@ -234,4 +300,4 @@ const EditModleUI = props => {
     </div>
   );
 };
-export default EditModleUI;
+export default EditModal;

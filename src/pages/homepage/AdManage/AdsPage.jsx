@@ -2,22 +2,24 @@ import React, { Fragment, useState, useEffect } from "react";
 import AdsItem from "./AdsItem";
 import axios from "axios";
 import { Row, Col } from "antd";
-import _ from "lodash";
 const AdsPage = props => {
+  const {keyWord,title,idx} = props
   const pageInfo = {
-    keyWord: props.keyWord,
-    title: props.title,
-    idx: props.idx
+    keyWord: keyWord,
+    title: title,
+    idx: idx
   };
   const [imgInfoList, setImgInfoList] = useState([]);
   useEffect(() => {
     axios
-      .get(`http://59.110.237.244/api/system?key=${props.keyWord}`)
+      .get(`http://59.110.237.244/api/system?key=${keyWord}`)
       .then(res => {
+        console.log(res);
         setImgInfoList(JSON.parse(res.data.value));
       });
     return () => {};
-  }, [pageInfo.title, props.keyWord]);
+    // eslint-disable-next-line
+  }, []);
 
   //负责这一广告系列所有变更的提交
   const handleSubmitList = (idxInList, key, info) => {

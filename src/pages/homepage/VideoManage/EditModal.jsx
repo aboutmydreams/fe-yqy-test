@@ -11,7 +11,6 @@ import {
   Upload
 } from "antd";
 import axios from "axios";
-import _ from "lodash";
 const { TextArea } = Input;
 const { Text } = Typography;
 

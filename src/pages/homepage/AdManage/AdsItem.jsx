@@ -46,7 +46,6 @@ const AdsItem = props => {
     setImgLoading(false);
     return () => {};
   }, []);
-
   const handleChange = info => {
     const { file, fileList } = info;
     if (file.size / 1024 / 1024 > 1) {

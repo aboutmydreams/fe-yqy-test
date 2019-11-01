@@ -17,13 +17,13 @@ import axios from "axios";
 import { get } from "../../../request/http";
 
 const { Title } = Typography;
-const StartPage = () => {
+const StartPage = (props) => {
+  const {title,keyWord} = props
   const [startImgInfo, setStartImgInfo] = useState({
-    title: "启动页广告",
-    idx: 1
+    title: title,
+    idx: ""
   });
   //页面信息相关变量
-  const { title } = startImgInfo;
   const [imgUrl, setImgUrl] = useState("");
   const [jump, setJump] = useState("");
   const [linkUrl, setLinkUrl] = useState("");
@@ -35,21 +35,23 @@ const StartPage = () => {
       uid: -1
     }
   ]);
-
   //交互相关变量
   const [submitLoading, setSubmitLoading] = useState(false);
   const [imgLoading, setImgLoading] = useState(true);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    get("http://59.110.237.244/api/system?key=firstAD", {}, {}).then(res => {
+    get(`http://59.110.237.244/api/system?key=${keyWord}`, {}, {}).then(res => {
       setImgLoading(false);
       const startInfo = JSON.parse(res.data.value);
       const copy = Object.assign({}, startImgInfo, startInfo);
+      //copy包含的属性：title id（这两个来自于父组件） 
+      // name url jump linkUrl 这四个来自于服务器上的图片信息
       setStartImgInfo(copy);
       setImgUrl(copy.url);
       setJump(copy.jump);
       setLinkUrl(copy.linkUrl);
+      //在广告管理板块中，所有模态框中的上传组件有且只有一张照片，所以可以写死uid
       setCurrentFileList([
         {
           uid: -1,
@@ -59,6 +61,7 @@ const StartPage = () => {
       ]);
     });
     return () => {};
+    // eslint-disable-next-line
   }, []);
 
   //禁止移除
@@ -99,8 +102,6 @@ const StartPage = () => {
     axios
       .post("http://59.110.237.244/api/upload?token=" + token, imgFile, header)
       .then(res => {
-        console.log(res);
-        //本地修改预览图,并获取回传的url
         setImgUrl(res.data.url);
       });
 
@@ -116,8 +117,8 @@ const StartPage = () => {
       linkUrl: jump ? linkUrl : null
     };
     axios
-      .put("http://59.110.237.244/api/system?key=firstAD", {
-        key: "firstAD",
+      .put(`http://59.110.237.244/api/system?key=${keyWord}"`, {
+        key: keyWord,
         value: JSON.stringify(imgInfo)
       })
       .then(res => {
