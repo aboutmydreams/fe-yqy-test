@@ -3,8 +3,9 @@ import { Layout, Menu, Breadcrumb } from "antd";
 import { Link } from "react-router-dom";
 import HomeRouter from "../router";
 import "./index.css";
+import Sider from "antd/lib/layout/Sider";
 
-const { Header, Content } = Layout;
+const { Content } = Layout;
 const { Item } = Menu;
 const menuItem = [
   {
@@ -44,32 +45,54 @@ const Homepage = () => {
   console.log(currentKey);
   return (
     <Layout>
-      <Header className='header'>
-        <div className='ncuhome'>
+      <Sider
+        //想着等最后确定没问题了再写成样式表
+        style={{
+          overflow: "auto",
+          height: "100vh",
+          position: "fixed",
+          left: 0
+        }}
+      >
+        <div
+          style={{
+            color: "black",
+            fontSize: "20px",
+            lineHeight: "20px",
+            backgroundColor: "white",
+            paddingLeft: "34px",
+            height: "5vh",
+            paddingBottom: "10vh",
+            paddingTop: "3vh"
+          }}
+        >
           <img
             className='logo'
             src='https://i.loli.net/2019/07/28/5d3d61ec2f6dd44203.png'
             alt='logo'
+            style={{ height: "50px" }}
           />
           <span>优企云</span>
         </div>
         <Menu
           theme='light'
-          mode='horizontal'
+          mode='inline'
           defaultSelectedKeys={`${currentKey}`}
-          style={{ lineHeight: "64px", display: "inline-block" }}
+          style={{ height: "87vh" }}
         >
           {menuItem.map((item, index) => {
             return (
               <Item key={index}>
-                <Link to={item.to}>{item.title}</Link>
+                <Link style={{ paddingLeft: "24px" }} to={item.to}>
+                  {item.title}
+                </Link>
               </Item>
             );
           })}
         </Menu>
-      </Header>
-      <Layout>
-        <Layout style={{ padding: "0 24px 24px" }}>
+      </Sider>
+      <Layout style={{ marginLeft: "240px", minHeight: "700px" }}>
+        <Layout style={{ paddingBottom: "80px" }}>
           <Breadcrumb separator='>' style={{ margin: "16px 0" }}>
             {window.location.pathname.split("/").map(item => {
               if (item) {
@@ -79,14 +102,7 @@ const Homepage = () => {
             })}
           </Breadcrumb>
 
-          <Content
-            style={{
-              background: "#fff",
-              padding: 24,
-              margin: 0,
-              minHeight: 500
-            }}
-          >
+          <Content>
             <HomeRouter />
           </Content>
         </Layout>
