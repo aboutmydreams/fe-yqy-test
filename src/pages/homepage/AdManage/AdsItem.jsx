@@ -13,7 +13,7 @@ import {
   Input,
   Spin
 } from "antd";
-import axios from "axios";
+import { post } from "../../../request/http";
 const { Title } = Typography;
 
 const AdsItem = props => {
@@ -77,13 +77,14 @@ const AdsItem = props => {
     imgFile.append("file", file);
     const token = localStorage.getItem("token");
     let header = { headers: { "Content-Type": "multipart/form-data" } };
-    axios
-      .post("http://59.110.237.244/api/upload?token=" + token, imgFile, header)
-      .then(res => {
-        console.log(res);
-        //本地修改预览图,并获取回传的url
-        setImgUrl(res.data.url);
-      });
+    (async () => {
+      const res = await post(
+        `/upload?token=${token}`,
+        imgFile,
+        header
+      );
+      setImgUrl(res.data.url);
+    })();
     return false;
   };
 

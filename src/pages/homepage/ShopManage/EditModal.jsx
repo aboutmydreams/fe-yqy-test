@@ -10,14 +10,13 @@ import {
   Modal,
   Upload
 } from "antd";
-import axios from "axios";
+import { put, post } from "../../../request/http";
 
 import "./style.css";
 const { TextArea } = Input;
 const { Text } = Typography;
 
 const EditModal = props => {
-  // console.log(props);
   const token = localStorage.getItem("token");
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -42,14 +41,6 @@ const EditModal = props => {
     setImgDetail(img_detail.split(";"));
     setPrice(price);
     setDetail(shop_detail);
-    // img_link.split(";").map((link, idx) => {
-    //   coverImgList.push({
-    //     name: name,
-    //     uid: idx,
-    //     url: link
-    //   });
-    //   return true;
-    // });
     return () => {};
   }, [props]);
 
@@ -94,21 +85,17 @@ const EditModal = props => {
       setLoading(false);
       return false;
     }
-
-    axios
-      .put("http://59.110.237.244/api/shop/edit?token=" + token, newProductInfo)
-      .then(res => {
-        console.log(res);
-        res.data.code === 1
+    (async () => {
+      try {
+        const res = await put(`shop/edit?token=${token}`, newProductInfo);
+        const resCode = res.data.code;
+        resCode === 1
           ? message.success("修改成功,请刷新列表查看") && setVisible(false)
           : message.error(`操作失败：${res.data.error}`);
-        setLoading(false);
-        //FIXME: 这里的刷新有可能发生在提示信息出现之前，是否考虑让用户手动刷新？我们提示
-        // window.location.reload();
-      })
-      .catch(err => {
+      } catch (err) {
         message.error(`操作失败: ${err}`);
-      });
+      }
+    })();
   };
 
   //哈哈哈！在beforeUpload里处理文件数量限制就解决了钩子函数冲突问题
@@ -137,26 +124,22 @@ const EditModal = props => {
       return false;
     }
   };
-  //TODO:考虑把这两个方法合并一下...？
   const beforeCoverUpload = file => {
     let imgFile = new FormData();
     imgFile.append("file", file);
     let header = { headers: { "Content-Type": "multipart/form-data" } };
-    axios
-      .post("http://59.110.237.244/api/upload?token=" + token, imgFile, header)
-      .then(res => {
-        // setImgLink([...imgLink,res.data.url])
-        if (coverImgList.length === 5) {
-          setCoverImgList([
+    (async () => {
+      const res = await post(`/upload?token=${token}`, imgFile, header);
+      coverImgList.length === 5
+        ? setCoverImgList([
             ...coverImgList.slice(-4),
             {
               name: file.name,
               uid: -Math.random() * 100,
               url: res.data.url
             }
-          ]);
-        } else {
-          setCoverImgList([
+          ])
+        : setCoverImgList([
             ...coverImgList,
             {
               name: file.name,
@@ -164,29 +147,25 @@ const EditModal = props => {
               url: res.data.url
             }
           ]);
-        }
-      });
+    })();
     return false;
   };
   const beforeDetailUpload = file => {
     let imgFile = new FormData();
     imgFile.append("file", file);
     let header = { headers: { "Content-Type": "multipart/form-data" } };
-    axios
-      .post("http://59.110.237.244/api/upload?token=" + token, imgFile, header)
-      .then(res => {
-        // setImgLink([...imgLink,res.data.url])
-        if (detailImgList.length === 5) {
-          setDetailImgList([
+    (async () => {
+      const res = await post(`/upload?token=${token}`, imgFile, header);
+      detailImgList.length === 5
+        ? setDetailImgList([
             ...detailImgList.slice(-4),
             {
               name: file.name,
               uid: -Math.random() * 100,
               url: res.data.url
             }
-          ]);
-        } else {
-          setDetailImgList([
+          ])
+        : setDetailImgList([
             ...detailImgList,
             {
               name: file.name,
@@ -194,8 +173,7 @@ const EditModal = props => {
               url: res.data.url
             }
           ]);
-        }
-      });
+    })();
     return false;
   };
 

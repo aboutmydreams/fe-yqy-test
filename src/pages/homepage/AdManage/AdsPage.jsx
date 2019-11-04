@@ -1,9 +1,9 @@
 import React, { Fragment, useState, useEffect } from "react";
 import AdsItem from "./AdsItem";
-import axios from "axios";
+import { get, put } from "../../../request/http";
 import { Row, Col } from "antd";
 const AdsPage = props => {
-  const {keyWord,title,idx} = props
+  const { keyWord, title, idx } = props;
   const pageInfo = {
     keyWord: keyWord,
     title: title,
@@ -11,12 +11,10 @@ const AdsPage = props => {
   };
   const [imgInfoList, setImgInfoList] = useState([]);
   useEffect(() => {
-    axios
-      .get(`http://59.110.237.244/api/system?key=${keyWord}`)
-      .then(res => {
-        console.log(res);
-        setImgInfoList(JSON.parse(res.data.value));
-      });
+    (async () => {
+      const res = await get(`/system?key=${keyWord}`);
+      setImgInfoList(JSON.parse(res.data.value));
+    })();
     return () => {};
     // eslint-disable-next-line
   }, []);
@@ -25,14 +23,12 @@ const AdsPage = props => {
   const handleSubmitList = (idxInList, key, info) => {
     //这个逻辑不同于起始页
     imgInfoList.splice(idxInList, 1, info);
-    axios
-      .put(`http://59.110.237.244/api/system?key=${key}`, {
+    (async () => {
+      await put(`/system?key=${key}`, {
         key: key,
         value: JSON.stringify(imgInfoList)
-      })
-      .then(res => {
-        console.log(res);
       });
+    })();
   };
   return (
     <Fragment>

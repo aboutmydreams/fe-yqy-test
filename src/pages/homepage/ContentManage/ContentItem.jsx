@@ -1,41 +1,37 @@
 import React, { useState, Fragment } from "react";
 import { Typography, Input, Button, Row, Col, message } from "antd";
 import "./style.css";
-import axios from "axios";
+import { put } from "../../../request/http";
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
 
 const ContentItem = props => {
-  let { title, key, content } = props.content;
+  const { content, saveEdition } = props;
+  let { title, key, content: initContent } = content;
   const [edit, setEdit] = useState(true);
-  const [editedContent, setEditedContent] = useState(content);
+  const [editedContent, setEditedContent] = useState(initContent);
 
   const handleChange = e => {
     let result = e.target.value;
     setEditedContent(result);
   };
 
-  const uploadInfo = (key, content) => {
-    console.log(key);
-    axios
-      .put(`http://59.110.237.244/api/system?key=${key}`, {
-        key: key,
-        value: editedContent
-      })
-      .then(res => {
-        console.log(res);
-        if (res.data["code"] === 1) {
-          message.success("修改成功");
-          props.saveEdition(key, editedContent);
-        } else if (res.data["code"] === 0) {
-          message.error("操作失败" + res.data["error"]);
-        }
-        console.log(res.data);
-      })
-      .catch(Error => {
+  const uploadInfo = key => {
+    (async () => {
+      try {
+        const res = await put(`/system?key=${key}`, {
+          key: key,
+          value: editedContent
+        });
+        const code = res.data.code;
+        code === 1
+          ? message.success("修改成功") && saveEdition(key, editedContent)
+          : message.error("操作失败" + res.data["error"]);
+      } catch (Error) {
         message.error("操作失败，" + Error);
-      });
+      }
+    })();
   };
   return (
     <Fragment>
@@ -46,22 +42,22 @@ const ContentItem = props => {
         <Col span={6}>
           {edit ? (
             <Button
-              type="primary"
+              type='primary'
               onClick={() => {
                 setEdit(!edit);
               }}
-              icon="edit"
+              icon='edit'
             >
               编辑内容
             </Button>
           ) : (
             <Button
-              type="default"
+              type='default'
               onClick={() => {
                 setEdit(!edit);
-                uploadInfo(key, content);
+                uploadInfo(key);
               }}
-              icon="check"
+              icon='check'
             >
               保存修改
             </Button>
@@ -71,7 +67,7 @@ const ContentItem = props => {
       {edit ? (
         <Row>
           <Col span={18} style={{ lineHeightL: "6px" }}>
-            <Text>{content}</Text>
+            <Text>{initContent}</Text>
           </Col>
         </Row>
       ) : (
@@ -79,10 +75,10 @@ const ContentItem = props => {
           <Col span={18}>
             <TextArea
               rows={6}
-              size="large"
-              prefix="snippets"
-              className="input-long"
-              defaultValue={content}
+              size='large'
+              prefix='snippets'
+              className='input-long'
+              defaultValue={initContent}
               autoSize
               onChange={handleChange}
             ></TextArea>

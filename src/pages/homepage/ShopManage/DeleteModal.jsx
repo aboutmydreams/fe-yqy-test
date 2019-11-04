@@ -1,36 +1,31 @@
 import React, { Fragment } from "react";
 
 import { message, Button, Modal } from "antd";
-import axios from "axios";
+import { deleteItem } from "../../../request/http";
 import "./style.css";
 const { confirm } = Modal;
 
 const DeleteModal = props => {
   const delIdx = props.text.key;
   const token = localStorage.getItem("token");
+
   const deleProduct = () => {
     const delParams = {
       key: delIdx
     };
-    axios
-      .delete(`http://59.110.237.244/api/shop/edit?token=${token}`, {
-        data: delParams
-      })
-      .then(res => {
+    (async () => {
+      try {
+        const res = await deleteItem(`/shop/edit?token=${token}`, delParams);
         const resCode = res.data.code;
-        //TODO:考虑在拦截器中进行统一的错误处理
-        if (resCode === 1) {
-          message.success("删除成功");
-        } else if (resCode === 0) {
-          message.error(`删除失败：${res.data.error}`);
-        } else {
-          message.error("删除失败，网络异常");
-        }
-      })
-      .catch(error => {
-        message.error(`操作失败： ${error}`);
-      });
+        resCode === 1
+          ? message.success("删除成功") && window.location.reload()
+          : message.error(`删除失败：${res.data.error}`);
+      } catch (err) {
+        message.err(`删除失败：${err}`);
+      }
+    })();
   };
+
   const confirmDel = () => {
     confirm({
       title: "确定要删除这个商品吗？",

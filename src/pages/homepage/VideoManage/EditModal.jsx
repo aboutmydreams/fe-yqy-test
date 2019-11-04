@@ -10,13 +10,16 @@ import {
   message,
   Upload
 } from "antd";
-import axios from "axios";
+import { post } from "../../../request/http";
 const { TextArea } = Input;
 const { Text } = Typography;
 
 const EditModal = props => {
+  const token = localStorage.getItem("token");
+
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
   const [sum, setSum] = useState("");
@@ -51,36 +54,36 @@ const EditModal = props => {
       cover: imgUrl
     };
     setLoading(true);
-    onEdit(newInfo, idx).then(()=>{
-      setTimeout(() => {
-        setVisible(false);
+    (async () => {
+      try {
+        await onEdit(newInfo, idx);
+        setTimeout(() => {
+          setVisible(false);
+          setLoading(false);
+          message.success("修改成功");
+          window.location.reload();
+        }, 1200);
+      } catch {
         setLoading(false);
-      }, 1200);
-    }).catch(()=>{
-      setLoading(false);
         message.error("请输入完整信息");
-    })
-
-    
+      }
+    })();
   };
   const beforeUpload = (file, fileList) => {
     setFileName(file.name);
     let imgFile = new FormData();
     imgFile.append("file", file);
-    const token = localStorage.getItem("token");
     const header = { headers: { "Content-Type": "multipart/form-data" } };
-    axios
-      .post("http://59.110.237.244/api/upload?token=" + token, imgFile, header)
-      .then(res => {
-        setImgUrl(res.data.url);
-      });
+    (async () => {
+      const res = await post(
+        `/upload?token=${token}`,
+        imgFile,
+        header
+      );
+      setImgUrl(res.data.url);
+    })();
     return false;
   };
-
-  //好像不能实现实时预览文件列表变更，因为官方示例中是需要action的，
-  //会直接由action的地址返回新的url，而在handleChange中无法获取
-  //beforeUpload中的imgUrl（因为useState是异步的嘛？）
-  //beforeUpload先于handleChange执行
 
   const handleChange = info => {
     console.log(info.fileList);
