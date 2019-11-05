@@ -13,12 +13,11 @@ import {
   Input,
   Spin
 } from "antd";
-import axios from "axios";
-import { get } from "../../../request/http";
+import { get, post, put } from "../../../request/http";
 
 const { Title } = Typography;
-const StartPage = (props) => {
-  const {title,keyWord} = props
+const StartPage = props => {
+  const { title, keyWord } = props;
   const [startImgInfo, setStartImgInfo] = useState({
     title: title,
     idx: ""
@@ -41,11 +40,13 @@ const StartPage = (props) => {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    get(`http://59.110.237.244/api/system?key=${keyWord}`, {}, {}).then(res => {
+    (async () => {
+      const res = await get(`/system?key=${keyWord}`);
+      console.log(res);
       setImgLoading(false);
       const startInfo = JSON.parse(res.data.value);
       const copy = Object.assign({}, startImgInfo, startInfo);
-      //copy包含的属性：title id（这两个来自于父组件） 
+      //copy包含的属性：title id（这两个来自于父组件）
       // name url jump linkUrl 这四个来自于服务器上的图片信息
       setStartImgInfo(copy);
       setImgUrl(copy.url);
@@ -59,7 +60,24 @@ const StartPage = (props) => {
           url: copy.url
         }
       ]);
-    });
+    })();
+    async function timeout(ms) {
+      await new Promise(resolve => {
+        setTimeout(resolve, ms);
+      });
+    }
+    async function asyncPrint(value, ms) {
+      console.time("total");
+      await timeout(ms);
+      console.log("step1");
+      await timeout(1000);
+      console.log("step2");
+      await timeout(2000);
+      console.log("step3");
+      console.log(value);
+      console.timeEnd("total");
+    }
+    asyncPrint("111", 5000);
     return () => {};
     // eslint-disable-next-line
   }, []);
@@ -99,12 +117,10 @@ const StartPage = (props) => {
     imgFile.append("file", file);
     const token = localStorage.getItem("token");
     let header = { headers: { "Content-Type": "multipart/form-data" } };
-    axios
-      .post("http://59.110.237.244/api/upload?token=" + token, imgFile, header)
-      .then(res => {
-        setImgUrl(res.data.url);
-      });
-
+    (async () => {
+      const res = await post(`/upload?token= ${token}`, imgFile, header);
+      setImgUrl(res.data.url);
+    })();
     return false;
   };
   //将新的文件信息上传到服务器
@@ -116,19 +132,18 @@ const StartPage = (props) => {
       url: imgUrl,
       linkUrl: jump ? linkUrl : null
     };
-    axios
-      .put(`http://59.110.237.244/api/system?key=${keyWord}"`, {
+    (async () => {
+      const res = await put(`/system?key=${keyWord}"`, {
         key: keyWord,
         value: JSON.stringify(imgInfo)
-      })
-      .then(res => {
-        setTimeout(() => {
-          setSubmitLoading(false);
-          setVisible(false);
-          message.success("修改图片信息成功");
-        }, 1500);
-        // window.location.reload();
       });
+      setTimeout(() => {
+        setSubmitLoading(false);
+        setVisible(false);
+        message.success("修改图片信息成功");
+      }, 1500);
+      console.log(res);
+    })();
   };
   const uploadProps = {
     listType: "picture",

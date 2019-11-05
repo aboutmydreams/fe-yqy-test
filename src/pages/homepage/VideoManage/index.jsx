@@ -1,33 +1,33 @@
 import React, { useState, useEffect } from "react";
 import VideoManageUI from "./VideoManageUI.jsx";
-import axios from "axios";
 import { message } from "antd";
 import _ from "lodash";
+import { get, post, deleteItem, put } from "../../../request/http";
 
 const VideoManage = () => {
   const token = localStorage.getItem("token");
   const [videoList, setVideoList] = useState([]);
   useEffect(() => {
-    axios.get("http://59.110.237.244/api/video?token=" + token).then(res => {
+    (async () => {
+      const res = await get(`/video?token=${token}`);
       setVideoList(res.data.data);
-    });
-  }, [token]);
+    })();
+    //eslint-disable-next-line
+  }, []);
 
   const handleEdit = (newInfo, idx) => {
     const { title, url, summary } = newInfo;
     if (title === "" || url === "" || summary === "") {
       return Promise.reject("error");
     } else {
-      axios
-        .put("http://59.110.237.244/api/video?token=" + token, newInfo)
-        .then(res => {
-          if (res.data.code === 1) {
-            const newList = _.cloneDeep(videoList);
-            Object.assign(newList[idx], newInfo);
-            setVideoList(newList);
-            message.success("修改成功,如果信息没有更新，请刷新列表");
-          }
-        });
+      (async () => {
+        const res = await put(`/video?token=${token}`, newInfo);
+        if (res.data.data === 1) {
+          const newList = _.cloneDeep(videoList);
+          Object.assign(newList[idx], newInfo);
+          setVideoList(newList);
+        }
+      })();
       return Promise.resolve();
     }
   };
@@ -36,34 +36,31 @@ const VideoManage = () => {
     if (title === "" || url === "" || summary === "") {
       return Promise.reject("error");
     } else {
-      axios
-        .post("http://59.110.237.244/api/video?token=" + token, newInfo)
-        .then(res => {
-          if (res.data.code === 1) {
-            const newList = _.cloneDeep(videoList);
-            newList.push(newInfo);
-            setVideoList(newList);
-            message.success("视频信息添加成功");
-          }
-        });
+      (async () => {
+        const res = await post(`/video?token=${token}`, newInfo);
+        if (res.data.data === 1) {
+          const newList = _.cloneDeep(videoList);
+          newList.push(newInfo);
+          setVideoList(newList);
+          message.success("视频信息添加成功");
+        }
+      })();
       return Promise.resolve();
     }
   };
 
   const handleDelete = idx => {
     const token = localStorage.getItem("token");
-    axios
-      .delete("http://59.110.237.244/api/video?token=" + token, {
-        data: {
-          video_id: idx
-        }
-      })
-      .then(() => {
-        message.success("删除成功");
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
+    (async () => {
+      await deleteItem(`/video?token=${token}`, {
+        video_id: idx
       });
+      await message.success({
+        content: "删除成功",
+        duration: 0.8
+      });
+      window.location.reload();
+    })();
   };
   return (
     <VideoManageUI

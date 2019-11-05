@@ -1,5 +1,4 @@
 import axios from "axios";
-import { message } from "antd";
 
 axios.defaults.baseURL = "http://59.110.237.244/api";
 axios.defaults.timeout = 10000;
@@ -51,23 +50,33 @@ axios.interceptors.response.use(
 const request = function(url, params, config = {}, method) {
   return new Promise((resolve, reject) => {
     axios[method](url, params, Object.assign({}, config))
-      .then(
-        res => {
-          resolve(res);
-        },
-        err => {
-          reject(err);
-        }
-      )
+      .then(res => {
+        resolve(res);
+      })
       .catch(err => {
         reject(err);
       });
   });
 };
 
-export const post = (url, params, config = {}) => {
-  return request(url, params, config, "post");
+//错误处理统一交给拦截器？
+
+export const get = async (url, params, config = {}) => {
+  return await request(url, params, config, "get");
 };
-export const get = (url, params, config = {}) => {
-  return request(url, params, config, "get");
+export const post = async (url, params, config = {}) => {
+  return await request(url, params, config, "post");
+};
+export const put = async (url, params, config = {}) => {
+  return await request(url, params, config, "put");
+};
+export const deleteItem = async (url, params, config = {}) => {
+  return await request(
+    url,
+    {
+      data: params
+    },
+    config,
+    "delete"
+  );
 };

@@ -9,20 +9,21 @@ import {
   Modal,
   Upload
 } from "antd";
-import axios from "axios";
-
+import { post } from "../../../request/http";
+import _ from "lodash";
 const { TextArea } = Input;
 const { Text } = Typography;
 const AddModal = () => {
+  //上传时的请求头与token
+  const header = { headers: { "Content-Type": "multipart/form-data" } };
   const token = localStorage.getItem("token");
+  //交互相关
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
-
   //商品信息
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [detail, setDetail] = useState("");
-
   //编辑模态框上传组件的上传列表
   const [coverImgList, setCoverImgList] = useState([]);
   const [detailImgList, setDetailImgList] = useState([]);
@@ -32,12 +33,10 @@ const AddModal = () => {
     let newImgLink = [];
     let newImgDetail = [];
     coverImgList.map(item => {
-      newImgLink.push(item.url);
-      return true;
+      return newImgLink.push(item.url);
     });
     detailImgList.map(item => {
-      newImgDetail.push(item.url);
-      return true;
+      return newImgDetail.push(item.url);
     });
 
     //校验信息完整性：新增模态框中是不允许不上传封面和详情图片的，
@@ -50,7 +49,6 @@ const AddModal = () => {
       shop_detail: detail
     };
 
-
     if (
       newImgLink.length === 0 ||
       newImgDetail.length === 0 ||
@@ -59,61 +57,69 @@ const AddModal = () => {
       detail.trim().length === 0
     ) {
       message.error(
-        "请输入完整信息，包括封面图片和详情图片，商品名称、价格以及描述不得为空",
+        "请输入完整信息，包括封面图片和详情图片，商品名称、价格以及描述不得为空"
       );
       setLoading(false);
       return false;
     }
 
-    axios
-      .post(
-        "http://59.110.237.244/api/shop/edit?token=" + token,
-        newProductInfo
-      )
-      .then(res => {
-        console.log(res);
+    (async () => {
+      try {
+        const res = await post(`/shop/edit?token=${token}`, newProductInfo);
         res.data.code === 1
           ? message.success("操作成功，请刷新列表查看") && setVisible(false)
           : message.error(`操作失败：${res.data.error}`);
-      })
-      .catch(err => {
+      } catch (err) {
         message.error(`操作失败: ${err}`);
         setLoading(false);
-      });
+      }
+    })();
   };
 
   const handleCoverRemove = file => {
     if (coverImgList.length === 1) {
       message.error("至少保留一张图片");
       return false;
+    } else {
+      const delIdx = coverImgList.findIndex(item => {
+        return item.url === file.url;
+      });
+      console.log(delIdx);
+      let newCoverImgList = _.cloneDeep(coverImgList);
+      newCoverImgList.splice(delIdx, 1);
+      console.log(newCoverImgList);
+      setCoverImgList(newCoverImgList);
     }
   };
   const handleDetailRemove = file => {
     if (detailImgList.length === 1) {
       message.error("至少保留一张照片");
       return false;
+    } else {
+      const delIdx = detailImgList.findIndex(item => {
+        return item.url === file.url;
+      });
+      let newDetailImgList = _.cloneDeep(detailImgList);
+      newDetailImgList.splice(delIdx, 1);
+      setDetailImgList(newDetailImgList);
     }
   };
 
-  //TODO:考虑把这两个方法合并一下...？
   const beforeCoverUpload = file => {
     let imgFile = new FormData();
     imgFile.append("file", file);
-    let header = { headers: { "Content-Type": "multipart/form-data" } };
-    axios
-      .post("http://59.110.237.244/api/upload?token=" + token, imgFile, header)
-      .then(res => {
-        if (coverImgList.length === 5) {
-          setCoverImgList([
+    (async () => {
+      const res = await post(`/upload?token=${token}`, imgFile, header);
+      coverImgList.length === 5
+        ? setCoverImgList([
             ...coverImgList.slice(-4),
             {
               name: file.name,
               uid: -Math.random() * 100,
               url: res.data.url
             }
-          ]);
-        } else {
-          setCoverImgList([
+          ])
+        : setCoverImgList([
             ...coverImgList,
             {
               name: file.name,
@@ -121,28 +127,25 @@ const AddModal = () => {
               url: res.data.url
             }
           ]);
-        }
-      });
+    })();
+
     return false;
   };
   const beforeDetailUpload = file => {
     let imgFile = new FormData();
     imgFile.append("file", file);
-    let header = { headers: { "Content-Type": "multipart/form-data" } };
-    axios
-      .post("http://59.110.237.244/api/upload?token=" + token, imgFile, header)
-      .then(res => {
-        if (detailImgList.length === 5) {
-          setDetailImgList([
+    (async () => {
+      const res = await post(`/upload?token=${token}`, imgFile, header);
+      detailImgList.length === 5
+        ? setDetailImgList([
             ...detailImgList.slice(-4),
             {
               name: file.name,
               uid: -Math.random() * 100,
               url: res.data.url
             }
-          ]);
-        } else {
-          setDetailImgList([
+          ])
+        : setDetailImgList([
             ...detailImgList,
             {
               name: file.name,
@@ -150,8 +153,8 @@ const AddModal = () => {
               url: res.data.url
             }
           ]);
-        }
-      });
+    })();
+
     return false;
   };
 

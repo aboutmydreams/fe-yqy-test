@@ -10,7 +10,7 @@ import {
   Typography,
   message
 } from "antd";
-import axios from "axios";
+import { post } from "../../../request/http";
 const { TextArea } = Input;
 const { Text } = Typography;
 
@@ -46,17 +46,20 @@ const AddModal = props => {
     };
     setLoading(true);
 
-    onAdd(newInfo)
-      .then(() => {
+    (async () => {
+      try {
+        await onAdd(newInfo);
         setTimeout(() => {
           setVisible(false);
           setLoading(false);
+          message.success("添加成功");
+          window.location.reload();
         }, 1200);
-      })
-      .catch(() => {
+      } catch {
         setLoading(false);
         message.error("请输入完整信息");
-      });
+      }
+    })();
   };
   const beforeUpload = file => {
     setFileName(file.name);
@@ -64,11 +67,14 @@ const AddModal = props => {
     imgFile.append("file", file);
     const token = localStorage.getItem("token");
     let header = { headers: { "Content-Type": "multipart/form-data" } };
-    axios
-      .post("http://59.110.237.244/api/upload?token=" + token, imgFile, header)
-      .then(res => {
-        setImgUrl(res.data.url);
-      });
+    (async () => {
+      const res = await post(
+        `/upload?token=${token}`,
+        imgFile,
+        header
+      );
+      setImgUrl(res.data.url);
+    })();
     return false;
   };
 
@@ -140,7 +146,10 @@ const AddModal = props => {
         <Row>
           <Col span={24}>
             <Text>视频图片：</Text>
-            <Upload {...uploadProps}>
+            <Upload
+              accept='.bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp'
+              {...uploadProps}
+            >
               <Button>
                 <Icon type='upload' />
                 上传视频图片
