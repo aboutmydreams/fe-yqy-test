@@ -10,19 +10,20 @@ import {
   Upload
 } from "antd";
 import { post } from "../../../request/http";
-
+import _ from "lodash";
 const { TextArea } = Input;
 const { Text } = Typography;
 const AddModal = () => {
+  //上传时的请求头与token
+  const header = { headers: { "Content-Type": "multipart/form-data" } };
   const token = localStorage.getItem("token");
+  //交互相关
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
-
   //商品信息
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [detail, setDetail] = useState("");
-
   //编辑模态框上传组件的上传列表
   const [coverImgList, setCoverImgList] = useState([]);
   const [detailImgList, setDetailImgList] = useState([]);
@@ -79,20 +80,34 @@ const AddModal = () => {
     if (coverImgList.length === 1) {
       message.error("至少保留一张图片");
       return false;
+    } else {
+      const delIdx = coverImgList.findIndex(item => {
+        return item.url === file.url;
+      });
+      console.log(delIdx);
+      let newCoverImgList = _.cloneDeep(coverImgList);
+      newCoverImgList.splice(delIdx, 1);
+      console.log(newCoverImgList);
+      setCoverImgList(newCoverImgList);
     }
   };
   const handleDetailRemove = file => {
     if (detailImgList.length === 1) {
       message.error("至少保留一张照片");
       return false;
+    } else {
+      const delIdx = detailImgList.findIndex(item => {
+        return item.url === file.url;
+      });
+      let newDetailImgList = _.cloneDeep(detailImgList);
+      newDetailImgList.splice(delIdx, 1);
+      setDetailImgList(newDetailImgList);
     }
   };
 
-  //TODO:考虑把这两个方法合并一下...？
   const beforeCoverUpload = file => {
     let imgFile = new FormData();
     imgFile.append("file", file);
-    let header = { headers: { "Content-Type": "multipart/form-data" } };
     (async () => {
       const res = await post(`/upload?token=${token}`, imgFile, header);
       coverImgList.length === 5
@@ -119,7 +134,6 @@ const AddModal = () => {
   const beforeDetailUpload = file => {
     let imgFile = new FormData();
     imgFile.append("file", file);
-    let header = { headers: { "Content-Type": "multipart/form-data" } };
     (async () => {
       const res = await post(`/upload?token=${token}`, imgFile, header);
       detailImgList.length === 5
