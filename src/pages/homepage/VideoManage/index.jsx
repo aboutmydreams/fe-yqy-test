@@ -10,6 +10,7 @@ const VideoManage = () => {
   useEffect(() => {
     (async () => {
       const res = await get(`/video?token=${token}`);
+      console.log(res);
       setVideoList(res.data.data);
     })();
     //eslint-disable-next-line

@@ -3,56 +3,53 @@ import {
   Modal,
   Input,
   Icon,
-  Upload,
   Button,
   Row,
   Col,
   Typography,
-  message
+  message,
+  Upload
 } from "antd";
 import { post } from "../../../request/http";
 const { TextArea } = Input;
 const { Text } = Typography;
 
-const AddModal = props => {
-  const { lastVideo, onAdd } = props;
-  let lastIdx;
-  if (lastVideo) {
-    lastIdx = lastVideo.video_id;
-    console.log(lastIdx);
-  }
+const EditModal = props => {
+  const header = { headers: { "Content-Type": "multipart/form-data" } };
+  const token = localStorage.getItem("token");
+
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
   const [sum, setSum] = useState("");
   const [imgUrl, setImgUrl] = useState("");
-  const [fileName, setFileName] = useState("");
-  const [fileList, setFileList] = useState([
-    {
-      name: fileName,
-      uid: -1,
-      url: imgUrl
-    }
-  ]);
+  const [imgFileList, setImgFileList] = useState([]);
+  const [videoFileList, setVideoFileList] = useState([]);
+
+  const { onAdd } = props;
+  message.config({
+    duration: 1.5,
+    maxCount: 3
+  });
 
   const onOk = () => {
     const newInfo = {
-      video_id: lastIdx + 1,
       title: title,
       url: url,
       summary: sum,
       cover: imgUrl
     };
+    console.log(newInfo);
     setLoading(true);
-
     (async () => {
       try {
         await onAdd(newInfo);
         setTimeout(() => {
           setVisible(false);
           setLoading(false);
-          message.success("添加成功");
+          message.success("修改成功");
           window.location.reload();
         }, 1200);
       } catch {
@@ -61,44 +58,82 @@ const AddModal = props => {
       }
     })();
   };
-  const beforeUpload = file => {
-    setFileName(file.name);
+  const beforeImgUpload = file => {
+    if (file.size / 1024 / 1024 > 1) {
+      return false;
+    }
     let imgFile = new FormData();
     imgFile.append("file", file);
-    const token = localStorage.getItem("token");
-    let header = { headers: { "Content-Type": "multipart/form-data" } };
     (async () => {
-      const res = await post(
-        `/upload?token=${token}`,
-        imgFile,
-        header
-      );
+      const res = await post(`/upload?token=${token}`, imgFile, header);
       setImgUrl(res.data.url);
     })();
     return false;
   };
 
-  const handleChange = info => {
-    let fileList = [...info.fileList];
-    fileList = fileList.slice(-1);
-    setFileList(fileList);
+  const beforeVideoUpload = file => {
+    if (file.size / 1024 / 1024 > 1) {
+      return false;
+    }
+    let videoFile = new FormData();
+    videoFile.append("file", file);
+    (async () => {
+      const res = await post(`/upload?token=${token}`, videoFile, header);
+      setUrl(res.data.url);
+      setVideoFileList([
+        {
+          name: file.name,
+          uid: -1,
+          url: res.data.url
+        }
+      ]);
+    })();
+    return false;
   };
-  const handleRemove = () => {
-    message.config({
-      duration: 1.5,
-      maxCount: 3
-    });
-    if (fileList.length === 1) {
+
+  const handleImgChange = info => {
+    const { file } = info;
+    if (file.size / 1024 / 1024 > 1) {
+      message.error("请上传小于1MB的图片");
+      return false;
+    }
+    let imgFileList = [...info.fileList];
+    imgFileList = imgFileList.slice(-1);
+    setImgFileList(imgFileList);
+  };
+  const handleVideoChange = info => {
+    const { file } = info;
+    console.log(info);
+    if (file.size / 1024 / 1024 > 1) {
+      message.error("请上传小于1MB的视频");
+      return false;
+    }
+  };
+  const handleImgRemove = () => {
+    if (imgFileList.length === 1) {
       message.error("图片数量必须为1，如果要使用新的图片，请直接上传新的图片");
       return false;
     }
   };
-  const uploadProps = {
+  const handleVideoRemove = () => {
+    if (videoFileList.length === 1) {
+      message.error("视频数量必须为1，如果要修改视频内容，请直接上传新的视频");
+      return false;
+    }
+  };
+  const imgUploadProps = {
     listType: "picture",
-    fileList: fileList,
-    onChange: handleChange,
-    onRemove: handleRemove,
-    beforeUpload: beforeUpload
+    fileList: imgFileList,
+    onChange: handleImgChange,
+    onRemove: handleImgRemove,
+    beforeUpload: beforeImgUpload
+  };
+  const videoUploadProps = {
+    listType: "text",
+    fileList: videoFileList,
+    onChange: handleVideoChange,
+    onRemove: handleVideoRemove,
+    beforeUpload: beforeVideoUpload
   };
   return (
     <Fragment>
@@ -131,7 +166,7 @@ const AddModal = props => {
       >
         <Row>
           <Col span={12}>
-            <Text>视频名称：</Text>
+            <Text>视频描述：</Text>
             <Input
               value={title}
               placeholder='请输入视频名称'
@@ -143,32 +178,34 @@ const AddModal = props => {
             />
           </Col>
         </Row>
+        <br />
         <Row>
           <Col span={24}>
-            <Text>视频图片：</Text>
+            <Text>视频封面：</Text>
             <Upload
               accept='.bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp'
-              {...uploadProps}
+              {...imgUploadProps}
             >
               <Button>
                 <Icon type='upload' />
-                上传视频图片
+                上传封面
               </Button>
             </Upload>
           </Col>
         </Row>
+        <br />
         <Row>
           <Col span={24}>
-            <Text>视频链接：</Text>
-            <Input
-              value={url}
-              placeholder='请输入完整的视频链接'
-              allowClear
-              prefix={<Icon type='play-square' />}
-              onChange={e => {
-                setUrl(e.target.value);
-              }}
-            />
+            <Text>视频内容：</Text>
+            <Upload
+              accept='.avi,.mov,.rmvb,.wmv,.flv,.mp4,.3gp,.mpg,.wma,.mkv,.webm,'
+              {...videoUploadProps}
+            >
+              <Button>
+                <Icon type='upload' />
+                上传视频
+              </Button>
+            </Upload>
           </Col>
         </Row>
         <br />
@@ -179,6 +216,7 @@ const AddModal = props => {
               defaultValue={sum}
               placeholder='请输入视频描述'
               autoSize
+              // autoSize={ minRows: 2, maxRows: 6 }
               onChange={e => {
                 setSum(e.target.value);
               }}
@@ -197,4 +235,4 @@ const AddModal = props => {
     </Fragment>
   );
 };
-export default AddModal;
+export default EditModal;

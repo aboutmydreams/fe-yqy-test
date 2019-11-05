@@ -15,6 +15,7 @@ const { TextArea } = Input;
 const { Text } = Typography;
 
 const EditModal = props => {
+  const header = { headers: { "Content-Type": "multipart/form-data" } };
   const token = localStorage.getItem("token");
 
   const [visible, setVisible] = useState(false);
@@ -24,25 +25,39 @@ const EditModal = props => {
   const [url, setUrl] = useState("");
   const [sum, setSum] = useState("");
   const [imgUrl, setImgUrl] = useState("");
-  const [fileName, setFileName] = useState("");
-  const [fileList, setFileList] = useState([
-    {
-      name: fileName,
-      uid: -1,
-      url: imgUrl
-    }
-  ]);
+  const [imgFileList, setImgFileList] = useState([]);
+  const [videoFileList, setVideoFileList] = useState([]);
 
   const { info, onEdit, idx } = props;
-
+  message.config({
+    duration: 1.5,
+    maxCount: 3
+  });
   useEffect(() => {
     const { url, title, summary, cover } = info;
     setTitle(title);
     setUrl(url);
     setSum(summary);
     setImgUrl(cover);
+    setImgFileList([
+      {
+        name: title,
+        uid: -1,
+        url: cover
+      }
+    ]);
+    setVideoFileList([
+      {
+        //文字列表这样设置可以实现将视频名称作为超链接
+        name: url,
+        uid: -1,
+        url: url
+      }
+    ]);
     return () => {};
-  }, [info]);
+    //如果出现上传之后又便会原先的图片，注意是不是deps的问题
+    //eslint-disable-next-line
+  }, []);
 
   const onOk = () => {
     const { video_id } = props.info;
@@ -53,6 +68,7 @@ const EditModal = props => {
       summary: sum,
       cover: imgUrl
     };
+    console.log(newInfo);
     setLoading(true);
     (async () => {
       try {
@@ -69,44 +85,85 @@ const EditModal = props => {
       }
     })();
   };
-  const beforeUpload = (file, fileList) => {
-    setFileName(file.name);
+  //在change钩子和beforeUpload钩子都要写一遍逻辑的原因：
+  //change钩子阻止改变列表，但会继续上传
+  const beforeImgUpload = file => {
+    if (file.size / 1024 / 1024 > 1) {
+      return false;
+    }
     let imgFile = new FormData();
     imgFile.append("file", file);
-    const header = { headers: { "Content-Type": "multipart/form-data" } };
     (async () => {
-      const res = await post(
-        `/upload?token=${token}`,
-        imgFile,
-        header
-      );
+      const res = await post(`/upload?token=${token}`, imgFile, header);
       setImgUrl(res.data.url);
     })();
     return false;
   };
 
-  const handleChange = info => {
-    console.log(info.fileList);
-    let fileList = [...info.fileList];
-    fileList = fileList.slice(-1);
-    setFileList(fileList);
+  const beforeVideoUpload = file => {
+    if (file.size / 1024 / 1024 > 1) {
+      return false;
+    }
+    let videoFile = new FormData();
+    videoFile.append("file", file);
+    (async () => {
+      const res = await post(`/upload?token=${token}`, videoFile, header);
+      console.log(res);
+      setUrl(res.data.url);
+    })();
+    return false;
   };
-  const handleRemove = () => {
-    message.config({
-      duration: 1.5,
-      maxCount: 3
-    });
-    if (fileList.length === 1) {
+
+  // FIXME: 如果有必要的话图片、视频的嫦娥逻辑可以改成相同的
+  const handleImgChange = info => {
+    const { file } = info;
+    if (file.size / 1024 / 1024 > 1) {
+      message.error("请上传小于1MB的图片");
+      return false;
+    }
+    let imgFileList = [...info.fileList];
+    imgFileList = imgFileList.slice(-1);
+    setImgFileList(imgFileList);
+  };
+  const handleVideoChange = info => {
+    const { file } = info;
+    if (file.size / 1024 / 1024 > 1) {
+      message.error("请上传小于1MB的视频");
+      return false;
+    }
+    setVideoFileList([
+      {
+        name: file.name,
+        uid: -1,
+        url: url
+      }
+    ]);
+  };
+  const handleImgRemove = () => {
+    if (imgFileList.length === 1) {
       message.error("图片数量必须为1，如果要使用新的图片，请直接上传新的图片");
       return false;
     }
   };
-  const uploadProps = {
+  const handleVideoRemove = () => {
+    if (videoFileList.length === 1) {
+      message.error("视频数量必须为1，如果要修改视频内容，请直接上传新的视频");
+      return false;
+    }
+  };
+  const imgUploadProps = {
     listType: "picture",
-    fileList: fileList,
-    onChange: handleChange,
-    onRemove: handleRemove,
-    beforeUpload: beforeUpload
+    fileList: imgFileList,
+    onChange: handleImgChange,
+    onRemove: handleImgRemove,
+    beforeUpload: beforeImgUpload
+  };
+  const videoUploadProps = {
+    listType: "text",
+    fileList: videoFileList,
+    onChange: handleVideoChange,
+    onRemove: handleVideoRemove,
+    beforeUpload: beforeVideoUpload
   };
   return (
     <Fragment>
@@ -151,29 +208,34 @@ const EditModal = props => {
             />
           </Col>
         </Row>
+        <br />
         <Row>
           <Col span={24}>
-            <Text>视频图片：</Text>
-            <Upload {...uploadProps}>
+            <Text>视频文件：</Text>
+            <Upload
+              accept='.bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp'
+              {...imgUploadProps}
+            >
               <Button>
                 <Icon type='upload' />
-                上传视频图片
+                上传封面
               </Button>
             </Upload>
           </Col>
         </Row>
+        <br />
         <Row>
           <Col span={24}>
-            <Text>视频链接：</Text>
-            <Input
-              value={url}
-              placeholder='请输入完整的视频链接'
-              allowClear
-              prefix={<Icon type='play-square' />}
-              onChange={e => {
-                setUrl(e.target.value);
-              }}
-            />
+            <Text>视频封面：</Text>
+            <Upload
+              accept='.avi,.mov,.rmvb,.wmv,.flv,.mp4,.3gp,.mpg,.wma,.mkv,.webm,'
+              {...videoUploadProps}
+            >
+              <Button>
+                <Icon type='upload' />
+                上传视频
+              </Button>
+            </Upload>
           </Col>
         </Row>
         <br />

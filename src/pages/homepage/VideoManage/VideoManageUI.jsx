@@ -83,7 +83,7 @@ const VideoManageUI = ({ onAdd, onEdit, onDelete, videoList }) => {
 
   return (
     <Fragment>
-      <AddModal lastVideo={videoList[videoList.length - 1]} onAdd={onAdd} />
+      <AddModal onAdd={onAdd} />
       <Table columns={columns} dataSource={videoList} pagination='bottom' />
     </Fragment>
   );

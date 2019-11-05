@@ -23,7 +23,8 @@ const AdsItem = props => {
     setImgUrl(props.url);
     setFileName(props.name);
     return () => {};
-  }, [props.jump, props.linkUrl, props.name, props.url]);
+    //eslint-disable-next-line
+  }, []);
 
   const { title, onSubmit, idxInList, keyWord } = props;
   const [imgUrl, setImgUrl] = useState("");
@@ -78,11 +79,7 @@ const AdsItem = props => {
     const token = localStorage.getItem("token");
     let header = { headers: { "Content-Type": "multipart/form-data" } };
     (async () => {
-      const res = await post(
-        `/upload?token=${token}`,
-        imgFile,
-        header
-      );
+      const res = await post(`/upload?token=${token}`, imgFile, header);
       setImgUrl(res.data.url);
     })();
     return false;
