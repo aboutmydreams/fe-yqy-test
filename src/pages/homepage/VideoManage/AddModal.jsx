@@ -93,8 +93,8 @@ const EditModal = props => {
 
   const handleImgChange = info => {
     const { file } = info;
-    if (file.size / 1024 / 1024 > 1) {
-      message.error("请上传小于1MB的图片");
+    if (file.size / 1024 / 1024 > 20) {
+      message.error("请上传小于20MB的图片");
       return false;
     }
     let imgFileList = [...info.fileList];
@@ -104,8 +104,8 @@ const EditModal = props => {
   const handleVideoChange = info => {
     const { file } = info;
     console.log(info);
-    if (file.size / 1024 / 1024 > 1) {
-      message.error("请上传小于1MB的视频");
+    if (file.size / 1024 / 1024 > 20) {
+      message.error("请上传小于20MB的视频");
       return false;
     }
   };

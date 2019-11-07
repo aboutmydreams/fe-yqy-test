@@ -80,16 +80,16 @@ class EditModleUI extends Component {
       <div>
         <Modal
           visible={this.state.visibleAdd}
-          title="审核选项"
+          title='审核选项'
           onOk={this.handleOk}
           onCancel={this.handleCancelAdd}
           footer={[
-            <Button key="back" onClick={this.handleCancelAdd}>
+            <Button key='back' onClick={this.handleCancelAdd}>
               取消
             </Button>,
             <Button
-              key="submit"
-              type="primary"
+              key='submit'
+              type='primary'
               loading={this.state.loadingAdd}
               onClick={this.handleOkAdd}
             >
@@ -115,8 +115,8 @@ class EditModleUI extends Component {
           </Form.Item>
         </Modal>
         <Button
-          className="EditModleUI"
-          type="primary"
+          className='EditModleUI'
+          type='primary'
           onClick={this.showModalAdd}
         >
           审核

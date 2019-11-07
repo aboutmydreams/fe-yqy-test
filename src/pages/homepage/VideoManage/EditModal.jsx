@@ -88,7 +88,7 @@ const EditModal = props => {
   //在change钩子和beforeUpload钩子都要写一遍逻辑的原因：
   //change钩子阻止改变列表，但会继续上传
   const beforeImgUpload = file => {
-    if (file.size / 1024 / 1024 > 1) {
+    if (file.size / 1024 / 1024 > 20) {
       return false;
     }
     let imgFile = new FormData();
@@ -101,7 +101,7 @@ const EditModal = props => {
   };
 
   const beforeVideoUpload = file => {
-    if (file.size / 1024 / 1024 > 1) {
+    if (file.size / 1024 / 1024 > 20) {
       return false;
     }
     let videoFile = new FormData();
@@ -117,8 +117,8 @@ const EditModal = props => {
   // FIXME: 如果有必要的话图片、视频的嫦娥逻辑可以改成相同的
   const handleImgChange = info => {
     const { file } = info;
-    if (file.size / 1024 / 1024 > 1) {
-      message.error("请上传小于1MB的图片");
+    if (file.size / 1024 / 1024 > 20) {
+      message.error("请上传小于20MB的图片");
       return false;
     }
     let imgFileList = [...info.fileList];
@@ -127,8 +127,8 @@ const EditModal = props => {
   };
   const handleVideoChange = info => {
     const { file } = info;
-    if (file.size / 1024 / 1024 > 1) {
-      message.error("请上传小于1MB的视频");
+    if (file.size / 1024 / 1024 > 20) {
+      message.error("请上传小于20MB的视频");
       return false;
     }
     setVideoFileList([

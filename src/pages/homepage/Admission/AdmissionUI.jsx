@@ -6,7 +6,6 @@ import EditInterface from "./EditModal";
 import AuditModal from "./AuditModal";
 // import Addbutton from "./AddModle";
 // import Deletebutton from "./DeleteModle";
-
 const AdmissionUI = () => {
   const token = localStorage.getItem("token");
   const [editType, setEditType] = useState("edit");
@@ -39,7 +38,7 @@ const AdmissionUI = () => {
       render: text => {
         return (
           <Fragment>
-            <AuditModal info={text}/>
+            <AuditModal info={text} />
             <Button
               type='primary'
               onClick={() => {
@@ -121,12 +120,10 @@ const AdmissionUI = () => {
           onCancel={() => {
             seEditModaltVisible(false);
           }}
-          onSave={handleSaveEdition}
-          onAdd={handleAddCompany}
         />
       ) : (
         <>
-          <Button
+          {/* <Button
             type='primary'
             onClick={() => {
               setEditType("add");
@@ -135,7 +132,7 @@ const AdmissionUI = () => {
             }}
           >
             新增
-          </Button>
+          </Button> */}
           <Table
             columns={columns}
             dataSource={listData}

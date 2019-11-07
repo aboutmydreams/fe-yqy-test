@@ -49,7 +49,7 @@ const AdsItem = props => {
   }, []);
   const handleChange = info => {
     const { file, fileList } = info;
-    if (file.size / 1024 / 1024 > 1) {
+    if (file.size / 1024 / 1024 > 20) {
       message.error("请上传小于1MB的图片");
       return false;
     }
@@ -63,14 +63,14 @@ const AdsItem = props => {
       duration: 1.5,
       maxCount: 3
     });
-    if (currentFileList.length === 1) {
+    if (currentFileList.length === 20) {
       message.error("图片数量必须为1，如果要使用新的图片，请直接上传新的图片");
       return false;
     }
   };
 
   const beforeUpload = file => {
-    if (file.size / 1024 / 1024 > 1) {
+    if (file.size / 1024 / 1024 > 20) {
       return false;
     }
     setFileName(file.name);

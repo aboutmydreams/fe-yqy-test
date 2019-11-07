@@ -81,8 +81,8 @@ const StartPage = props => {
   const handleChange = info => {
     console.log(startImgInfo);
     const { file, fileList } = info;
-    if (file.size / 1024 / 1024 > 1) {
-      message.error("请上传小于1MB的图片");
+    if (file.size / 1024 / 1024 > 20) {
+      message.error("请上传小于20MB的图片");
       return false;
     }
     let newFileList = [...fileList];
@@ -91,9 +91,7 @@ const StartPage = props => {
   };
   //由这一部分来处理上传到服务器
   const beforeUpload = file => {
-    //检测文件大小不得超过1MB
-    //还是如果超过1MB了我们再给他转一下
-    if (file.size / 1024 / 1024 > 1) {
+    if (file.size / 1024 / 1024 > 20) {
       return false;
     }
     setFileName(file.name);
