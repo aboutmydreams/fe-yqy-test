@@ -1,162 +1,150 @@
-import React from "react";
-import { Table, Tag, message } from "antd";
-import axios from "axios";
-
+import React, { useState, Fragment, useEffect } from "react";
+import { Table, Tag, Menu, Icon, Button } from "antd";
+import { get } from "../../../request/http";
 import "./style.css";
-import EditModleUI from "./EditModle";
+import EditInterface from "./EditModal";
+import AuditModal from "./AuditModal";
 // import Addbutton from "./AddModle";
 // import Deletebutton from "./DeleteModle";
 
-class AdmissionUI extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      loading: false,
-      visible: false,
-      inputValue: "",
-      inputChange: "",
-      columns: [
-        {
-          title: "姓名",
-          dataIndex: "true_name",
-          key: "true_name",
-          render: text => <p>{text}</p>
-        },
-        {
-          title: "角色",
-          dataIndex: "role",
-          key: "role",
-          render: text => (
-            <Tag color={text.length > 4 ? "green" : "red"}>{text}</Tag>
-          )
-        },
-        {
-          title: "手机号",
-          dataIndex: "username",
-          key: "username",
-          render: text => <p>{text}</p>
-        },
-        {
-          title: "个人地址",
-          dataIndex: "my_address",
-          key: "my_address",
-          render: text => <p>{text}</p>
-        },
-        {
-          title: "图片",
-          dataIndex: "img_links",
-          key: "img_links",
-          render: text => {
-            if (text.search(";") !== -1) {
-              let textList = text.split(";");
-              let imgList = [];
-              for (let imgSrc of textList) {
-                imgList.push(
-                  <img
-                    key={imgSrc}
-                    className='commodity'
-                    src={imgSrc}
-                    alt='shop'
-                  />
-                );
-              }
-              text = imgList;
-            } else {
-              text = <img className='commodity' src={text} alt='shop' />;
-            }
-            // console.log(text);
-            return <div>{text}</div>;
-          }
-        },
-        {
-          title: "企业名",
-          key: "company",
-          dataIndex: "company",
-          render: text => {
-            let texts = text.split(";");
-            return (
-              <span>
-                {texts.map(tag => {
-                  let color = tag.length > 3 ? "blue" : "green";
-                  if (tag === "loser") {
-                    color = "volcano";
-                  }
-                  return (
-                    <Tag color={color} key={tag}>
-                      {tag.toUpperCase()}
-                    </Tag>
-                  );
-                })}
-              </span>
-            );
-          }
-        },
-        {
-          title: "企业地址",
-          dataIndex: "company_address",
-          key: "company_address",
-          render: text => <p>{text}</p>
-        },
-        {
-          title: "操作",
-          key: "action",
-          render: (text, record) => {
-            return (
-              <span>
-                <EditModleUI text={text} />
-                {/* <Deletebutton text={text} /> */}
-              </span>
-            );
-          }
+const AdmissionUI = () => {
+  const token = localStorage.getItem("token");
+  const [editType, setEditType] = useState("edit");
+  const [editModalVisible, seEditModaltVisible] = useState(false);
+  const [totalList, setTotalList] = useState([]);
+  const [listData, setListData] = useState([]);
+  const [currentEditKey, setCurrentEditKey] = useState({});
+  const columns = [
+    {
+      title: "姓名",
+      dataIndex: "true_name",
+      key: "true_name",
+      render: text => <p>{text}</p>
+    },
+    {
+      title: "公司名称",
+      key: "company",
+      dataIndex: "company",
+      render: text => <Tag color={"blue"}>{text}</Tag>
+    },
+    {
+      title: "手机号",
+      dataIndex: "username",
+      key: "username",
+      render: text => <p>{text}</p>
+    },
+    {
+      title: "操作",
+      key: "action",
+      render: text => {
+        return (
+          <Fragment>
+            <AuditModal info={text}/>
+            <Button
+              type='primary'
+              onClick={() => {
+                seEditModaltVisible(true);
+                setEditType("edit");
+                setCurrentEditKey(text.key);
+              }}
+            >
+              编辑
+            </Button>
+          </Fragment>
+        );
+      }
+    }
+  ];
+  useEffect(() => {
+    (async () => {
+      const res = await get(`/attest/attest?token=${token}`);
+      setTotalList(res.data["data"]);
+      const user0List = [];
+      res.data["data"].forEach(item => {
+        if (item.role === "user0") {
+          return user0List.push(item);
         }
-      ],
+      });
+      setListData(user0List);
+    })();
+    return () => {};
+    //eslint-disable-next-line
+  }, [token]);
 
-      data: []
-    };
-  }
-
-  componentDidMount() {
-    let token = localStorage.getItem("token");
-    axios
-      .get("http://59.110.237.244/api/attest/attest?token=" + token)
-      .then(res => this.setState({ data: res.data["data"] }));
-  }
-
-  showModal = () => {
-    this.setState({
-      visible: true
+  const handleChangeData = ({ key }) => {
+    seEditModaltVisible(false);
+    const currentList = [];
+    totalList.forEach(item => {
+      if (item.role === key) {
+        return currentList.push(item);
+      }
     });
+    setListData(currentList);
   };
-
-  handleOk = () => {
-    setTimeout(() => {
-      this.setState({ loading: false, visible: false });
-      message.success("修改图片地址成功");
-    }, 3000);
+  const handleSaveEdition = () => {
+    console.log("save");
   };
-
-  handleCancel = () => {
-    this.setState({ visible: false });
+  const handleAddCompany = () => {
+    console.log("add");
   };
-
-  inputChange(e) {
-    this.setState({
-      inputValue: e.target.value
-    });
-  }
-
-  render() {
-    return (
-      <div>
-        {/* <Addbutton /> */}
-        <Table
-          columns={this.state.columns}
-          dataSource={this.state.data}
-          pagination='bottom'
+  //TODO: 感觉没有必要使用二级路由，因为并不涉及组件的切换...
+  //四个板块用的是同一个组件，只是数据不同
+  //TODO: 展示组件与编辑组件的切换，考虑上动画？
+  return (
+    <>
+      <Menu
+        onClick={handleChangeData}
+        defaultSelectedKeys={["user0"]}
+        mode='horizontal'
+      >
+        <Menu.Item key='user0'>
+          <Icon type='mail' />
+          User
+        </Menu.Item>
+        <Menu.Item key='vip1'>
+          <Icon type='appstore' />
+          Vip1
+        </Menu.Item>
+        <Menu.Item key='vip2'>
+          <Icon type='appstore' />
+          Vip2
+        </Menu.Item>
+        <Menu.Item key='vip3'>
+          <Icon type='appstore' />
+          Vip3
+        </Menu.Item>
+      </Menu>
+      {editModalVisible ? (
+        <EditInterface
+          companyKey={currentEditKey}
+          type={editType}
+          onCancel={() => {
+            seEditModaltVisible(false);
+          }}
+          onSave={handleSaveEdition}
+          onAdd={handleAddCompany}
         />
-      </div>
-    );
-  }
-}
+      ) : (
+        <>
+          <Button
+            type='primary'
+            onClick={() => {
+              setEditType("add");
+              seEditModaltVisible(true);
+              setCurrentEditKey("");
+            }}
+          >
+            新增
+          </Button>
+          <Table
+            columns={columns}
+            dataSource={listData}
+            pagination='bottom'
+          ></Table>
+        </>
+      )}
+    </>
+  );
+};
 
 export default AdmissionUI;

@@ -61,23 +61,7 @@ const StartPage = props => {
         }
       ]);
     })();
-    async function timeout(ms) {
-      await new Promise(resolve => {
-        setTimeout(resolve, ms);
-      });
-    }
-    async function asyncPrint(value, ms) {
-      console.time("total");
-      await timeout(ms);
-      console.log("step1");
-      await timeout(1000);
-      console.log("step2");
-      await timeout(2000);
-      console.log("step3");
-      console.log(value);
-      console.timeEnd("total");
-    }
-    asyncPrint("111", 5000);
+
     return () => {};
     // eslint-disable-next-line
   }, []);

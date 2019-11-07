@@ -110,9 +110,6 @@ class EditModleUI extends Component {
               </Radio>
               <Radio style={radioStyle} value={"user0"}>
                 不通过
-                {/* {this.state.value === 4 ? (
-                  <Input style={{ width: 100, marginLeft: 10 }} />
-                ) : null} */}
               </Radio>
             </Radio.Group>
           </Form.Item>
