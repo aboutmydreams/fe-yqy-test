@@ -11,7 +11,13 @@ const InitForm = props => {
   const {
     companyKey: key,
     onSaveEdition,
-    form: { getFieldDecorator, getFieldsError, getFieldsValue, setFieldsValue }
+    form: {
+      getFieldDecorator,
+      getFieldsError,
+      getFieldsValue,
+      setFieldsValue,
+      validateFields
+    }
   } = props;
   console.log(props);
   const [companyImg, setCompanyImg] = useState("");
@@ -43,6 +49,7 @@ const InitForm = props => {
       const res = await get(`/user/detail?token=${token}&key=${key}`);
       const yyzzImgUrl = [];
       const currentInfo = res.data.company;
+      console.log(JSON.stringify(currentInfo));
       const { company_img_link, sfz_img_link, yyzz_img_link } = currentInfo;
       setCompanyImg(company_img_link);
       setSfzImg(sfz_img_link);
@@ -80,7 +87,7 @@ const InitForm = props => {
         },
         //在设置完初始值后进行校验
         () => {
-          props.form.validateFields();
+          validateFields();
         }
       );
     })();
@@ -133,9 +140,20 @@ const InitForm = props => {
   //   isFieldTouched("companyImg") && getFieldError("companyImg");
   // const sfzImgErr = isFieldTouched("sfzImg") && getFieldError("sfzImg");
   // const yyzzImgErr = isFieldTouched("yyzzImgUrl") && getFieldError("yyzzImgUrl");
+  const formItemLayout = {
+    //TODO:上响应式 不然太太太丑了
+    // labelCol: {
+    //   xs: { span: 24 },
+    //   sm: { span: 5 }
+    // },
+    // wrapperCol: {
+    //   xs: { span: 24 },
+    //   sm: { span: 12 }
+    // }
+  };
 
   return (
-    <Form layout='vertical' onSubmit={handleSubmit}>
+    <Form layout='vertical' onSubmit={handleSubmit} {...formItemLayout}>
       <Item label='公司名称' hasFeedback>
         {getFieldDecorator("companyName", {
           rules: [{ required: true, message: "请输入公司名称" }],
@@ -179,7 +197,13 @@ const InitForm = props => {
 
       <Item label='联系人姓名' hasFeedback>
         {getFieldDecorator("name", {
-          rules: [{ required: true, message: "请输入联系人名称" }]
+          rules: [
+            { required: true, message: "请输入联系人名称" },
+            {
+              pattern: /[\u4e00-\u9fa5]/gm,
+              message: "请输入中文姓名"
+            }
+          ]
         })(
           <Input
             prefix={<Icon type='user' style={{ color: "rgba(0,0,0,.25)" }} />}

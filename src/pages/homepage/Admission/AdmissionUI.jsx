@@ -6,6 +6,7 @@ import EditInterface from "./EditModal";
 import AuditModal from "./AuditModal";
 // import Addbutton from "./AddModle";
 // import Deletebutton from "./DeleteModle";
+
 const AdmissionUI = () => {
   const token = localStorage.getItem("token");
   const [editType, setEditType] = useState("edit");
@@ -57,6 +58,7 @@ const AdmissionUI = () => {
   useEffect(() => {
     (async () => {
       const res = await get(`/attest/attest?token=${token}`);
+      console.log(res);
       setTotalList(res.data["data"]);
       const user0List = [];
       res.data["data"].forEach(item => {
@@ -79,12 +81,6 @@ const AdmissionUI = () => {
       }
     });
     setListData(currentList);
-  };
-  const handleSaveEdition = () => {
-    console.log("save");
-  };
-  const handleAddCompany = () => {
-    console.log("add");
   };
   //TODO: 感觉没有必要使用二级路由，因为并不涉及组件的切换...
   //四个板块用的是同一个组件，只是数据不同

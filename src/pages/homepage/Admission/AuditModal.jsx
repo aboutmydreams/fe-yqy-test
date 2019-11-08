@@ -3,7 +3,7 @@ import { Button, Modal, Form, Radio, message } from "antd";
 import { put } from "../../../request/http";
 const AuditModal = props => {
   const { info } = props;
-  const { username } = info;
+  const { username, role } = info;
   const token = localStorage.getItem("token");
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -37,7 +37,7 @@ const AuditModal = props => {
     })();
   };
   const handleChange = e => {
-    setCurrentLevel  (e.target.value);
+    setCurrentLevel(e.target.value);
   };
   return (
     <Fragment>
@@ -68,7 +68,7 @@ const AuditModal = props => {
         ]}
       >
         <Form.Item>
-          <Radio.Group onChange={handleChange}>
+          <Radio.Group onChange={handleChange} defaultValue={role}>
             <Radio style={radioStyle} value={"vip1"}>
               vip1
             </Radio>
