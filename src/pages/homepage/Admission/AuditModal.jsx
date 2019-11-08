@@ -86,7 +86,7 @@ const AuditModal = props => {
       </Modal>
 
       <Button
-        icon='check'
+        icon='audit'
         type='primary'
         onClick={() => {
           setVisible(true);

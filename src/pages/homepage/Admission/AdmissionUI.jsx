@@ -2,15 +2,14 @@ import React, { useState, Fragment, useEffect } from "react";
 import { Table, Tag, Menu, Icon, Button } from "antd";
 import { get } from "../../../request/http";
 import "./style.css";
-import EditInterface from "./EditModal";
+import EditInterface from "./EditPage";
 import AuditModal from "./AuditModal";
-// import Addbutton from "./AddModle";
 // import Deletebutton from "./DeleteModle";
 
 const AdmissionUI = () => {
   const token = localStorage.getItem("token");
   const [editType, setEditType] = useState("edit");
-  const [editModalVisible, seEditModaltVisible] = useState(false);
+  const [editModalVisible, seEditPageVisible] = useState(false);
   const [totalList, setTotalList] = useState([]);
   const [listData, setListData] = useState([]);
   const [currentEditKey, setCurrentEditKey] = useState({});
@@ -42,8 +41,9 @@ const AdmissionUI = () => {
             <AuditModal info={text} />
             <Button
               type='primary'
+              icon='edit'
               onClick={() => {
-                seEditModaltVisible(true);
+                seEditPageVisible(true);
                 setEditType("edit");
                 setCurrentEditKey(text.key);
               }}
@@ -73,7 +73,7 @@ const AdmissionUI = () => {
   }, [token]);
 
   const handleChangeData = ({ key }) => {
-    seEditModaltVisible(false);
+    seEditPageVisible(false);
     const currentList = [];
     totalList.forEach(item => {
       if (item.role === key) {
@@ -93,7 +93,7 @@ const AdmissionUI = () => {
         mode='horizontal'
       >
         <Menu.Item key='user0'>
-          <Icon type='mail' />
+          <Icon type='user' />
           User
         </Menu.Item>
         <Menu.Item key='vip1'>
@@ -114,21 +114,22 @@ const AdmissionUI = () => {
           companyKey={currentEditKey}
           type={editType}
           onCancel={() => {
-            seEditModaltVisible(false);
+            seEditPageVisible(false);
           }}
         />
       ) : (
         <>
-          {/* <Button
+          <Button
             type='primary'
+            icon='plus-circle'
             onClick={() => {
               setEditType("add");
-              seEditModaltVisible(true);
+              seEditPageVisible(true);
               setCurrentEditKey("");
             }}
           >
             新增
-          </Button> */}
+          </Button>
           <Table
             columns={columns}
             dataSource={listData}

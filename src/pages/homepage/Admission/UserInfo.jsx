@@ -10,6 +10,7 @@ const header = { headers: { "Content-Type": "multipart/form-data" } };
 const InitForm = props => {
   const {
     companyKey: key,
+    type,
     onSaveEdition,
     form: {
       getFieldDecorator,
@@ -19,7 +20,6 @@ const InitForm = props => {
       validateFields
     }
   } = props;
-  console.log(props);
   const [companyImg, setCompanyImg] = useState("");
   const [sfzImg, setSfzImg] = useState("");
   const [yyzzImgUrl, setYyzzImg] = useState([]);
@@ -45,52 +45,56 @@ const InitForm = props => {
   };
 
   useEffect(() => {
-    (async () => {
-      const res = await get(`/user/detail?token=${token}&key=${key}`);
-      const yyzzImgUrl = [];
-      const currentInfo = res.data.company;
-      console.log(JSON.stringify(currentInfo));
-      const { company_img_link, sfz_img_link, yyzz_img_link } = currentInfo;
-      setCompanyImg(company_img_link);
-      setSfzImg(sfz_img_link);
-      setYyzzImg(yyzz_img_link.split(";"));
-      yyzz_img_link.split(";").map((imgUrl, idx) => {
-        return yyzzImgUrl.push({
-          name: currentInfo.company,
-          uid: idx,
-          url: imgUrl
+    if (key.length !== 0) {
+      (async () => {
+        const res = await get(`/user/detail?token=${token}&key=${key}`);
+        const yyzzImgUrl = [];
+        const currentInfo = res.data.company;
+        console.log(JSON.stringify(currentInfo));
+        const { company_img_link, sfz_img_link, yyzz_img_link } = currentInfo;
+        setCompanyImg(company_img_link);
+        setSfzImg(sfz_img_link);
+        setYyzzImg(yyzz_img_link.split(";"));
+        yyzz_img_link.split(";").map((imgUrl, idx) => {
+          return yyzzImgUrl.push({
+            name: currentInfo.company,
+            uid: idx,
+            url: imgUrl
+          });
         });
-      });
-      setFieldsValue(
-        {
-          companyName: currentInfo.company,
-          addr: currentInfo.company_address,
-          detail: currentInfo.company_detail,
-          name: currentInfo.true_name,
-          phone: currentInfo.phone,
-          collect: currentInfo.collect_count,
-          companyImg: [
-            {
-              name: currentInfo.company,
-              uid: -1,
-              url: company_img_link
-            }
-          ],
-          sfzImg: [
-            {
-              name: currentInfo.true_name,
-              uid: -1,
-              url: sfz_img_link
-            }
-          ],
-          yyzzImgUrl: yyzzImgUrl
-        },
-        //在设置完初始值后进行校验
-        () => {
-          validateFields();
-        }
-      );
-    })();
+        setFieldsValue(
+          {
+            companyName: currentInfo.company,
+            addr: currentInfo.company_address,
+            detail: currentInfo.company_detail,
+            name: currentInfo.true_name,
+            phone: currentInfo.phone,
+            collect: currentInfo.collect_count,
+            companyImg: [
+              {
+                name: currentInfo.company,
+                uid: -1,
+                url: company_img_link
+              }
+            ],
+            sfzImg: [
+              {
+                name: currentInfo.true_name,
+                uid: -1,
+                url: sfz_img_link
+              }
+            ],
+            yyzzImgUrl: yyzzImgUrl
+          },
+          //在设置完初始值后进行校验
+          () => {
+            validateFields();
+          }
+        );
+      })();
+    } else {
+      validateFields();
+    }
     return () => {};
     // eslint-disable-next-line
   }, []);
@@ -140,6 +144,7 @@ const InitForm = props => {
   //   isFieldTouched("companyImg") && getFieldError("companyImg");
   // const sfzImgErr = isFieldTouched("sfzImg") && getFieldError("sfzImg");
   // const yyzzImgErr = isFieldTouched("yyzzImgUrl") && getFieldError("yyzzImgUrl");
+
   const formItemLayout = {
     //TODO:上响应式 不然太太太丑了
     // labelCol: {
@@ -160,7 +165,7 @@ const InitForm = props => {
           trigger: "onChange"
         })(
           <Input
-            prefix={<Icon type='user' style={{ color: "rgba(0,0,0,.25)" }} />}
+            prefix={<Icon type='home' style={{ color: "rgba(0,0,0,.25)" }} />}
             placeholder='公司名称'
           />
         )}
@@ -171,7 +176,9 @@ const InitForm = props => {
           rules: [{ required: true, message: "请输入公司地址" }]
         })(
           <Input
-            prefix={<Icon type='lock' style={{ color: "rgba(0,0,0,.25)" }} />}
+            prefix={
+              <Icon type='compass' style={{ color: "rgba(0,0,0,.25)" }} />
+            }
             type='addr'
             placeholder='addr'
           />
@@ -181,18 +188,26 @@ const InitForm = props => {
       <Item label='公司详情' hasFeedback>
         {getFieldDecorator("detail", {
           rules: [{ required: true, message: "请输入企业详情" }]
-        })(<TextArea placeholder='企业详情' autoSize />)}
+        })(
+          <TextArea
+            placeholder='企业详情'
+            prefix={<Icon icon='shop' />}
+            autoSize
+          />
+        )}
       </Item>
 
       <Item label='收藏数' hasFeedback>
         {getFieldDecorator("collect", {
           //TODO: 校验
           rules: [{ required: true, message: "" }]
-        })(<InputNumber min={0} />)}
+        })(<InputNumber min={0} prefix={<Icon type='star' />} />)}
       </Item>
 
       <Item label='手机号' hasFeedback>
-        {getFieldDecorator("phone")(<Input disabled />)}
+        {getFieldDecorator("phone")(
+          <Input prefix={<Icon type='mobile' />} disabled />
+        )}
       </Item>
 
       <Item label='联系人姓名' hasFeedback>
@@ -274,8 +289,9 @@ const InitForm = props => {
       </Item>
 
       <Item>
-        <Button>取消</Button>
+        <Button icon='close'>取消</Button>
         <Button
+          icon='check'
           type='primary'
           htmlType='submit'
           disabled={hasErrors(getFieldsError())}
