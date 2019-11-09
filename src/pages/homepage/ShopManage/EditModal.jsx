@@ -104,6 +104,7 @@ const EditModal = props => {
       setLoading(false);
       return false;
     }
+    console.log(newProductInfo);
     (async () => {
       try {
         const res = await put(`shop/edit?token=${token}`, newProductInfo);

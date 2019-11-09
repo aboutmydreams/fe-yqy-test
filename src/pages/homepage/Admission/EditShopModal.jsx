@@ -1,4 +1,5 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect } from "react";
+
 import {
   Typography,
   message,
@@ -9,124 +10,208 @@ import {
   Modal,
   Upload
 } from "antd";
-
-import { put, post, get } from "../../../request/http";
+import { put, post } from "../../../request/http";
 import _ from "lodash";
 import "./style.css";
 const { TextArea } = Input;
-const { Item } = Form;
 const { Text } = Typography;
 const header = { headers: { "Content-Type": "multipart/form-data" } };
 const token = localStorage.getItem("token");
 
 const EditShopModal = props => {
-  console.log(props);
-  const {
-    productInfo: {
-      key: productKey,
-      name,
-      img_link,
-      img_detail,
-      price,
-      shop_detail
-    },
-    form: {
-      getFieldDecorator,
-      getFieldsError,
-      getFieldsValue,
-      setFieldsValue,
-      validateFields
-    }
-  } = props;
-  const [coverImgList, setCoverImgList] = useState([]);
-  const [detailImgList, setDetailImgList] = useState([]);
 
+  console.log(props);
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
 
+  //商品信息
+  const [name, setName] = useState("");
+  const [imgLink, setImgLink] = useState([]);
+  const [imgDetail, setImgDetail] = useState([]);
+  const [price, setPrice] = useState("");
+  const [detail, setDetail] = useState("");
+  //编辑模态框上传组件的上传列表
+  const [coverImgList, setCoverImgList] = useState([]);
+  const [detailImgList, setDetailImgList] = useState([]);
+
   useEffect(() => {
-    const coverImg = [];
-    const detailImg = [];
-    //TODO: 复用提取逻辑
-    img_link.split(";").map((coverLink, idx) => {
-      return coverImg.push({
+    //这个组件的imgLink始终为数组格式，只有在上传时才会转为字符串
+    const { productInfo } = props;
+    const { name, img_link, img_detail, price, shop_detail } = productInfo;
+    const imgLinkArr = img_link.split(";");
+    const imgDetailArr = img_detail.split(";");
+
+    setName(name);
+    setImgLink(imgLinkArr);
+    setImgDetail(imgDetailArr);
+    setPrice(price);
+    setDetail(shop_detail);
+
+    imgLinkArr.map((link, idx) => {
+      return coverImgList.push({
         uid: idx,
         name: name,
-        url: coverLink
+        url: link
       });
     });
-    img_detail.split(";").map((detailLink, idx) => {
-      return detailImg.push({
+    imgDetailArr.map((link, idx) => {
+      return detailImgList.push({
         uid: idx,
         name: name,
-        url: detailLink
+        url: link
       });
     });
-    setCoverImgList(img_link.split(";"));
-    setDetailImgList(img_detail.split(";"));
-    setFieldsValue(
-      {
-        productName: name,
-        price: price,
-        detail: shop_detail,
-        coverImg: coverImg,
-        detailImg: detailImg
-      },
-      () => {
-        validateFields();
-      }
-    );
     return () => {};
     //eslint-disable-next-line
   }, []);
 
-  const hasErrors = fieldsError => {
-    return Object.keys(fieldsError).some(field => fieldsError[field]);
-  };
-  //TODO: 考虑抽离上传逻辑
-  const saveProdInfo = e => {
-    e.preventDefault();
-    const { productName, price, detail } = getFieldsValue();
+  const handleOk = () => {
+    console.log(coverImgList);
+    let newImgLink = [];
+    let newImgDetail = [];
 
-    const formatPrice = price.replace("；", ";");
+    coverImgList.map(item => {
+      return newImgLink.push(item.url);
+    });
+    detailImgList.map(item => {
+      return newImgDetail.push(item.url);
+    });
+
     const newProductInfo = {
-      key: productKey,
-      name: productName,
-      price: formatPrice,
-      shop_detail: detail,
-      img_link: coverImgList.join(";"),
-      img_detail: detailImgList.join(";")
+      key: props.productInfo.key,
+      name: name,
+      price: price,
+      //如果没有上传新的，则使用原本的封面/详情图片（保留）
+      img_link: newImgLink.length === 0 ? imgLink : newImgLink.join(";"),
+      img_detail:
+        newImgDetail.length === 0 ? imgDetail : newImgDetail.join(";"),
+      shop_detail: detail
     };
+    setLoading(true);
+    //上传前校验(与新增的模块校验规则稍微不同哈)
+    if (
+      imgLink.length === 0 ||
+      imgDetail.length === 0 ||
+      name.trim().length === 0 ||
+      price.trim().length === 0 ||
+      detail.trim().length === 0
+    ) {
+      message.error({
+        content:
+          "请输入完整信息,商品名称、价格以及描述不得为空，如果不上传新的封面以及详情图片，则会采用原本的图片",
+        duration: 10
+      });
+      setLoading(false);
+      return false;
+    }
     console.log(newProductInfo);
     (async () => {
-      const res = await put(`shop/edit?token=${token}`, newProductInfo);
-      console.log(res);
-      //FIXME: 这里先用刷新替代一下，后面会改成实时更新
-      //TODO: 交互
-      window.location.reload();
+      try {
+        const res = await put(`shop/edit?token=${token}`, newProductInfo);
+        const resCode = res.data.code;
+        resCode === 1
+          ? message.success("修改成功,请刷新列表查看") && setVisible(false)
+          : message.error(`操作失败：${res.data.error}`);
+      } catch (err) {
+        message.error(`操作失败: ${err}`);
+        setLoading(false);
+      }
     })();
   };
 
-  const normImgFileList = (e, set, count, state) => {
-    console.log(e);
-    if (e.file.status !== "removed") {
-      let imgFile = new FormData();
-      imgFile.append("file", e.file);
-      (async () => {
-        const res = await post(`/upload?token=${token}`, imgFile, header);
-        const [...copy] = state;
-        copy.push(res.data.url);
-        set(copy);
-      })();
-      //在图片列表更改时并不是用的回传的url而是本地图片
-      return e.fileList.slice(-count);
+  const handleCoverRemove = file => {
+    if (coverImgList.length === 1) {
+      message.error("至少保留一张图片");
+      return false;
     } else {
-      return e.fileList;
+      const delIdx = coverImgList.findIndex(item => {
+        return item.url === file.url;
+      });
+      let newCoverImgList = _.cloneDeep(coverImgList);
+      newCoverImgList.splice(delIdx, 1);
+      console.log(newCoverImgList);
+      setCoverImgList(newCoverImgList);
+    }
+  };
+  const handleDetailRemove = file => {
+    if (detailImgList.length === 1) {
+      message.error("至少保留一张照片");
+      return false;
+    } else {
+      const delIdx = detailImgList.findIndex(item => {
+        return item.url === file.url;
+      });
+      let newDetailImgList = _.cloneDeep(detailImgList);
+      newDetailImgList.splice(delIdx, 1);
+      setDetailImgList(newDetailImgList);
     }
   };
 
+  const beforeCoverUpload = file => {
+    const imgFile = new FormData();
+    imgFile.append("file", file);
+    (async () => {
+      const res = await post(`/upload?token=${token}`, imgFile, header);
+      coverImgList.length === 5
+        ? setCoverImgList([
+            ...coverImgList.slice(-4),
+            {
+              name: file.name,
+              uid: -Math.random() * 100,
+              url: res.data.url
+            }
+          ])
+        : setCoverImgList([
+            ...coverImgList,
+            {
+              name: file.name,
+              uid: -Math.random() * 100,
+              url: res.data.url
+            }
+          ]);
+    })();
+    return false;
+  };
+  const beforeDetailUpload = file => {
+    const imgFile = new FormData();
+    imgFile.append("file", file);
+    (async () => {
+      const res = await post(`/upload?token=${token}`, imgFile, header);
+      detailImgList.length === 5
+        ? setDetailImgList([
+            ...detailImgList.slice(-4),
+            {
+              name: file.name,
+              uid: -Math.random() * 100,
+              url: res.data.url
+            }
+          ])
+        : setDetailImgList([
+            ...detailImgList,
+            {
+              name: file.name,
+              uid: -Math.random() * 100,
+              url: res.data.url
+            }
+          ]);
+    })();
+    return false;
+  };
+
+  const coverProps = {
+    listType: "picture",
+    fileList: coverImgList,
+    beforeUpload: beforeCoverUpload,
+    onRemove: handleCoverRemove
+  };
+  const detailProps = {
+    listType: "picture",
+    fileList: detailImgList,
+    beforeUpload: beforeDetailUpload,
+    onRemove: handleDetailRemove
+  };
   return (
-    <Fragment>
+    <div>
       <Modal
         visible={visible}
         title='编辑'
@@ -145,84 +230,65 @@ const EditShopModal = props => {
           <Button
             key='submit'
             type='primary'
-            // loading={loading}
-            onClick={saveProdInfo}
-            disabled={hasErrors(getFieldsError())}
+            loading={loading}
+            onClick={handleOk}
           >
             确认
           </Button>
         ]}
       >
-        <Form layout='vertical' onSubmit={saveProdInfo}>
-          <Item label='商品名称' hasFeedback>
-            {getFieldDecorator("productName", {
-              rules: [{ required: true, message: "请输入商品名称" }]
-            })(<Input placeholder='商品名称' />)}
-          </Item>
-
-          <Item
-            label='上传封面图片'
-            extra='只能上传不超过五张图片，每张大小不得超过20MB'
-            hasFeedback
+        <Form.Item>
+          <Text strong>商品名称（不可重复）</Text>
+          <Input
+            placeholder='名称'
+            className='input'
+            value={name}
+            onChange={e => {
+              setName(e.target.value);
+            }}
+          />
+          <Upload
+            accept='.bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp'
+            {...coverProps}
           >
-            {getFieldDecorator("coverImg", {
-              rules: [{ required: true, message: "至少上传一张照片" }],
-              valuePropName: "fileList",
-              getValueFromEvent: e => {
-                return normImgFileList(e, setCoverImgList, 5, coverImgList);
-              }
-            })(
-              <Upload
-                beforeUpload={() => {
-                  return false;
-                }}
-                accept='.bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp'
-                listType='picture'
-              >
-                <Button icon='upload'>上传封面照片</Button>
-              </Upload>
-            )}
-          </Item>
-
-          <Item
-            label='上传详情图片'
-            extra='只能上传不超过五张图片，每张大小不得超过20MB'
-            hasFeedback
+            <Button>
+              <Icon type='upload' />
+              上传封面图片(数量限制：5)
+            </Button>
+          </Upload>
+          <Upload
+            accept='.bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp'
+            {...detailProps}
           >
-            {getFieldDecorator("detailImg", {
-              rules: [{ required: true, message: "至少上传一张照片" }],
-              valuePropName: "fileList",
-              getValueFromEvent: e => {
-                return normImgFileList(e, setDetailImgList, 5, detailImgList);
-              }
-            })(
-              <Upload
-                beforeUpload={() => {
-                  return false;
-                }}
-                accept='.bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp'
-                listType='picture'
-              >
-                <Button icon='upload'>上传详情照片</Button>
-              </Upload>
-            )}
-          </Item>
-
-          <Item label='价格'>
-            {getFieldDecorator("price", {
-              rules: [{ required: true, message: "至少设置一种价格" }]
-            })(<Input placeholder='价格设置（请用；相隔）' />)}
-          </Item>
-
-          <Item label='商品详情'>
-            {getFieldDecorator("detail", {
-              rules: [{ required: true, message: "请输入商品详情!" }]
-            })(<TextArea autoSize placeholder='请输入商品详情' />)}
-          </Item>
-        </Form>
+            <Button>
+              <Icon type='upload' />
+              上传详情图片(数量限制：5)
+            </Button>
+          </Upload>
+          <Text strong>价格设置（;相隔）</Text>
+          <Input
+            placeholder='价格设置（分号相隔）'
+            className='input'
+            defaultValue={price}
+            onChange={e => {
+              setPrice(e.target.value);
+            }}
+          />
+          <div>
+            <Text strong>详细内容 </Text>
+          </div>
+          <TextArea
+            rows={5}
+            placeholder='详细内容'
+            defaultValue={detail}
+            onChange={e => {
+              setDetail(e.target.value);
+            }}
+          />
+        </Form.Item>
       </Modal>
       <Button
-        icon={"text"}
+        className='EditModleUI'
         type='primary'
         onClick={() => {
           setVisible(true);
@@ -230,11 +296,7 @@ const EditShopModal = props => {
       >
         编辑
       </Button>
-    </Fragment>
+    </div>
   );
 };
-
-const EditShopPage = Form.create({
-  name: "shop_info"
-})(EditShopModal);
-export default EditShopPage;
+export default EditShopModal;

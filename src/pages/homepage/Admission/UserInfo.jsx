@@ -12,6 +12,7 @@ const InitForm = props => {
     companyKey: key,
     type,
     onSaveEdition,
+    onAddUser,
     form: {
       getFieldDecorator,
       getFieldsError,
@@ -22,48 +23,29 @@ const InitForm = props => {
   } = props;
   const [companyImg, setCompanyImg] = useState("");
   const [sfzImg, setSfzImg] = useState("");
-  const [yyzzImgUrl, setYyzzImg] = useState([]);
-
-  const normImgFile = (e, set, count, state) => {
-    if (e.file.status !== "removed") {
-      let imgFile = new FormData();
-      imgFile.append("file", e.file);
-      (async () => {
-        const res = await post(`/upload?token=${token}`, imgFile, header);
-        if (count > 1) {
-          const [...copy] = state;
-          copy.push(res.data.url);
-          set(copy);
-        } else {
-          set(res.data.url);
-        }
-      })();
-      return e.fileList.slice(-count);
-    } else {
-      return e.fileList;
-    }
-  };
+  const [yyzzImgList, setYyzzImgList] = useState([]);
 
   useEffect(() => {
-    console.log(props);
-
     if (key.length !== 0) {
       (async () => {
         const res = await get(`/user/detail?token=${token}&key=${key}`);
-        const yyzzImgUrl = [];
         const currentInfo = res.data.company;
-        console.log(JSON.stringify(currentInfo));
         const { company_img_link, sfz_img_link, yyzz_img_link } = currentInfo;
         setCompanyImg(company_img_link);
         setSfzImg(sfz_img_link);
-        setYyzzImg(yyzz_img_link.split(";"));
-        yyzz_img_link.split(";").map((imgUrl, idx) => {
-          return yyzzImgUrl.push({
-            name: currentInfo.company,
-            uid: idx,
-            url: imgUrl
+        const yyzzImgListTmp = [];
+        if (yyzz_img_link.length !== 0) {
+          yyzz_img_link.split(";").map((imgUrl, idx) => {
+            return yyzzImgListTmp.push({
+              name: currentInfo.company,
+              uid: idx,
+              url: imgUrl
+            });
           });
-        });
+          setYyzzImgList(yyzzImgListTmp);
+        } else {
+          setYyzzImgList([]);
+        }
         setFieldsValue(
           {
             companyName: currentInfo.company,
@@ -79,14 +61,16 @@ const InitForm = props => {
                 url: company_img_link
               }
             ],
-            sfzImg: [
-              {
-                name: currentInfo.true_name,
-                uid: -1,
-                url: sfz_img_link
-              }
-            ],
-            yyzzImgUrl: yyzzImgUrl
+            sfzImg:
+              sfz_img_link.length === 0
+                ? []
+                : [
+                    {
+                      name: currentInfo.true_name,
+                      uid: -1,
+                      url: sfz_img_link
+                    }
+                  ]
           },
           //在设置完初始值后进行校验
           () => {
@@ -100,6 +84,66 @@ const InitForm = props => {
     return () => {};
     // eslint-disable-next-line
   }, []);
+
+  //公司 身份证照片表单域处理逻辑
+  const normImgFile = (e, set, count, state) => {
+    if (e.file.status !== "removed") {
+      let imgFile = new FormData();
+      imgFile.append("file", e.file);
+      (async () => {
+        const res = await post(`/upload?token=${token}`, imgFile, header);
+        set(res.data.url);
+      })();
+      return e.fileList.slice(-count);
+    } else {
+      return e.fileList;
+    }
+  };
+
+  //营业执照上传处理逻辑
+  const handleYyzzRemove = file => {
+    const delIdx = yyzzImgList.findIndex(item => {
+      return item.url === file.url;
+    });
+    let copy = [...yyzzImgList];
+    copy.splice(delIdx, 1);
+    console.log(copy);
+    setYyzzImgList(copy);
+  };
+
+  const beforeUpload = file => {
+    const imgFile = new FormData();
+    imgFile.append("file", file);
+    (async () => {
+      const res = await post(`/upload?token=${token}`, imgFile, header);
+      yyzzImgList.length === 3
+        ? setYyzzImgList([
+            ...yyzzImgList.slice(-2),
+            {
+              name: file.name,
+              uid: -Math.random() * 100,
+              url: res.data.url
+            }
+          ])
+        : setYyzzImgList([
+            ...yyzzImgList,
+            {
+              name: file.name,
+              uid: -Math.random() * 100,
+              url: res.data.url
+            }
+          ]);
+    })();
+    return false;
+  };
+
+  const yyzzImgUploadProps = {
+    listType: "picture",
+    fileList: yyzzImgList,
+    beforeUpload: beforeUpload,
+    onRemove: handleYyzzRemove
+  };
+
   //有任一项没有通过，禁用提交按钮
   const hasErrors = fieldsError => {
     return Object.keys(fieldsError).some(field => fieldsError[field]);
@@ -108,33 +152,37 @@ const InitForm = props => {
   //无需使用onChange事件收集
   const handleSubmit = e => {
     e.preventDefault();
-    const {
-      companyName,
-      addr,
-      collect,
-      detail,
-      companyImg,
-      sfzImg,
-      name,
-      phone
-    } = getFieldsValue();
-    //companyImg和sfzImg是fileList的形式，要取出url
-    //yyzzImg本身就是url的形式
-    const newUserInfo = {
-      company_name: companyName,
-      company_address: addr,
-      true_name: name,
-      phone: phone,
-      company_img_link: companyImg[0].url,
-      company_detail: detail,
-      sfz_img_link: sfzImg[0].url,
-      collect_count: collect,
-      yyzz_img_link: yyzzImgUrl.slice(-3).join(";")
-    };
-    onSaveEdition(newUserInfo);
-    console.log(getFieldsValue(), companyImg, sfzImg, yyzzImgUrl.slice(-3));
+    if (yyzzImgList.length === 0) {
+      message.error("请上传营业执照照片");
+      return false;
+    } else {
+      const formValues = getFieldsValue();
+      const { companyName, addr, detail, name, phone } = formValues;
+      console.log(yyzzImgList);
+      const yyzzImgLink = [];
+      yyzzImgList.map(imgItem => {
+        return yyzzImgLink.push(imgItem.url);
+      });
+      const newUserInfo = {
+        company: companyName,
+        company_address: addr,
+        true_name: name,
+        phone: phone,
+        company_img_link: companyImg,
+        company_detail: detail,
+        sfz_img_link: sfzImg,
+        yyzz_img_link: yyzzImgLink.join(";")
+      };
+      console.log(newUserInfo);
+      type === "edit"
+        ? onSaveEdition(newUserInfo)
+        : onAddUser(
+            Object.assign({}, newUserInfo, {
+              pwd: formValues.pwd
+            })
+          );
+    }
   };
-
   //提示文字相关，单为交互考虑，去掉也不影响实际使用
   //经历过校验并被检验出错误才为true
   //配合validateStatus与help使用
@@ -163,7 +211,7 @@ const InitForm = props => {
     <Form layout='vertical' onSubmit={handleSubmit} {...formItemLayout}>
       <Item label='公司名称' hasFeedback>
         {getFieldDecorator("companyName", {
-          rules: [{ required: true, message: "请输入公司名称" }],
+          rules: [{ required: true, message: "请输入公司名称！" }],
           trigger: "onChange"
         })(
           <Input
@@ -175,7 +223,7 @@ const InitForm = props => {
 
       <Item label='公司地址' hasFeedback>
         {getFieldDecorator("addr", {
-          rules: [{ required: true, message: "请输入公司地址" }]
+          rules: [{ required: true, message: "请输入公司地址！" }]
         })(
           <Input
             prefix={
@@ -189,7 +237,7 @@ const InitForm = props => {
 
       <Item label='公司详情' hasFeedback>
         {getFieldDecorator("detail", {
-          rules: [{ required: true, message: "请输入企业详情" }]
+          rules: [{ required: true, message: "请输入公司详情！" }]
         })(
           <TextArea
             placeholder='企业详情'
@@ -201,21 +249,28 @@ const InitForm = props => {
 
       <Item label='收藏数' hasFeedback>
         {getFieldDecorator("collect", {
-          //TODO: 校验
-          rules: [{ required: true, message: "" }]
+          rules: [{ required: true, message: "收藏数至少为0" }]
         })(<InputNumber min={0} prefix={<Icon type='star' />} />)}
       </Item>
 
       <Item label='手机号' hasFeedback>
-        {getFieldDecorator("phone")(
-          <Input prefix={<Icon type='mobile' />} disabled />
-        )}
+        {getFieldDecorator("phone", {
+          rules: [{ required: true, message: "请输入手机号！" }]
+        })(<Input prefix={<Icon type='mobile' />} />)}
       </Item>
+
+      {type !== "edit" ? (
+        <Item label='密码' hasFeedback>
+          {getFieldDecorator("pwd", {
+            rules: [{ required: true, message: "请输入密码！" }]
+          })(<Input prefix={<Icon type='key' />} />)}
+        </Item>
+      ) : null}
 
       <Item label='联系人姓名' hasFeedback>
         {getFieldDecorator("name", {
           rules: [
-            { required: true, message: "请输入联系人名称" },
+            { required: true, message: "请输入姓名！" },
             {
               pattern: /[\u4e00-\u9fa5]/gm,
               message: "请输入中文姓名"
@@ -231,7 +286,7 @@ const InitForm = props => {
 
       <Item label='公司照片' extra='只能上传一张图片，大小不得超过？MB'>
         {getFieldDecorator("companyImg", {
-          rules: [{ required: true, message: "至少上传一张照片" }],
+          rules: [{ required: true, message: "至少上传一张图片" }],
 
           valuePropName: "fileList",
           getValueFromEvent: e => {
@@ -252,7 +307,7 @@ const InitForm = props => {
 
       <Item label='身份证照片' extra='只能上传一张图片，大小不得超过？MB'>
         {getFieldDecorator("sfzImg", {
-          rules: [{ required: true, message: "至少上传一张照片" }],
+          rules: [{ required: true, message: "至少上传一张图片" }],
           valuePropName: "fileList",
           getValueFromEvent: e => {
             return normImgFile(e, setSfzImg, 1);
@@ -271,23 +326,13 @@ const InitForm = props => {
       </Item>
 
       <Item label='营业执照照片' extra='最多上传三张图片，大小不得超过？MB'>
-        {getFieldDecorator("yyzzImgUrl", {
-          rules: [{ required: true, message: "至少上传一张照片" }],
-          valuePropName: "fileList",
-          getValueFromEvent: e => {
-            return normImgFile(e, setYyzzImg, 3, yyzzImgUrl);
-          }
-        })(
-          <Upload
-            beforeUpload={() => {
-              return false;
-            }}
-            accept='.bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp'
-            listType='picture'
-          >
-            <Button icon='upload'>上传营业执照照片</Button>
-          </Upload>
-        )}
+        <Upload
+          {...yyzzImgUploadProps}
+          accept='.bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp'
+          listType='picture'
+        >
+          <Button icon='upload'>上传营业执照照片</Button>
+        </Upload>
       </Item>
 
       <Item>

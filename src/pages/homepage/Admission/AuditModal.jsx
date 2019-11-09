@@ -4,6 +4,7 @@ import { put } from "../../../request/http";
 const AuditModal = props => {
   const { info, visi, toggle } = props;
   const { username, role } = info;
+  console.log(props);
   const token = localStorage.getItem("token");
   const [visible, setVisible] = useState(visi);
   const [loading, setLoading] = useState(false);

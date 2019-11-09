@@ -2,9 +2,9 @@ import React, { useState, Fragment, useEffect } from "react";
 import { Table, Tag, Menu, Icon, Button } from "antd";
 import { get } from "../../../request/http";
 import "./style.css";
-import EditInterface from "./EditPage";
+import EditInterface from "./EditInterface";
 import AuditModal from "./AuditModal";
-// import Deletebutton from "./DeleteModle";
+import DelUserModal from "./DelUserModal";
 
 const AdmissionUI = () => {
   const token = localStorage.getItem("token");
@@ -59,6 +59,7 @@ const AdmissionUI = () => {
             >
               编辑
             </Button>
+            <DelUserModal phone={text.username} />
           </Fragment>
         );
       }
@@ -66,6 +67,7 @@ const AdmissionUI = () => {
   ];
   useEffect(() => {
     (async () => {
+      // /user/query接口有问题？ 无法修改vip信息
       const res = await get(`/attest/attest?token=${token}`);
       console.log(res);
       setTotalList(res.data["data"]);
