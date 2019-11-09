@@ -87,13 +87,13 @@ const ShopManageUI = props => {
     let token = localStorage.getItem("token");
     //获取商品列表
     axios
-      .get("http://59.110.237.244/api/shop/edit?token=" + token)
+      .get("http://www.youqiyun.net/api/shop/edit?token=" + token)
       .then(res => {
         const productList = res.data.data;
         setData(productList);
       });
     //获取推荐商品
-    axios.get("http://59.110.237.244/api/system?key=recommand").then(res => {
+    axios.get("http://www.youqiyun.net/api/system?key=recommand").then(res => {
       var recoIdxArr = res.data.value;
       if (res.data.value.search(",") === -1) {
         recoIdxArr = res.data.value.split(",");
@@ -112,7 +112,7 @@ const ShopManageUI = props => {
   };
   const submitRecoIdx = () => {
     axios
-      .put("http://59.110.237.244/api/system", {
+      .put("http://www.youqiyun.net/api/system", {
         key: "recommand",
         value: recoIdxStr
       })

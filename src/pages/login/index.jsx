@@ -10,7 +10,7 @@ const Login = () => {
   const onLogin = ({ username, password }) => {
     console.log(username, password);
     axios
-      .post("http://59.110.237.244/api/admin/login", {
+      .post("http://www.youqiyun.net/api/admin/login", {
         username: username,
         password: password
       })

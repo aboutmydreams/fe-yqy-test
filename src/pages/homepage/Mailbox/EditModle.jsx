@@ -43,7 +43,7 @@ class EditModleUI extends Component {
     let token = localStorage.getItem("token");
     this.setState({ loadingAdd: true });
     axios
-      .put("http://59.110.237.244/api/attest/attest?token=" + token, jsonData)
+      .put("http://www.youqiyun.net/api/attest/attest?token=" + token, jsonData)
       .then(res => {
         if (res.data["code"] === 1) {
           message.success("已审核");

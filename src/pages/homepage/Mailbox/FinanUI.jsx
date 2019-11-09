@@ -84,7 +84,7 @@ class FinanUI extends React.Component {
   componentDidMount() {
     let token = localStorage.getItem("token");
     axios
-      .get("http://59.110.237.244/api/finance?token=" + token)
+      .get("http://www.youqiyun.net/api/finance?token=" + token)
       .then(res => this.setState({ data: res.data["data"] }));
   }
 

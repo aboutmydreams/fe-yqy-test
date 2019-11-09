@@ -113,7 +113,7 @@ class AdmissionUI extends React.Component {
   componentDidMount() {
     let token = localStorage.getItem("token");
     axios
-      .get("http://59.110.237.244/api/attest/attest?token=" + token)
+      .get("http://www.youqiyun.net/api/attest/attest?token=" + token)
       .then(res => this.setState({ data: res.data["data"] }));
   }
 
