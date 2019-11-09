@@ -227,7 +227,7 @@ const InitForm = props => {
         )}
       </Item>
 
-      <Item label='Upload' extra='只能上传一张图片，大小不得超过？MB'>
+      <Item label='公司照片' extra='只能上传一张图片，大小不得超过？MB'>
         {getFieldDecorator("companyImg", {
           rules: [{ required: true, message: "至少上传一张照片" }],
 
@@ -248,7 +248,7 @@ const InitForm = props => {
         )}
       </Item>
 
-      <Item label='Upload' extra='只能上传一张图片，大小不得超过？MB'>
+      <Item label='身份证照片' extra='只能上传一张图片，大小不得超过？MB'>
         {getFieldDecorator("sfzImg", {
           rules: [{ required: true, message: "至少上传一张照片" }],
           valuePropName: "fileList",
@@ -268,7 +268,7 @@ const InitForm = props => {
         )}
       </Item>
 
-      <Item label='Upload' extra='最多上传三张图片，大小不得超过？MB'>
+      <Item label='营业执照照片' extra='最多上传三张图片，大小不得超过？MB'>
         {getFieldDecorator("yyzzImgUrl", {
           rules: [{ required: true, message: "至少上传一张照片" }],
           valuePropName: "fileList",

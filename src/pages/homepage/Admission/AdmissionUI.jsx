@@ -13,6 +13,8 @@ const AdmissionUI = () => {
   const [totalList, setTotalList] = useState([]);
   const [listData, setListData] = useState([]);
   const [currentEditKey, setCurrentEditKey] = useState({});
+  const [auditModalVisible, setAuditModalVisible] = useState(false);
+  const [auditRole, setAuditRole] = useState("");
   const columns = [
     {
       title: "姓名",
@@ -38,14 +40,21 @@ const AdmissionUI = () => {
       render: text => {
         return (
           <Fragment>
-            <AuditModal info={text} />
+            <Button
+              onClick={() => {
+                setAuditModalVisible(true);
+                setAuditRole(text);
+              }}
+            >
+              审核
+            </Button>
             <Button
               type='primary'
               icon='edit'
               onClick={() => {
                 seEditPageVisible(true);
                 setEditType("edit");
-                setCurrentEditKey(text.key);
+                setCurrentEditKey(text.role);
               }}
             >
               编辑
@@ -82,6 +91,9 @@ const AdmissionUI = () => {
     });
     setListData(currentList);
   };
+  const toggle = show => {
+    setAuditModalVisible(show);
+  };
   //TODO: 感觉没有必要使用二级路由，因为并不涉及组件的切换...
   //四个板块用的是同一个组件，只是数据不同
   //TODO: 展示组件与编辑组件的切换，考虑上动画？
@@ -109,6 +121,10 @@ const AdmissionUI = () => {
           Vip3
         </Menu.Item>
       </Menu>
+
+      {auditModalVisible ? (
+        <AuditModal info={auditRole} visi={true} toggle={toggle} />
+      ) : null}
       {editModalVisible ? (
         <EditInterface
           companyKey={currentEditKey}

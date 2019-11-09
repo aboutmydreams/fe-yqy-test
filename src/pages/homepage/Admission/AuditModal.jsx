@@ -2,10 +2,10 @@ import React, { Fragment, useState, useEffect } from "react";
 import { Button, Modal, Form, Radio, message } from "antd";
 import { put } from "../../../request/http";
 const AuditModal = props => {
-  const { info } = props;
+  const { info, visi, toggle } = props;
   const { username, role } = info;
   const token = localStorage.getItem("token");
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(visi);
   const [loading, setLoading] = useState(false);
   const [currentLevel, setCurrentLevel] = useState("");
   console.log(info);
@@ -53,6 +53,7 @@ const AuditModal = props => {
             key='back'
             onClick={() => {
               setVisible(false);
+              toggle(false);
             }}
           >
             取消
@@ -84,16 +85,6 @@ const AuditModal = props => {
           </Radio.Group>
         </Form.Item>
       </Modal>
-
-      <Button
-        icon='audit'
-        type='primary'
-        onClick={() => {
-          setVisible(true);
-        }}
-      >
-        审核
-      </Button>
     </Fragment>
   );
 };

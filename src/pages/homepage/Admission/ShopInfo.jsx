@@ -1,6 +1,7 @@
 import React, { useState, Fragment, useEffect } from "react";
 import { get } from "../../../request/http";
 import { Table, Button, Icon, message, Row, Col, Tag } from "antd";
+import EditShopPage from "./EditShopModal";
 const token = localStorage.getItem("token");
 const ShopInfo = props => {
   const { companyKey: key, type } = props;
@@ -36,10 +37,9 @@ const ShopInfo = props => {
       render: text => {
         return (
           <Fragment>
-            <Button type='primary' icon={"edit"}>
-              编辑
-            </Button>
-            <Button>删除</Button>
+          {/* TODO:分离 */}
+            <EditShopPage companyKey={key} />
+            <Button type='warning'>删除</Button>
           </Fragment>
         );
       }

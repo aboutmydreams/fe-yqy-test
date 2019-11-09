@@ -1,17 +1,21 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
 import Homepage from "../pages/homepage/layout";
 import Login from "../pages/login";
 import { get } from "../request/http";
-function AppRouter() {
-  let me = false;
-  let token = localStorage.getItem("token");
+const AppRouter = () => {
+  const [logined, setLogined] = useState(false);
+  const token = localStorage.getItem("token");
   console.log(token);
-  get(`/me?token=${token}`, null, {}).then(res => {
-    console.log(res);
-    //应该让它返回一个布尔值？
-    res.data.ans ? (me = true) : (me = false);
-  });
+  useEffect(() => {
+    (async () => {
+      const res = await get(`/me?token=${token}`, null, {});
+      if (res.data.ans) {
+        setLogined(true);
+      }
+    })();
+    return () => {};
+  }, [token]);
   return (
     <Router>
       {/* Login page */}
@@ -22,11 +26,11 @@ function AppRouter() {
         exact
         path='/'
         render={() =>
-          me ? <Redirect to='/home' /> : <Redirect to='/login/' />
+          logined ? <Redirect to='/home' /> : <Redirect to='/login/' />
         }
       />
     </Router>
   );
-}
+};
 
 export default AppRouter;
