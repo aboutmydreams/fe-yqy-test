@@ -10,7 +10,7 @@ const Login = () => {
   const onLogin = ({ username, password }) => {
     console.log(username, password);
     axios
-      .post("http://www.youqiyun.net/api/admin/login", {
+      .post("http://youqiyun.net/api/admin/login", {
         username: username,
         password: password
       })
