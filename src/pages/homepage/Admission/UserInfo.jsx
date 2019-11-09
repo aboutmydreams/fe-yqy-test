@@ -45,6 +45,8 @@ const InitForm = props => {
   };
 
   useEffect(() => {
+    console.log(props);
+
     if (key.length !== 0) {
       (async () => {
         const res = await get(`/user/detail?token=${token}&key=${key}`);

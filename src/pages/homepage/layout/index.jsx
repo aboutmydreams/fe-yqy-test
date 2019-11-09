@@ -40,6 +40,7 @@ const menuItem = [
 
 const Homepage = () => {
   let currentKey = menuItem.findIndex(item => {
+    console.log(window.location.pathname);
     return item.to === window.location.pathname;
   });
   console.log(currentKey);

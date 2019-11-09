@@ -54,7 +54,7 @@ const AdmissionUI = () => {
               onClick={() => {
                 seEditPageVisible(true);
                 setEditType("edit");
-                setCurrentEditKey(text.role);
+                setCurrentEditKey(text.key);
               }}
             >
               编辑
@@ -79,7 +79,7 @@ const AdmissionUI = () => {
     })();
     return () => {};
     //eslint-disable-next-line
-  }, [token]);
+  }, []);
 
   const handleChangeData = ({ key }) => {
     seEditPageVisible(false);
@@ -125,6 +125,7 @@ const AdmissionUI = () => {
       {auditModalVisible ? (
         <AuditModal info={auditRole} visi={true} toggle={toggle} />
       ) : null}
+
       {editModalVisible ? (
         <EditInterface
           companyKey={currentEditKey}
