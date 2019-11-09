@@ -1,8 +1,9 @@
 import React, { useState, Fragment, useEffect } from "react";
 import { get } from "../../../request/http";
-import { Table, Button, Icon, message, Row, Col, Tag } from "antd";
+import { Table, Button, Tag } from "antd";
 import EditShopModal from "./EditShopModal";
 const token = localStorage.getItem("token");
+
 const ShopInfo = props => {
   const { companyKey: key, type } = props;
   const [listData, setListData] = useState([]);

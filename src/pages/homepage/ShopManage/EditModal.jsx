@@ -18,7 +18,7 @@ const { Text } = Typography;
 
 const EditModal = props => {
   const header = { headers: { "Content-Type": "multipart/form-data" } };
-
+  //FIXME: 如果审核模块能成功使用gFD方式处理多图片上传表单域，一定要把这里也搞定
   console.log(props);
   const token = localStorage.getItem("token");
   const [loading, setLoading] = useState(false);

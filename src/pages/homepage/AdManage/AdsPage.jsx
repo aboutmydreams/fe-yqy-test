@@ -2,14 +2,16 @@ import React, { Fragment, useState, useEffect } from "react";
 import AdsItem from "./AdsItem";
 import { get, put } from "../../../request/http";
 import { Row, Col } from "antd";
+
 const AdsPage = props => {
   const { keyWord, title, idx } = props;
+  const [imgInfoList, setImgInfoList] = useState([]);
+
   const pageInfo = {
     keyWord: keyWord,
     title: title,
     idx: idx
   };
-  const [imgInfoList, setImgInfoList] = useState([]);
   useEffect(() => {
     (async () => {
       const res = await get(`/system?key=${keyWord}`);

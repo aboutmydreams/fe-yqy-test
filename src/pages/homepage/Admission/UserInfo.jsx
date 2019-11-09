@@ -101,6 +101,7 @@ const InitForm = props => {
   };
 
   //营业执照上传处理逻辑
+  //FIXME: 在这里搞清楚怎么用gFD处理
   const handleYyzzRemove = file => {
     const delIdx = yyzzImgList.findIndex(item => {
       return item.url === file.url;

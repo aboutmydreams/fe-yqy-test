@@ -5,9 +5,9 @@ import "./style.css";
 import EditInterface from "./EditInterface";
 import AuditModal from "./AuditModal";
 import DelUserModal from "./DelUserModal";
+const token = localStorage.getItem("token");
 
 const AdmissionUI = () => {
-  const token = localStorage.getItem("token");
   const [editType, setEditType] = useState("edit");
   const [editModalVisible, seEditPageVisible] = useState(false);
   const [totalList, setTotalList] = useState([]);
@@ -67,10 +67,9 @@ const AdmissionUI = () => {
   ];
   useEffect(() => {
     (async () => {
-      // /user/query接口有问题？ 无法修改vip信息
       const res = await get(`/attest/attest?token=${token}`);
-      console.log(res);
       setTotalList(res.data["data"]);
+
       const user0List = [];
       res.data["data"].forEach(item => {
         if (item.role === "user0") {
@@ -123,7 +122,7 @@ const AdmissionUI = () => {
           Vip3
         </Menu.Item>
       </Menu>
-
+      {/* 不确定这个是不是必要的，防止同时渲染每行对应的审核框应该能减少性能开销吧 */}
       {auditModalVisible ? (
         <AuditModal info={auditRole} visi={true} toggle={toggle} />
       ) : null}

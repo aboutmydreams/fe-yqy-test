@@ -1,31 +1,33 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { Button, Modal, Form, Radio, message } from "antd";
 import { put } from "../../../request/http";
+const token = localStorage.getItem("token");
+
 const AuditModal = props => {
   const { info, visi, toggle } = props;
   const { username, role } = info;
-  console.log(props);
-  const token = localStorage.getItem("token");
+
   const [visible, setVisible] = useState(visi);
   const [loading, setLoading] = useState(false);
+
   const [currentLevel, setCurrentLevel] = useState("");
   console.log(info);
+
   const radioStyle = {
     display: "block",
     height: "30px",
     lineHeight: "30px"
   };
+
   const handleOk = () => {
     let newVipInfo = {
       username: username,
       attest_ans: currentLevel
     };
-    console.log(newVipInfo);
     setLoading(true);
     (async () => {
       try {
         const res = await put(`/attest/attest?token=${token}`, newVipInfo);
-        console.log(res);
         const resCode = res.data.code;
         resCode === 1
           ? message.success("已审核") && setVisible(false)

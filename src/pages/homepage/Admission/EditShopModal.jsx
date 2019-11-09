@@ -18,8 +18,9 @@ const { Text } = Typography;
 const header = { headers: { "Content-Type": "multipart/form-data" } };
 const token = localStorage.getItem("token");
 
-const EditShopModal = props => {
+//FIXME: 还是最好用模态框+表单域来解决，明天一定要再试试用getFieldDecorator来处理
 
+const EditShopModal = props => {
   console.log(props);
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);

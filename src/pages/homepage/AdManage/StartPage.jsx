@@ -16,6 +16,8 @@ import {
 import { get, post, put } from "../../../request/http";
 
 const { Title } = Typography;
+const token = localStorage.getItem("token");
+const header = { headers: { "Content-Type": "multipart/form-data" } };
 const StartPage = props => {
   const { title, keyWord } = props;
   const [startImgInfo, setStartImgInfo] = useState({
@@ -97,8 +99,7 @@ const StartPage = props => {
     setFileName(file.name);
     let imgFile = new FormData();
     imgFile.append("file", file);
-    const token = localStorage.getItem("token");
-    let header = { headers: { "Content-Type": "multipart/form-data" } };
+
     (async () => {
       const res = await post(`/upload?token= ${token}`, imgFile, header);
       setImgUrl(res.data.url);

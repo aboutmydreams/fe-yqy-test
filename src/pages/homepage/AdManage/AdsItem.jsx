@@ -15,6 +15,8 @@ import {
 } from "antd";
 import { post } from "../../../request/http";
 const { Title } = Typography;
+const token = localStorage.getItem("token");
+const header = { headers: { "Content-Type": "multipart/form-data" } };
 
 const AdsItem = props => {
   useEffect(() => {
@@ -47,10 +49,11 @@ const AdsItem = props => {
     setImgLoading(false);
     return () => {};
   }, []);
+
   const handleChange = info => {
     const { file, fileList } = info;
     if (file.size / 1024 / 1024 > 20) {
-      message.error("请上传小于1MB的图片");
+      message.error("请上传小于20MB的图片");
       return false;
     }
     let newFileList = [...fileList];
@@ -63,7 +66,7 @@ const AdsItem = props => {
       duration: 1.5,
       maxCount: 3
     });
-    if (currentFileList.length === 20) {
+    if (currentFileList.length === 1) {
       message.error("图片数量必须为1，如果要使用新的图片，请直接上传新的图片");
       return false;
     }
@@ -76,8 +79,6 @@ const AdsItem = props => {
     setFileName(file.name);
     let imgFile = new FormData();
     imgFile.append("file", file);
-    const token = localStorage.getItem("token");
-    let header = { headers: { "Content-Type": "multipart/form-data" } };
     (async () => {
       const res = await post(`/upload?token=${token}`, imgFile, header);
       setImgUrl(res.data.url);
@@ -108,6 +109,7 @@ const AdsItem = props => {
     onRemove: handleRemove,
     beforeUpload: beforeUpload
   };
+  
   return (
     <Fragment>
       <div>
