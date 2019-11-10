@@ -24,39 +24,48 @@ const InitForm = props => {
   const [companyImg, setCompanyImg] = useState("");
   const [sfzImg, setSfzImg] = useState("");
   const [yyzzImgList, setYyzzImgList] = useState([]);
-
   useEffect(() => {
-    if (key.length !== 0) {
+    if (type === "edit") {
+      //编辑已有信息
       (async () => {
         const res = await get(`/user/detail?token=${token}&key=${key}`);
         const currentInfo = res.data.company;
-        const { company_img_link, sfz_img_link, yyzz_img_link } = currentInfo;
+        const {
+          company_img_link,
+          sfz_img_link,
+          yyzz_img_link,
+          company,
+          company_address,
+          phone,
+          true_name,
+          collect_count,
+          company_detail
+        } = currentInfo;
+
         setCompanyImg(company_img_link);
         setSfzImg(sfz_img_link);
+
         const yyzzImgListTmp = [];
-        if (yyzz_img_link.length !== 0) {
-          yyzz_img_link.split(";").map((imgUrl, idx) => {
-            return yyzzImgListTmp.push({
-              name: currentInfo.company,
-              uid: idx,
-              url: imgUrl
-            });
+        yyzz_img_link.split(";").map((link, idx) => {
+          return yyzzImgListTmp.push({
+            uid: idx,
+            name: company,
+            url: link
           });
-          setYyzzImgList(yyzzImgListTmp);
-        } else {
-          setYyzzImgList([]);
-        }
+        });
+        setYyzzImgList(yyzzImgListTmp);
+
         setFieldsValue(
           {
-            companyName: currentInfo.company,
-            addr: currentInfo.company_address,
-            detail: currentInfo.company_detail,
-            name: currentInfo.true_name,
-            phone: currentInfo.phone,
-            collect: currentInfo.collect_count,
+            companyName: company,
+            addr: company_address,
+            detail: company_detail,
+            name: true_name,
+            phone: phone,
+            collect: collect_count,
             companyImg: [
               {
-                name: currentInfo.company,
+                name: company,
                 uid: -1,
                 url: company_img_link
               }
@@ -66,11 +75,12 @@ const InitForm = props => {
                 ? []
                 : [
                     {
-                      name: currentInfo.true_name,
+                      name: true_name,
                       uid: -1,
                       url: sfz_img_link
                     }
-                  ]
+                  ],
+            yyzzImg: yyzzImgListTmp.length === 0 ? [] : yyzzImgListTmp
           },
           //在设置完初始值后进行校验
           () => {
@@ -86,7 +96,7 @@ const InitForm = props => {
   }, []);
 
   //公司 身份证照片表单域处理逻辑
-  const normImgFile = (e, set, count, state) => {
+  const normImgFile = (e, set, count) => {
     if (e.file.status !== "removed") {
       let imgFile = new FormData();
       imgFile.append("file", e.file);
@@ -100,49 +110,35 @@ const InitForm = props => {
     }
   };
 
-  //营业执照上传处理逻辑
-  //FIXME: 在这里搞清楚怎么用gFD处理
+  const normYyzzImgFile = e => {
+    if (e.file.status !== "removed") {
+      let imgFile = new FormData();
+      imgFile.append("file", e.file);
+      (async () => {
+        const res = await post(`/upload?token=${token}`, imgFile, header);
+        const [...copy] = yyzzImgList;
+        copy.push({
+          uid: Math.random() * 100,
+          name: e.file.name,
+          url: res.data.url
+        });
+        setYyzzImgList(copy.slice(-3));
+      })();
+      return e.fileList.slice(-3);
+    } else {
+      //直接reruen 由onRemove处理
+      return e.fileList;
+    }
+  };
+
   const handleYyzzRemove = file => {
     const delIdx = yyzzImgList.findIndex(item => {
       return item.url === file.url;
     });
     let copy = [...yyzzImgList];
     copy.splice(delIdx, 1);
-    console.log(copy);
     setYyzzImgList(copy);
-  };
-
-  const beforeUpload = file => {
-    const imgFile = new FormData();
-    imgFile.append("file", file);
-    (async () => {
-      const res = await post(`/upload?token=${token}`, imgFile, header);
-      yyzzImgList.length === 3
-        ? setYyzzImgList([
-            ...yyzzImgList.slice(-2),
-            {
-              name: file.name,
-              uid: -Math.random() * 100,
-              url: res.data.url
-            }
-          ])
-        : setYyzzImgList([
-            ...yyzzImgList,
-            {
-              name: file.name,
-              uid: -Math.random() * 100,
-              url: res.data.url
-            }
-          ]);
-    })();
-    return false;
-  };
-
-  const yyzzImgUploadProps = {
-    listType: "picture",
-    fileList: yyzzImgList,
-    beforeUpload: beforeUpload,
-    onRemove: handleYyzzRemove
+    console.log(copy);
   };
 
   //有任一项没有通过，禁用提交按钮
@@ -153,48 +149,36 @@ const InitForm = props => {
   //无需使用onChange事件收集
   const handleSubmit = e => {
     e.preventDefault();
-    if (yyzzImgList.length === 0) {
-      message.error("请上传营业执照照片");
-      return false;
-    } else {
-      const formValues = getFieldsValue();
-      const { companyName, addr, detail, name, phone } = formValues;
-      console.log(yyzzImgList);
-      const yyzzImgLink = [];
-      yyzzImgList.map(imgItem => {
-        return yyzzImgLink.push(imgItem.url);
-      });
-      const newUserInfo = {
-        company: companyName,
-        company_address: addr,
-        true_name: name,
-        phone: phone,
-        company_img_link: companyImg,
-        company_detail: detail,
-        sfz_img_link: sfzImg,
-        yyzz_img_link: yyzzImgLink.join(";")
-      };
-      console.log(newUserInfo);
-      type === "edit"
-        ? onSaveEdition(newUserInfo)
-        : onAddUser(
-            Object.assign({}, newUserInfo, {
-              pwd: formValues.pwd
-            })
-          );
-    }
-  };
-  //提示文字相关，单为交互考虑，去掉也不影响实际使用
-  //经历过校验并被检验出错误才为true
-  //配合validateStatus与help使用
 
-  // const companyNameErr =
-  //   isFieldTouched("companyName") && getFieldError("companyName");
-  // const addrErr = isFieldTouched("addr") && getFieldError("addr");
-  // const companyImgErr =
-  //   isFieldTouched("companyImg") && getFieldError("companyImg");
-  // const sfzImgErr = isFieldTouched("sfzImg") && getFieldError("sfzImg");
-  // const yyzzImgErr = isFieldTouched("yyzzImgUrl") && getFieldError("yyzzImgUrl");
+    const formValues = getFieldsValue();
+    const { companyName, addr, detail, name, phone } = formValues;
+
+    //取出营业执照列表的链接
+    const yyzzImgLinks = [];
+    yyzzImgList.map(imgItem => {
+      return yyzzImgLinks.push(imgItem.url);
+    });
+
+    const newUserInfo = {
+      company: companyName,
+      company_address: addr,
+      true_name: name,
+      phone: phone,
+      company_img_link: companyImg,
+      company_detail: detail,
+      sfz_img_link: sfzImg,
+      yyzz_img_link: yyzzImgLinks.join(";")
+    };
+    console.log(newUserInfo);
+    type === "edit"
+      ? onSaveEdition(newUserInfo)
+      : //添加新用户时需要带上密码
+        onAddUser(
+          Object.assign({}, newUserInfo, {
+            pwd: formValues.pwd
+          })
+        );
+  };
 
   const formItemLayout = {
     //TODO:上响应式 不然太太太丑了
@@ -257,7 +241,7 @@ const InitForm = props => {
       <Item label='手机号' hasFeedback>
         {getFieldDecorator("phone", {
           rules: [{ required: true, message: "请输入手机号！" }]
-        })(<Input prefix={<Icon type='mobile' />} />)}
+        })(<Input disabled prefix={<Icon type='mobile' />} />)}
       </Item>
 
       {type !== "edit" ? (
@@ -327,13 +311,24 @@ const InitForm = props => {
       </Item>
 
       <Item label='营业执照照片' extra='最多上传三张图片，大小不得超过？MB'>
-        <Upload
-          {...yyzzImgUploadProps}
-          accept='.bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp'
-          listType='picture'
-        >
-          <Button icon='upload'>上传营业执照照片</Button>
-        </Upload>
+        {getFieldDecorator("yyzzImg", {
+          rules: [{ required: true, message: "至少上传一张图片" }],
+          valuePropName: "fileList",
+          getValueFromEvent: e => {
+            return normYyzzImgFile(e);
+          }
+        })(
+          <Upload
+            onRemove={handleYyzzRemove}
+            beforeUpload={() => {
+              return false;
+            }}
+            accept='.bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp'
+            listType='picture'
+          >
+            <Button icon='upload'>上传营业执照照片</Button>
+          </Upload>
+        )}
       </Item>
 
       <Item>

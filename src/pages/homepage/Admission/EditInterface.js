@@ -15,9 +15,8 @@ const EditInterface = props => {
     console.log(userInfo);
     (async () => {
       const res = await put(`/user/manage?token=${token}`, userInfo);
-      //FIXME: 先用刷新替代一下 后面上实时
-      // window.location.reload();
       console.log(res);
+      window.location.reload();
     })();
   };
   const handleAdd = userInfo => {
@@ -25,6 +24,7 @@ const EditInterface = props => {
     (async () => {
       const res = await post(`/user/manage?token=${token}`, userInfo);
       console.log(res);
+      window.location.reload();
     })();
   };
   const handleChangeForm = ({ key }) => {

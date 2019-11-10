@@ -5,7 +5,6 @@ const token = localStorage.getItem("token");
 const { confirm } = Modal;
 
 const DelUserModal = props => {
-  console.log(props);
   const { phone } = props;
   const deleProduct = () => {
     const delParams = {
