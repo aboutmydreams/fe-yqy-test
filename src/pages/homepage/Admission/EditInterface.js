@@ -1,35 +1,48 @@
 import React, { useState, Fragment } from "react";
 import UserInfo from "./UserInfo";
 import ShopInfo from "./ShopInfo";
-import { Menu, Icon } from "antd";
-import { put, post } from "../../../request/http";
+import { Menu, Icon, Modal, message } from "antd";
+import { put, post, deleteItem } from "../../../request/http";
+const { confirm } = Modal;
 const { Item } = Menu;
 const token = localStorage.getItem("token");
 
 const EditInterface = props => {
   //从这里就开始分为编辑用界面和新增用界面了
-  const [currentInfo, setCurrentUserInfo] = useState("userInfo");
+  const [currentPage, setCurrentPage] = useState("userInfo");
   const { type, companyKey: key } = props;
 
-  const handleEdit = userInfo => {
-    console.log(userInfo);
-    (async () => {
+  const handleEditUser = userInfo => {
+    return (async () => {
       const res = await put(`/user/manage?token=${token}`, userInfo);
-      console.log(res);
-      window.location.reload();
+      if (res.data.code === 0) {
+        return Promise.reject("error");
+      }
     })();
   };
-  const handleAdd = userInfo => {
+
+  const handleAddUser = userInfo => {
     console.log(userInfo);
-    (async () => {
+    return (async () => {
       const res = await post(`/user/manage?token=${token}`, userInfo);
-      console.log(res);
-      window.location.reload();
+      if (res.data.code === 0) {
+        return Promise.reject("error");
+      }
     })();
   };
-  const handleChangeForm = ({ key }) => {
-    setCurrentUserInfo(key);
+  
+  //预留的处理函数
+  const handleEditShop = shopInfo => {
+    console.log(shopInfo);
   };
+  const handleAddShop = shopInfo => {
+    console.log(shopInfo);
+  };
+
+  const handleChangeForm = ({ key }) => {
+    setCurrentPage(key);
+  };
+
   return (
     <Fragment>
       <Menu
@@ -46,15 +59,20 @@ const EditInterface = props => {
           商品管理
         </Item>
       </Menu>
-      {currentInfo === "userInfo" ? (
+      {currentPage === "userInfo" ? (
         <UserInfo
           companyKey={type === "edit" ? key : ""}
           type={type}
-          onSaveEdition={handleEdit}
-          onAddUser={handleAdd}
+          onEditUser={handleEditUser}
+          onAddUser={handleAddUser}
         />
       ) : (
-        <ShopInfo companyKey={type === "edit" ? key : ""} type={type} />
+        <ShopInfo
+          companyKey={type === "edit" ? key : ""}
+          type={type}
+          // onEditShop={handleEditShop}
+          // onAddShop={handleAddShop}
+        />
       )}
     </Fragment>
   );

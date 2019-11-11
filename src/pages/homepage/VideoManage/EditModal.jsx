@@ -68,7 +68,6 @@ const EditModal = props => {
       summary: sum,
       cover: imgUrl
     };
-    console.log(newInfo);
     setLoading(true);
     (async () => {
       try {
