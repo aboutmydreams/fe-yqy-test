@@ -41,6 +41,7 @@ const AdmissionUI = () => {
         return (
           <Fragment>
             <Button
+              icon="audit"
               onClick={() => {
                 setAuditModalVisible(true);
                 setAuditRole(text);
@@ -49,8 +50,8 @@ const AdmissionUI = () => {
               审核
             </Button>
             <Button
-              type='primary'
-              icon='edit'
+              type="primary"
+              icon="edit"
               onClick={() => {
                 seEditPageVisible(true);
                 setEditType("edit");
@@ -59,7 +60,8 @@ const AdmissionUI = () => {
             >
               编辑
             </Button>
-            <DelUserModal phone={text.username} />
+            {/* FIXME:  这个接口的username得和phone绑定 */}
+            <DelUserModal phone={text.username} info={text} />
           </Fragment>
         );
       }
@@ -103,22 +105,22 @@ const AdmissionUI = () => {
       <Menu
         onClick={handleChangeData}
         defaultSelectedKeys={["user0"]}
-        mode='horizontal'
+        mode="horizontal"
       >
-        <Menu.Item key='user0'>
-          <Icon type='user' />
+        <Menu.Item key="user0">
+          <Icon type="user" />
           User
         </Menu.Item>
-        <Menu.Item key='vip1'>
-          <Icon type='appstore' />
+        <Menu.Item key="vip1">
+          <Icon type="appstore" />
           Vip1
         </Menu.Item>
-        <Menu.Item key='vip2'>
-          <Icon type='appstore' />
+        <Menu.Item key="vip2">
+          <Icon type="appstore" />
           Vip2
         </Menu.Item>
-        <Menu.Item key='vip3'>
-          <Icon type='appstore' />
+        <Menu.Item key="vip3">
+          <Icon type="appstore" />
           Vip3
         </Menu.Item>
       </Menu>
@@ -138,8 +140,8 @@ const AdmissionUI = () => {
       ) : (
         <>
           <Button
-            type='primary'
-            icon='plus-circle'
+            type="primary"
+            icon="user-add"
             onClick={() => {
               setEditType("add");
               seEditPageVisible(true);
@@ -151,7 +153,7 @@ const AdmissionUI = () => {
           <Table
             columns={columns}
             dataSource={listData}
-            pagination='bottom'
+            pagination="bottom"
           ></Table>
         </>
       )}

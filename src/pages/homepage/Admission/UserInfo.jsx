@@ -1,9 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 
-import { Form, Icon, Input, Button, InputNumber, Upload, message } from "antd";
+import {
+  Form,
+  Icon,
+  Input,
+  Button,
+  InputNumber,
+  Upload,
+  message,
+  Radio
+} from "antd";
 import { get, post } from "../../../request/http";
 const { TextArea } = Input;
 const { Item } = Form;
+const { Group } = Radio;
 const token = localStorage.getItem("token");
 const header = { headers: { "Content-Type": "multipart/form-data" } };
 
@@ -65,6 +75,7 @@ const InitForm = props => {
           {
             name: true_name,
             phone: phone,
+            // role: "user0",
             // myAddr: my_address,
             // myDetail: my_detail,
             //对于非必须的项,可能会传回空值,应渲染为空列表
@@ -111,7 +122,16 @@ const InitForm = props => {
     } else {
       setFieldsValue(
         {
-          alibabaLink: ""
+          name: "",
+          phone: "",
+          sfzImg: [],
+          companyName: "",
+          collect: "",
+          companyImg: [],
+          addr: "",
+          detail: "",
+          alibabaLink: "",
+          yyzzImg: []
         },
         () => {
           validateFields();
@@ -187,7 +207,8 @@ const InitForm = props => {
       pwd,
       // myAddr,
       collect,
-      alibabaLink
+      alibabaLink,
+      role
       // myDetail
     } = formValues;
 
@@ -212,7 +233,7 @@ const InitForm = props => {
       yyzz_img_link: yyzzImgLinks.join(";"),
       alibaba_link: alibabaLink
     };
-    console.log(newUserInfo);
+    console.log(newUserInfo, role);
     (async () => {
       try {
         type === "edit"
@@ -243,8 +264,8 @@ const InitForm = props => {
   };
 
   return (
-    <Form layout='vertical' onSubmit={handleSubmit} {...formItemLayout}>
-      <Item label='联系人姓名' hasFeedback>
+    <Form layout="vertical" onSubmit={handleSubmit} {...formItemLayout}>
+      <Item label="联系人姓名" hasFeedback>
         {getFieldDecorator("name", {
           rules: [
             { required: true, message: "请输入姓名！" },
@@ -253,18 +274,13 @@ const InitForm = props => {
               message: "请输入中文姓名"
             }
           ]
-        })(
-          <Input
-            prefix={<Icon type='user' style={{ color: "rgba(0,0,0,.25)" }} />}
-            placeholder='联系人名称'
-          />
-        )}
+        })(<Input prefix={<Icon type="user" />} placeholder="联系人名称" />)}
       </Item>
 
-      <Item label='手机号' hasFeedback>
+      <Item label="手机号" hasFeedback>
         {getFieldDecorator("phone", {
           rules: [{ required: true, message: "请输入手机号！" }]
-        })(<Input prefix={<Icon type='mobile' />} />)}
+        })(<Input prefix={<Icon type="mobile" />} />)}
       </Item>
 
       {/* <Item label='个人住址' hasFeedback>
@@ -284,8 +300,32 @@ const InitForm = props => {
           />
         )}
       </Item> */}
+      {/* 新增时需要填写密码、初始等级 */}
+      {type !== "edit" ? (
+        <Fragment>
+          <Item label="密码" hasFeedback>
+            {getFieldDecorator("pwd", {
+              rules: [{ required: true, message: "请输入密码！" }]
+            })(<Input prefix={<Icon type="key" />} />)}
+          </Item>
 
-      <Item label='身份证照片' extra='只能上传一张图片，大小不得超过20MB'>
+          <Item label="初始vip等级">
+            {getFieldDecorator("role", {
+              rule: [{ required: true, message: "请选择初始vip级别" }],
+              initialValue: "user0"
+            })(
+              <Group>
+                <Radio value="user0">user0</Radio>
+                <Radio value="vip1">vip1</Radio>
+                <Radio value="vip2">vip2</Radio>
+                <Radio value="vip3">vip3</Radio>
+              </Group>
+            )}
+          </Item>
+        </Fragment>
+      ) : null}
+
+      <Item label="身份证照片" extra="只能上传一张图片，大小不得超过20MB">
         {getFieldDecorator("sfzImg", {
           rules: [{ required: true, message: "至少上传一张图片" }],
           valuePropName: "fileList",
@@ -297,10 +337,10 @@ const InitForm = props => {
             beforeUpload={() => {
               return false;
             }}
-            accept='.bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp'
-            listType='picture'
+            accept=".bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp"
+            listType="picture"
           >
-            <Button icon='upload'>上传身份证照片</Button>
+            <Button icon="upload">上传身份证照片</Button>
           </Upload>
         )}
       </Item>
@@ -325,25 +365,20 @@ const InitForm = props => {
         )}
       </Item> */}
 
-      <Item label='公司名称' hasFeedback>
+      <Item label="公司名称" hasFeedback>
         {getFieldDecorator("companyName", {
           rules: [{ required: true, message: "请输入公司名称！" }],
           trigger: "onChange"
-        })(
-          <Input
-            prefix={<Icon type='home' style={{ color: "rgba(0,0,0,.25)" }} />}
-            placeholder='公司名称'
-          />
-        )}
+        })(<Input prefix={<Icon type="home" />} placeholder="公司名称" />)}
       </Item>
 
-      <Item label='收藏数' hasFeedback>
+      <Item label="收藏数" hasFeedback>
         {getFieldDecorator("collect", {
           rules: [{ required: true, message: "收藏数至少为0" }]
-        })(<InputNumber min={0} prefix={<Icon type='star' />} />)}
+        })(<InputNumber min={0} prefix={<Icon type="star" />} />)}
       </Item>
 
-      <Item label='公司照片' extra='只能上传一张图片，大小不得超过？MB'>
+      <Item label="公司照片" extra="只能上传一张图片，大小不得超过？MB">
         {getFieldDecorator("companyImg", {
           rules: [{ required: true, message: "至少上传一张图片" }],
 
@@ -356,49 +391,39 @@ const InitForm = props => {
             beforeUpload={() => {
               return false;
             }}
-            accept='.bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp'
-            listType='picture'
+            accept=".bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp"
+            listType="picture"
           >
-            <Button icon='upload'>上传公司照片</Button>
+            <Button icon="upload">上传公司照片</Button>
           </Upload>
         )}
       </Item>
 
-      <Item label='公司地址' hasFeedback>
+      <Item label="公司地址" hasFeedback>
         {getFieldDecorator("addr", {
           rules: [{ required: true, message: "请输入公司地址！" }]
         })(
           <Input
-            prefix={
-              <Icon type='compass' style={{ color: "rgba(0,0,0,.25)" }} />
-            }
-            type='addr'
-            placeholder='addr'
+            prefix={<Icon type="compass" />}
+            type="addr"
+            placeholder="addr"
           />
         )}
       </Item>
 
-      <Item label='公司详情' hasFeedback>
+      <Item label="公司详情" hasFeedback>
         {getFieldDecorator("detail", {
           rules: [{ required: true, message: "请输入公司详情！" }]
         })(
           <TextArea
-            placeholder='企业详情'
-            prefix={<Icon icon='shop' />}
+            placeholder="企业详情"
+            prefix={<Icon icon="shop" />}
             autoSize
           />
         )}
       </Item>
 
-      {type !== "edit" ? (
-        <Item label='密码' hasFeedback>
-          {getFieldDecorator("pwd", {
-            rules: [{ required: true, message: "请输入密码！" }]
-          })(<Input prefix={<Icon type='key' />} />)}
-        </Item>
-      ) : null}
-
-      <Item label='营业执照照片' extra='最多上传三张图片，大小不得超过？MB'>
+      <Item label="营业执照照片" extra="最多上传三张图片，大小不得超过？MB">
         {getFieldDecorator("yyzzImg", {
           rules: [{ required: true, message: "至少上传一张图片" }],
           valuePropName: "fileList",
@@ -411,31 +436,28 @@ const InitForm = props => {
             beforeUpload={() => {
               return false;
             }}
-            accept='.bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp'
-            listType='picture'
+            accept=".bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp"
+            listType="picture"
           >
-            <Button icon='upload'>上传营业执照照片</Button>
+            <Button icon="upload">上传营业执照照片</Button>
           </Upload>
         )}
       </Item>
 
-      <Item label='阿里巴巴链接' extra='请输入完整链接'>
+      <Item label="阿里巴巴链接" extra="请输入完整链接">
         {getFieldDecorator("alibabaLink", {
           rules: []
         })(
-          <Input
-            prefix={<Icon type='user' style={{ color: "rgba(0,0,0,.25)" }} />}
-            placeholder='阿里巴巴链接'
-          />
+          <Input prefix={<Icon type="alibaba" />} placeholder="阿里巴巴链接" />
         )}
       </Item>
 
       <Item>
-        <Button icon='close'>取消</Button>
+        <Button icon="close">取消</Button>
         <Button
-          icon='check'
-          type='primary'
-          htmlType='submit'
+          icon="save"
+          type="primary"
+          htmlType="submit"
           disabled={hasErrors(getFieldsError())}
         >
           保存修改

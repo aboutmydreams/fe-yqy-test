@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from "react";
 
 import { message, Input, Button, Icon, Form, Modal, Upload } from "antd";
-import { post } from "../../../request/http";
+import { post, get } from "../../../request/http";
 import "./style.css";
 const { Item } = Form;
 const { TextArea } = Input;
 const header = { headers: { "Content-Type": "multipart/form-data" } };
 const token = localStorage.getItem("token");
 
-const EditShopForm = props => {
+const AddShopForm = props => {
   const {
-    productInfo: { img_link, img_detail, key, name, price, shop_detail },
     form: {
       getFieldDecorator,
       getFieldsError,
@@ -18,8 +17,8 @@ const EditShopForm = props => {
       setFieldsValue,
       validateFields
     },
-    onSave,
-    idx
+    onAdd,
+    companyKey = ""
   } = props;
   //交互相关
   const [loading, setLoading] = useState(false);
@@ -28,34 +27,20 @@ const EditShopForm = props => {
   //编辑模态框上传组件的上传列表
   const [coverImgList, setCoverImgList] = useState([]);
   const [detailImgList, setDetailImgList] = useState([]);
+  const [phone, setPhone] = useState("");
 
   useEffect(() => {
     const coverImgListTmp = [];
     const detailImgListTmp = [];
-
-    img_link.split(";").map((link, idx) => {
-      return coverImgListTmp.push({
-        uid: idx,
-        name: name,
-        url: link
-      });
-    });
-    setCoverImgList(coverImgListTmp);
-
-    img_detail.split(";").map((link, idx) => {
-      return detailImgListTmp.push({
-        uid: idx,
-        name: name,
-        url: link
-      });
-    });
-    setDetailImgList(detailImgListTmp);
-
+    (async () => {
+      const res = await get(`/user/detail?token=${token}&key=${companyKey}`);
+      setPhone(res.data.company.phone);
+    })();
     setFieldsValue(
       {
-        productName: name,
-        detail: shop_detail,
-        price: price,
+        productName: "",
+        detail: "",
+        price: "",
         coverImg: coverImgListTmp,
         detailImg: detailImgListTmp
       },
@@ -67,30 +52,37 @@ const EditShopForm = props => {
     //eslint-disable-next-line
   }, []);
 
+  const hasErrors = fieldsError => {
+    return Object.keys(fieldsError).some(field => fieldsError[field]);
+  };
+
   const handleOk = () => {
     let newCoverLink = [];
     let newDetailLink = [];
+
     coverImgList.map(item => {
       return newCoverLink.push(item.url);
     });
     detailImgList.map(item => {
       return newDetailLink.push(item.url);
     });
+
     const formValues = getFieldsValue();
     const { productName, price, detail } = formValues;
+
     const newProductInfo = {
-      key: key,
+      phone: phone,
       name: productName,
       price: price.replace("；", ";"),
-      //如果没有上传新的，则使用原本的封面/详情图片（保留）
       img_link: newCoverLink.join(";"),
       img_detail: newDetailLink.join(";"),
       shop_detail: detail
     };
+    console.log(newProductInfo);
     setLoading(true);
     (async () => {
       try {
-        await onSave(newProductInfo, idx);
+        await onAdd(newProductInfo);
       } catch (err) {
         setLoading(false);
         message.error(err);
@@ -98,13 +90,9 @@ const EditShopForm = props => {
       setTimeout(() => {
         setVisible(false);
         setLoading(false);
-        message.success("修改成功");
+        message.success("添加成功");
       }, 1200);
     })();
-  };
-
-  const hasErrors = fieldsError => {
-    return Object.keys(fieldsError).some(field => fieldsError[field]);
   };
 
   const normMultiImgFile = (e, set, state, count) => {
@@ -130,7 +118,6 @@ const EditShopForm = props => {
   };
 
   const handleRemove = (file, state, setState) => {
-    //不用再在这里限制数量
     const delIdx = state.findIndex(item => {
       return item.url === file.url;
     });
@@ -177,7 +164,7 @@ const EditShopForm = props => {
             })(
               <Input
                 prefix={
-                  <Icon type="gift" style={{ color: "rgba(0,0,0,.25)" }} />
+                  <Icon type="home" style={{ color: "rgba(0,0,0,.25)" }} />
                 }
                 placeholder="商品名称"
               />
@@ -236,10 +223,7 @@ const EditShopForm = props => {
             })(
               <Input
                 prefix={
-                  <Icon
-                    type="pay-circle"
-                    style={{ color: "rgba(0,0,0,.25)" }}
-                  />
+                  <Icon type="home" style={{ color: "rgba(0,0,0,.25)" }} />
                 }
                 placeholder="价格"
               />
@@ -255,20 +239,20 @@ const EditShopForm = props => {
       </Modal>
 
       <Button
-        icon="edit"
+        icon="plus-circle"
         type="primary"
         onClick={() => {
           setVisible(true);
         }}
       >
-        编辑
+        新增
       </Button>
     </>
   );
 };
 
-const EditShopModal = Form.create({
+const AddShopModal = Form.create({
   name: "shop_info"
-})(EditShopForm);
+})(AddShopForm);
 
-export default EditShopModal;
+export default AddShopModal;

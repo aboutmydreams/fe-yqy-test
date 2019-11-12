@@ -1,15 +1,14 @@
 import React, { useState, Fragment, useEffect } from "react";
-import { get } from "../../../request/http";
+import { get, post, put, deleteItem } from "../../../request/http";
 import { Table, Button, Tag, message, Modal } from "antd";
 import EditShopModal from "./EditShopModal";
-import { put, deleteItem } from "../../../request/http.js";
+import AddShopModal from "./AddShopModal";
 import _ from "lodash";
 const { confirm } = Modal;
 const token = localStorage.getItem("token");
 
 const ShopInfo = props => {
-  console.log(props);
-  const { companyKey: key, type, onDeleteShop } = props;
+  const { companyKey: key, onDeleteShop } = props;
   const [listData, setListData] = useState([]);
   const columns = [
     {
@@ -30,6 +29,8 @@ const ShopInfo = props => {
       key: "price",
       render: text => {
         const priceTag = [];
+        //传入这件商品相对于列表的idx
+        // 在修改成功后直接操作商品列表来实现无刷新更新
         text.split(";").map((item, idx) => {
           return priceTag.push(
             <Tag key={idx} color={"blue"}>
@@ -53,6 +54,8 @@ const ShopInfo = props => {
               idx={idx}
             />
             <Button
+            type="danger"
+            icon="delete"
               onClick={() => {
                 confirmDel(id);
               }}
@@ -114,7 +117,7 @@ const ShopInfo = props => {
     return () => {};
     //eslint-disable-next-line
   }, []);
-  //TODO: 抽离到上层
+
   const handleSaveProductInfo = (productInfo, idx) => {
     return (async () => {
       const res = await put(`shop/edit?token=${token}`, productInfo);
@@ -130,12 +133,35 @@ const ShopInfo = props => {
       }
     })();
   };
+
+  const handleAddProductInfo = productInfo => {
+    return (async () => {
+      const res = await post(`shop/edit?token=${token}`, productInfo);
+      const resCode = res.data.code;
+      if (resCode === 0) {
+        return Promise.reject(res.data.error);
+      } else {
+        let newList = _.cloneDeep(listData);
+        newList.push(productInfo);
+        setListData(newList);
+        return Promise.resolve();
+      }
+    })();
+  };
+
+  const updateList = () => {};
+
   return (
     <Fragment>
+      <AddShopModal
+        onAdd={handleAddProductInfo}
+        companyKey={key}
+        len={listData.length}
+      />
       <Table
         columns={columns}
         dataSource={listData}
-        pagination='bottom'
+        pagination="bottom"
       ></Table>
     </Fragment>
   );

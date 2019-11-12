@@ -6,6 +6,7 @@ const { confirm } = Modal;
 
 const DelUserModal = props => {
   const { phone } = props;
+  console.log(props);
   const deleProduct = () => {
     const delParams = {
       phone: phone
@@ -15,7 +16,8 @@ const DelUserModal = props => {
         const res = await deleteItem(`/user/manage?token=${token}`, delParams);
         const resCode = res.data.code;
         resCode === 1
-          ? message.success("删除成功") && window.location.reload()
+          ? //这里用刷新影响不大
+            message.success("删除成功") && window.location.reload()
           : message.error(`删除失败：${res.data.error}`);
       } catch (err) {
         message.err(`删除失败：${err}`);
@@ -39,7 +41,7 @@ const DelUserModal = props => {
   };
   return (
     <Fragment>
-      <Button type='danger' onClick={confirmDel}>
+      <Button type="danger" icon="delete" onClick={confirmDel}>
         删除
       </Button>
     </Fragment>

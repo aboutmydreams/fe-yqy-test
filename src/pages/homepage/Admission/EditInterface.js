@@ -1,9 +1,8 @@
 import React, { useState, Fragment } from "react";
 import UserInfo from "./UserInfo";
 import ShopInfo from "./ShopInfo";
-import { Menu, Icon, Modal, message } from "antd";
-import { put, post, deleteItem } from "../../../request/http";
-const { confirm } = Modal;
+import { Menu, Icon } from "antd";
+import { put, post } from "../../../request/http";
 const { Item } = Menu;
 const token = localStorage.getItem("token");
 
@@ -30,14 +29,6 @@ const EditInterface = props => {
       }
     })();
   };
-  
-  //预留的处理函数
-  const handleEditShop = shopInfo => {
-    console.log(shopInfo);
-  };
-  const handleAddShop = shopInfo => {
-    console.log(shopInfo);
-  };
 
   const handleChangeForm = ({ key }) => {
     setCurrentPage(key);
@@ -45,34 +36,36 @@ const EditInterface = props => {
 
   return (
     <Fragment>
-      <Menu
-        onClick={handleChangeForm}
-        defaultSelectedKeys={["userInfo"]}
-        mode='horizontal'
-      >
-        <Item key='userInfo'>
-          <Icon type='mail' />
-          信息管理
-        </Item>
-        <Item key='shopInfo'>
-          <Icon type='mail' />
-          商品管理
-        </Item>
-      </Menu>
-      {currentPage === "userInfo" ? (
-        <UserInfo
-          companyKey={type === "edit" ? key : ""}
-          type={type}
-          onEditUser={handleEditUser}
-          onAddUser={handleAddUser}
-        />
+      {key.length !== 0 ? (
+        <Fragment>
+          <Menu
+            onClick={handleChangeForm}
+            defaultSelectedKeys={["userInfo"]}
+            mode="horizontal"
+          >
+            <Item key="userInfo">
+              <Icon type="hdd" />
+              信息管理
+            </Item>
+            <Item key="shopInfo">
+              <Icon type="shopping" />
+              商品管理
+            </Item>
+          </Menu>
+          {currentPage === "userInfo" ? (
+            <UserInfo
+              companyKey={key}
+              type={type}
+              onEditUser={handleEditUser}
+              onAddUser={handleAddUser}
+            />
+          ) : (
+            <ShopInfo companyKey={key} type={type} />
+          )}
+        </Fragment>
       ) : (
-        <ShopInfo
-          companyKey={type === "edit" ? key : ""}
-          type={type}
-          // onEditShop={handleEditShop}
-          // onAddShop={handleAddShop}
-        />
+        //新增页面只能够新增用户
+        <UserInfo companyKey="" type="add" onAddUser={handleAddUser} />
       )}
     </Fragment>
   );
