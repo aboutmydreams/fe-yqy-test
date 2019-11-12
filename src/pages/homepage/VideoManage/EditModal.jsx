@@ -174,7 +174,7 @@ const EditModal = props => {
         }}
         footer={[
           <Button
-            key='back'
+            key="back"
             onClick={() => {
               setVisible(false);
             }}
@@ -182,8 +182,8 @@ const EditModal = props => {
             取消
           </Button>,
           <Button
-            key='submit'
-            type='primary'
+            key="submit"
+            type="primary"
             loading={loading}
             onClick={() => {
               onOk();
@@ -198,9 +198,9 @@ const EditModal = props => {
             <Text>视频描述：</Text>
             <Input
               value={title}
-              placeholder='请输入视频名称'
+              placeholder="请输入视频名称"
               allowClear
-              prefix={<Icon type='pushpin' />}
+              prefix={<Icon type="pushpin" />}
               onChange={e => {
                 setTitle(e.target.value);
               }}
@@ -210,13 +210,13 @@ const EditModal = props => {
         <br />
         <Row>
           <Col span={24}>
-            <Text>视频文件：</Text>
+            <Text>封面：</Text>
             <Upload
-              accept='.bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp'
+              accept=".bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp"
               {...imgUploadProps}
             >
               <Button>
-                <Icon type='upload' />
+                <Icon type="upload" />
                 上传封面
               </Button>
             </Upload>
@@ -225,13 +225,13 @@ const EditModal = props => {
         <br />
         <Row>
           <Col span={24}>
-            <Text>视频封面：</Text>
+            <Text>视频文件：</Text>
             <Upload
-              accept='.avi,.mov,.rmvb,.wmv,.flv,.mp4,.3gp,.mpg,.wma,.mkv,.webm,'
+              accept=".avi,.mov,.rmvb,.wmv,.flv,.mp4,.3gp,.mpg,.wma,.mkv,.webm,"
               {...videoUploadProps}
             >
               <Button>
-                <Icon type='upload' />
+                <Icon type="upload" />
                 上传视频
               </Button>
             </Upload>
@@ -243,7 +243,7 @@ const EditModal = props => {
             <Text>视频描述：</Text>
             <TextArea
               defaultValue={sum}
-              placeholder='请输入视频描述'
+              placeholder="请输入视频描述"
               autoSize
               onChange={e => {
                 setSum(e.target.value);
@@ -253,7 +253,7 @@ const EditModal = props => {
         </Row>
       </Modal>
       <Button
-        type='primary'
+        type="primary"
         onClick={() => {
           setVisible(true);
         }}
