@@ -7,21 +7,22 @@ import Sider from "antd/lib/layout/Sider";
 
 const { Content } = Layout;
 const { Item } = Menu;
+
 const menuItem = [
   {
     to: "/home",
     title: "实时数据"
   },
   {
-    to: "/home/Admanage/",
+    to: "/home/Admanage",
     title: "广告管理"
   },
   {
-    to: "/home/Content/",
+    to: "/home/Content",
     title: "内容管理"
   },
   {
-    to: "/home/ShopManage/",
+    to: "/home/ShopManage",
     title: "商品管理"
   },
   {
@@ -40,44 +41,48 @@ const menuItem = [
 
 const Homepage = () => {
   let currentKey = menuItem.findIndex(item => {
-    console.log(window.location.pathname);
     return item.to === window.location.pathname;
   });
-  console.log(currentKey);
+
+  //url与面包屑导航名称映射
+  const breadcrumbNameMap = {
+    "/home": "首页",
+    "/home/Admanage": "广告管理",
+    "/home/Content": "内容管理",
+    "/home/ShopManage": "商品管理",
+    "/home/Admission": "审核",
+    "/home/MailBox": "融资管理",
+    "/home/VideoManage": "视频管理"
+  };
+
+  //创建一个将当前pathname切片的数组 如['home','Admission']
+  const pathSnippets = window.location.pathname.split("/").filter(i => i);
+
+  //生成面包屑导航项
+  const breadcrumbItems = pathSnippets.map((item, index) => {
+    const url = `/${pathSnippets.slice(0, index + 1).join("/")}`;
+    return (
+      <Breadcrumb.Item key={url}>
+        <Link to={url}>{breadcrumbNameMap[url]}</Link>
+      </Breadcrumb.Item>
+    );
+  });
+
+  console.log(pathSnippets, breadcrumbItems);
   return (
     <Layout>
-      <Sider
-        //想着等最后确定没问题了再写成样式表
-        style={{
-          overflow: "auto",
-          height: "100vh",
-          position: "fixed",
-          left: 0
-        }}
-      >
-        <div
-          style={{
-            color: "black",
-            fontSize: "20px",
-            lineHeight: "20px",
-            backgroundColor: "white",
-            paddingLeft: "34px",
-            height: "5vh",
-            paddingBottom: "10vh",
-            paddingTop: "3vh"
-          }}
-        >
+      <Sider className="sider">
+        <div>
           <img
-            className='logo'
-            src='https://i.loli.net/2019/07/28/5d3d61ec2f6dd44203.png'
-            alt='logo'
-            style={{ height: "50px" }}
+            className="logo"
+            src="https://i.loli.net/2019/07/28/5d3d61ec2f6dd44203.png"
+            alt="logo"
           />
           <span>优企云</span>
         </div>
         <Menu
-          theme='light'
-          mode='inline'
+          theme="light"
+          mode="inline"
           defaultSelectedKeys={`${currentKey}`}
           style={{ height: "87vh" }}
         >
@@ -94,15 +99,9 @@ const Homepage = () => {
       </Sider>
       <Layout style={{ marginLeft: "240px", minHeight: "700px" }}>
         <Layout style={{ paddingBottom: "80px" }}>
-          <Breadcrumb separator='>' style={{ margin: "16px 0" }}>
-            {window.location.pathname.split("/").map(item => {
-              if (item) {
-                return <Breadcrumb.Item key={item}>{item}</Breadcrumb.Item>;
-              }
-              return null;
-            })}
+          <Breadcrumb separator=">" style={{ margin: "16px 0" }}>
+            {breadcrumbItems}
           </Breadcrumb>
-
           <Content>
             <HomeRouter />
           </Content>

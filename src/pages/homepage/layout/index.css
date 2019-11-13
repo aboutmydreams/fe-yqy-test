@@ -1,24 +1,40 @@
 .header {
-    display: flex;
-    background: #fff;
-    box-shadow: 0 2px 8px #f0f1f2;
-    z-index: 100;
+  display: flex;
+  background: #fff;
+  box-shadow: 0 2px 8px #f0f1f2;
+  z-index: 100;
 }
 
 .ncuhome {
-    display: flex;
-    align-items: center;
-    margin-right: 33px;
-    cursor: pointer;
+  display: flex;
+  align-items: center;
+  margin-right: 33px;
+  cursor: pointer;
 }
 
 .ncuhome > span {
-    color: rgba(0, 0, 0, .65);
-    font-family: Helvetica;
-    margin-left: 8px;
-    font-size: 14px;
+  color: rgba(0, 0, 0, 0.65);
+  font-family: Helvetica;
+  margin-left: 8px;
+  font-size: 14px;
 }
 
 .logo {
-    height: 36px;
+  height: 50px;
+}
+.sider {
+  overflow: auto;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+}
+.sider div div {
+  color: black;
+  font-size: 20px;
+  line-height: 20px;
+  background-color: white;
+  padding-left: 34px;
+  height: 5vh;
+  padding-bottom: 10vh;
+  padding-top: 3vh;
 }

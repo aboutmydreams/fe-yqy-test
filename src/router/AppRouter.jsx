@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
 import Homepage from "../pages/homepage/layout";
 import Login from "../pages/login";
 import { get } from "../request/http";
+
 const AppRouter = () => {
   const [logined, setLogined] = useState(false);
   const token = localStorage.getItem("token");
@@ -19,14 +20,14 @@ const AppRouter = () => {
   return (
     <Router>
       {/* Login page */}
-      <Route exact path='/login' component={Login} />
+      <Route exact path="/login" component={Login} />
       {/* Basic home page */}
-      <Route path='/home' component={Homepage} />
+      <Route path="/home" component={Homepage} />
       <Route
         exact
-        path='/'
+        path="/"
         render={() =>
-          logined ? <Redirect to='/home' /> : <Redirect to='/login/' />
+          logined ? <Redirect to="/home" /> : <Redirect to="/login/" />
         }
       />
     </Router>
