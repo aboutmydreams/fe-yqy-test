@@ -35,29 +35,29 @@ const ContentItem = props => {
   };
   return (
     <Fragment>
-      <Row>
+      <Row className="title">
         <Col span={3}>
           <Title level={3}>{title}</Title>
         </Col>
         <Col span={6}>
           {edit ? (
             <Button
-              type='primary'
+              type="primary"
               onClick={() => {
                 setEdit(!edit);
               }}
-              icon='edit'
+              icon="edit"
             >
               编辑内容
             </Button>
           ) : (
             <Button
-              type='default'
+              type="default"
               onClick={() => {
                 setEdit(!edit);
                 uploadInfo(key);
               }}
-              icon='check'
+              icon="check"
             >
               保存修改
             </Button>
@@ -65,19 +65,19 @@ const ContentItem = props => {
         </Col>
       </Row>
       {edit ? (
-        <Row>
+        <Row className="textarea">
           <Col span={18} style={{ lineHeightL: "6px" }}>
             <Text>{initContent}</Text>
           </Col>
         </Row>
       ) : (
-        <Row>
+        <Row className="textarea">
           <Col span={18}>
             <TextArea
               rows={6}
-              size='large'
-              prefix='snippets'
-              className='input-long'
+              size="large"
+              prefix="snippets"
+              className="input-long"
               defaultValue={initContent}
               autoSize
               onChange={handleChange}

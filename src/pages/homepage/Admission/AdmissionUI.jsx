@@ -20,23 +20,27 @@ const AdmissionUI = () => {
       title: "姓名",
       dataIndex: "true_name",
       key: "true_name",
+      align: "center",
       render: text => <p>{text}</p>
     },
     {
       title: "公司名称",
       key: "company",
       dataIndex: "company",
+      align: "center",
       render: text => <Tag color={"blue"}>{text}</Tag>
     },
     {
       title: "手机号",
       dataIndex: "username",
       key: "username",
+      align: "center",
       render: text => <p>{text}</p>
     },
     {
       title: "操作",
       key: "action",
+      align: "center",
       render: text => {
         return (
           <Fragment>
@@ -46,6 +50,7 @@ const AdmissionUI = () => {
                 setAuditModalVisible(true);
                 setAuditRole(text);
               }}
+              className="actBtn"
             >
               审核
             </Button>
@@ -57,6 +62,7 @@ const AdmissionUI = () => {
                 setEditType("edit");
                 setCurrentEditKey(text.key);
               }}
+              className="actBtn"
             >
               编辑
             </Button>
@@ -142,6 +148,10 @@ const AdmissionUI = () => {
           <Button
             type="primary"
             icon="user-add"
+            style={{
+              marginTop: "10px",
+              marginBottom: "5px"
+            }}
             onClick={() => {
               setEditType("add");
               seEditPageVisible(true);

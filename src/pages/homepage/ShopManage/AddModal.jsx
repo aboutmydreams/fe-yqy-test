@@ -174,7 +174,7 @@ const AddModal = () => {
     <Fragment>
       <Modal
         visible={visible}
-        title='编辑'
+        title="编辑"
         onCancel={() => {
           setVisible(false);
         }}
@@ -183,13 +183,13 @@ const AddModal = () => {
             onClick={() => {
               setVisible(false);
             }}
-            key='back'
+            key="back"
           >
             取消
           </Button>,
           <Button
-            key='submit'
-            type='primary'
+            key="submit"
+            type="primary"
             loading={loading}
             onClick={handleOk}
           >
@@ -200,46 +200,44 @@ const AddModal = () => {
         <Form.Item>
           <Text strong>商品名称（不可重复）</Text>
           <Input
-            placeholder='名称'
-            className='input'
+            placeholder="名称"
+            className="input"
             value={name}
             onChange={e => {
               setName(e.target.value);
             }}
           />
           <Upload
-            accept='.bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp'
+            accept=".bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp"
             {...coverProps}
           >
             <Button>
-              <Icon type='upload' />
+              <Icon type="upload" />
               上传封面图片(数量限制：5)
             </Button>
           </Upload>
           <Upload
-            accept='.bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp'
+            accept=".bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp"
             {...detailProps}
           >
             <Button>
-              <Icon type='upload' />
+              <Icon type="upload" />
               上传详情图片(数量限制：5)
             </Button>
           </Upload>
           <Text strong>价格设置（;相隔）</Text>
           <Input
-            placeholder='价格设置（分号相隔）'
-            className='input'
+            placeholder="价格设置（分号相隔）"
+            className="input"
             defaultValue={price}
             onChange={e => {
               setPrice(e.target.value);
             }}
           />
-          <div>
-            <Text strong>详细内容 </Text>
-          </div>
+          <Text strong>详细内容 </Text>
           <TextArea
             rows={5}
-            placeholder='详细内容'
+            placeholder="详细内容"
             defaultValue={detail}
             onChange={e => {
               setDetail(e.target.value);
@@ -249,7 +247,8 @@ const AddModal = () => {
       </Modal>
 
       <Button
-        type='primary'
+        icon="plus-circle"
+        type="primary"
         onClick={() => {
           setVisible(true);
         }}

@@ -216,7 +216,7 @@ const EditModal = props => {
               {...imgUploadProps}
             >
               <Button>
-                <Icon type="upload" />
+                <Icon type="picture" />
                 上传封面
               </Button>
             </Upload>
@@ -231,7 +231,7 @@ const EditModal = props => {
               {...videoUploadProps}
             >
               <Button>
-                <Icon type="upload" />
+                <Icon type="play-square" />
                 上传视频
               </Button>
             </Upload>
@@ -253,6 +253,7 @@ const EditModal = props => {
         </Row>
       </Modal>
       <Button
+      icon="edit"
         type="primary"
         onClick={() => {
           setVisible(true);

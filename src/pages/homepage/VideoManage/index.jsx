@@ -3,10 +3,11 @@ import VideoManageUI from "./VideoManageUI.jsx";
 import { message } from "antd";
 import _ from "lodash";
 import { get, post, deleteItem, put } from "../../../request/http";
+const token = localStorage.getItem("token");
 
 const VideoManage = () => {
-  const token = localStorage.getItem("token");
   const [videoList, setVideoList] = useState([]);
+
   useEffect(() => {
     (async () => {
       const res = await get(`/video?token=${token}`);
@@ -32,6 +33,7 @@ const VideoManage = () => {
       return Promise.resolve();
     }
   };
+
   const handleAdd = newInfo => {
     const { title, url, summary } = newInfo;
     if (title === "" || url === "" || summary === "") {
@@ -63,6 +65,7 @@ const VideoManage = () => {
       window.location.reload();
     })();
   };
+  
   return (
     <VideoManageUI
       videoList={videoList}

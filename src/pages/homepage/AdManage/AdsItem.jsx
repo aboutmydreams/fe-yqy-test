@@ -109,14 +109,14 @@ const AdsItem = props => {
     onRemove: handleRemove,
     beforeUpload: beforeUpload
   };
-  
+
   return (
     <Fragment>
       <div>
         <Row>
           <Col span={6}>
             <Button
-              type='primary'
+              type="primary"
               onClick={() => {
                 setVisible(true);
               }}
@@ -131,10 +131,10 @@ const AdsItem = props => {
           <Spin />
         ) : (
           <img
-            className='startimg'
+            className="startimg"
             style={{ width: "200px", height: "200px" }}
             src={imgUrl}
-            alt='img'
+            alt="img"
           />
         )}
         <Modal
@@ -145,7 +145,7 @@ const AdsItem = props => {
           }}
           footer={[
             <Button
-              key='back'
+              key="back"
               onClick={() => {
                 setVisible(false);
               }}
@@ -153,8 +153,8 @@ const AdsItem = props => {
               取消
             </Button>,
             <Button
-              key='submit'
-              type='primary'
+              key="submit"
+              type="primary"
               loading={submitLoading}
               onClick={() => {
                 handleOk();
@@ -165,11 +165,11 @@ const AdsItem = props => {
           ]}
         >
           <Upload
-            accept='.bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp'
+            accept=".bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp"
             {...uploadProps}
           >
             <Button>
-              <Icon type='upload' />
+              <Icon type="upload" />
               上传图片
             </Button>
           </Upload>
@@ -177,26 +177,26 @@ const AdsItem = props => {
           <div>
             <p>在点击图片时跳转链接</p>
             <Switch
-              checkedChildren='开'
+              checkedChildren="开"
               onChange={() => {
                 setJump(!jump);
               }}
-              unCheckedChildren='关'
+              unCheckedChildren="关"
               defaultChecked={jump}
             />
             {jump ? (
               <Input
                 value={linkUrl}
-                placeholder='请输入点击图片后跳转的链接'
+                placeholder="请输入点击图片后跳转的链接"
                 onChange={e => {
                   setLinkUrl(e.target.value);
                 }}
                 allowClear
-                prefix={<Icon type='link' />}
+                prefix={<Icon type="link" />}
                 suffix={
-                  <Tooltip title='请输入完整链接'>
+                  <Tooltip title="请输入完整链接">
                     <Icon
-                      type='info-circle'
+                      type="info-circle"
                       style={{ color: "rgba(0,0,0,.45)" }}
                     />
                   </Tooltip>

@@ -244,10 +244,10 @@ const InitForm = props => {
                 pwd: pwd
               })
             );
-        message.success("修改信息成功");
       } catch (err) {
         message.error("出错了!请稍后再试");
       }
+      message.success("修改信息成功");
     })();
   };
 
@@ -280,7 +280,7 @@ const InitForm = props => {
       <Item label="手机号" hasFeedback>
         {getFieldDecorator("phone", {
           rules: [{ required: true, message: "请输入手机号！" }]
-        })(<Input prefix={<Icon type="mobile" />} />)}
+        })(<Input disabled prefix={<Icon type="mobile" />} />)}
       </Item>
 
       {/* <Item label='个人住址' hasFeedback>

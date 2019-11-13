@@ -29,18 +29,18 @@ const VideoManageUI = ({ onAdd, onEdit, onDelete, videoList }) => {
       render: imgUrl =>
         imgUrl ? (
           <img
-            alt='img'
+            alt="img"
             src={imgUrl}
             style={{ width: "100px", height: "100px" }}
           />
         ) : (
-          <Fragment>
+          <>
             <Icon
-              type='file-image'
+              type="file-image"
               style={{ width: "50px", height: "50px", fontSize: "38px" }}
             ></Icon>
             <Text>未上传图片</Text>
-          </Fragment>
+          </>
         )
     },
     {
@@ -50,7 +50,7 @@ const VideoManageUI = ({ onAdd, onEdit, onDelete, videoList }) => {
       render: text => {
         return (
           // eslint-disable-next-line react/jsx-no-target-blank
-          <a href={text} target='_blank'>
+          <a href={text} target="_blank">
             {text}
           </a>
         );
@@ -84,7 +84,7 @@ const VideoManageUI = ({ onAdd, onEdit, onDelete, videoList }) => {
   return (
     <Fragment>
       <AddModal onAdd={onAdd} />
-      <Table columns={columns} dataSource={videoList} pagination='bottom' />
+      <Table columns={columns} dataSource={videoList} pagination="bottom" />
     </Fragment>
   );
 };

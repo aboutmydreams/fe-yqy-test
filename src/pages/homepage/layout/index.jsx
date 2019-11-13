@@ -67,8 +67,6 @@ const Homepage = () => {
       </Breadcrumb.Item>
     );
   });
-
-  console.log(pathSnippets, breadcrumbItems);
   return (
     <Layout>
       <Sider className="sider">
@@ -97,7 +95,9 @@ const Homepage = () => {
           })}
         </Menu>
       </Sider>
-      <Layout style={{ marginLeft: "240px", minHeight: "700px" }}>
+      <Layout
+        style={{ marginLeft: "240px", minHeight: "700px", marginRight: "20px" }}
+      >
         <Layout style={{ paddingBottom: "80px" }}>
           <Breadcrumb separator=">" style={{ margin: "16px 0" }}>
             {breadcrumbItems}

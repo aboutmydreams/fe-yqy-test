@@ -44,7 +44,6 @@ const StartPage = props => {
   useEffect(() => {
     (async () => {
       const res = await get(`/system?key=${keyWord}`);
-      console.log(res);
       setImgLoading(false);
       const startInfo = JSON.parse(res.data.value);
       const copy = Object.assign({}, startImgInfo, startInfo);
@@ -106,7 +105,6 @@ const StartPage = props => {
     })();
     return false;
   };
-  //将新的文件信息上传到服务器
   const handleOk = () => {
     setSubmitLoading(true);
     const imgInfo = {
@@ -137,100 +135,99 @@ const StartPage = props => {
   };
   return (
     <Fragment>
-      <div>
-        <Row>
-          <Col span={6}>
-            <Button
-              type='primary'
-              onClick={() => {
-                setVisible(true);
-              }}
-            >
-              编辑广告
-            </Button>
-          </Col>
-        </Row>
-        <br />
-        <Title level={4}>图片预览</Title>
-        {imgLoading ? (
-          <Spin />
-        ) : (
-          <img
-            className='startimg'
-            style={{ width: "200px", height: "200px" }}
-            src={imgUrl}
-            alt='img'
-          />
-        )}
-        <Modal
-          visible={visible}
-          title={title}
-          onCancel={() => {
-            setVisible(false);
-          }}
-          footer={[
-            <Button
-              key='back'
-              onClick={() => {
-                setVisible(false);
-              }}
-            >
-              取消
-            </Button>,
-            <Button
-              key='submit'
-              type='primary'
-              loading={submitLoading}
-              onClick={() => {
-                handleOk();
-              }}
-            >
-              确认
-            </Button>
-          ]}
-        >
-          <Upload
-            accept='.bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp'
-            {...uploadProps}
+      <Row>
+        <Col span={6}>
+          <Button
+            icon="edit"
+            type="primary"
+            onClick={() => {
+              setVisible(true);
+            }}
           >
-            <Button>
-              <Icon type='upload' />
-              上传图片(图片大小不能超过1MB)
-            </Button>
-          </Upload>
-          <br />
-          <div>
-            <p>在点击图片时跳转链接</p>
-            <Switch
-              checkedChildren='开'
-              onChange={() => {
-                setJump(!jump);
+            编辑广告
+          </Button>
+        </Col>
+      </Row>
+      <br />
+      <Title level={4}>图片预览</Title>
+      {imgLoading ? (
+        <Spin />
+      ) : (
+        <img
+          className="startimg"
+          style={{ width: "200px", height: "200px" }}
+          src={imgUrl}
+          alt="img"
+        />
+      )}
+      <Modal
+        visible={visible}
+        title={title}
+        onCancel={() => {
+          setVisible(false);
+        }}
+        footer={[
+          <Button
+            key="back"
+            onClick={() => {
+              setVisible(false);
+            }}
+          >
+            取消
+          </Button>,
+          <Button
+            key="submit"
+            type="primary"
+            loading={submitLoading}
+            onClick={() => {
+              handleOk();
+            }}
+          >
+            确认
+          </Button>
+        ]}
+      >
+        <Upload
+          accept=".bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp"
+          {...uploadProps}
+        >
+          <Button>
+            <Icon type="file-image" />
+            上传图片(图片大小不能超过20MB)
+          </Button>
+        </Upload>
+        <br />
+        <div>
+          <p>在点击图片时跳转链接</p>
+          <Switch
+            checkedChildren="开"
+            onChange={() => {
+              setJump(!jump);
+            }}
+            unCheckedChildren="关"
+            defaultChecked={jump}
+          />
+          {jump ? (
+            <Input
+              value={linkUrl}
+              placeholder="请输入点击图片后跳转的链接"
+              onChange={e => {
+                setLinkUrl(e.target.value);
               }}
-              unCheckedChildren='关'
-              defaultChecked={jump}
+              allowClear
+              prefix={<Icon type="link" />}
+              suffix={
+                <Tooltip title="请输入完整链接">
+                  <Icon
+                    type="info-circle"
+                    style={{ color: "rgba(0,0,0,.45)" }}
+                  />
+                </Tooltip>
+              }
             />
-            {jump ? (
-              <Input
-                value={linkUrl}
-                placeholder='请输入点击图片后跳转的链接'
-                onChange={e => {
-                  setLinkUrl(e.target.value);
-                }}
-                allowClear
-                prefix={<Icon type='link' />}
-                suffix={
-                  <Tooltip title='请输入完整链接'>
-                    <Icon
-                      type='info-circle'
-                      style={{ color: "rgba(0,0,0,.45)" }}
-                    />
-                  </Tooltip>
-                }
-              />
-            ) : null}
-          </div>
-        </Modal>
-      </div>
+          ) : null}
+        </div>
+      </Modal>
     </Fragment>
   );
 };

@@ -1,11 +1,13 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { Table, Tag, Button, Row, Col, Input, Icon } from "antd";
-import axios from "axios";
+import { Table, Tag, Button, Row, Col, Input, Icon, message } from "antd";
+import { get, put } from "../../../request/http";
 
 import "./style.css";
 import AddModal from "./AddModal";
 import EditModal from "./EditModal";
 import DeleteModal from "./DeleteModal";
+
+const token = localStorage.getItem("token");
 
 const ShopManageUI = props => {
   const [editRecommand, setEditRecommand] = useState(false);
@@ -16,18 +18,21 @@ const ShopManageUI = props => {
       title: "商品编号",
       dataIndex: "key",
       key: "key",
+      align: "center",
       render: text => <p>{text}</p>
     },
     {
       title: "商品名称",
       dataIndex: "name",
       key: "name",
+      align: "center",
       render: text => <p>{text}</p>
     },
     {
       title: "图片链接地址",
       dataIndex: "img_link",
       key: "img_link",
+      align: "center",
       render: text => {
         if (text.search(";") !== -1) {
           //如果有多张图片则转为数组
@@ -35,12 +40,12 @@ const ShopManageUI = props => {
           let imgList = [];
           for (let imgSrc of textList) {
             imgList.push(
-              <img className='commodity' key={imgSrc} src={imgSrc} alt='shop' />
+              <img className="commodity" key={imgSrc} src={imgSrc} alt="shop" />
             );
           }
           text = imgList;
         } else {
-          text = <img className='commodity' src={text} alt='shop' />;
+          text = <img className="commodity" src={text} alt="shop" />;
         }
         return <div>{text}</div>;
       }
@@ -83,25 +88,22 @@ const ShopManageUI = props => {
       }
     }
   ];
+
   useEffect(() => {
-    let token = localStorage.getItem("token");
-    //获取商品列表
-    axios
-      .get("http://www.youqiyun.net/api/shop/edit?token=" + token)
-      .then(res => {
-        const productList = res.data.data;
-        setData(productList);
-      });
-    //获取推荐商品
-    axios.get("http://www.youqiyun.net/api/system?key=recommand").then(res => {
-      var recoIdxArr = res.data.value;
-      if (res.data.value.search(",") === -1) {
-        recoIdxArr = res.data.value.split(",");
+    (async () => {
+      const res = await get(`/shop/edit?token=${token}`);
+      const recomProd = await get("/system?key=recommand");
+      const productList = res.data.data;
+      let recoIdxArr = recomProd.data.value;
+
+      if (recomProd.data.value.search(",") === -1) {
+        recoIdxArr = recomProd.data.value.split(",");
       } else {
-        recoIdxArr = res.data.value;
+        recoIdxArr = recomProd.data.value;
       }
       setRecoIdxStr(String(recoIdxArr));
-    });
+      setData(productList);
+    })();
     return () => {};
   }, []);
 
@@ -110,20 +112,23 @@ const ShopManageUI = props => {
     let formattedValue = initValue.replace("，", ",");
     setRecoIdxStr(formattedValue);
   };
-  const submitRecoIdx = () => {
-    axios
-      .put("http://www.youqiyun.net/api/system", {
+  const submitRecoIdx = async () => {
+    try {
+      const res = await put("/system", {
         key: "recommand",
         value: recoIdxStr
-      })
-      .then(res => {
-        console.log(res);
       });
+      if (res.data.code === 1) {
+        message.success("推荐商品保存成功");
+      }
+    } catch (err) {
+      message.err(`出错了：${err}`);
+    }
   };
 
   return (
     <Fragment>
-      <Row>
+      <Row style={{ paddingRight: "5%" }}>
         <Col span={2}>
           <AddModal />
         </Col>
@@ -132,15 +137,16 @@ const ShopManageUI = props => {
           <Input
             value={recoIdxStr}
             disabled={!editRecommand}
-            placeholder='请输入要展示在推荐位上的商品编号，以‘，’分隔'
-            prefix={<Icon type='star' />}
+            placeholder="请输入要展示在推荐位上的商品编号，以‘，’分隔"
+            prefix={<Icon type="star" />}
             onChange={formatInput}
           />
         </Col>
 
         <Col span={2}>
           <Button
-            type='primary'
+            icon="like"
+            type="primary"
             onClick={() => {
               setEditRecommand(!editRecommand);
               if (editRecommand) {
@@ -148,12 +154,12 @@ const ShopManageUI = props => {
               }
             }}
           >
-            {editRecommand ? "保存设置" : "推荐"}
+            {editRecommand ? "保存设置" : "修改推荐商品"}
           </Button>
         </Col>
       </Row>
       <br />
-      <Table columns={columns} dataSource={data} pagination='bottom' />
+      <Table columns={columns} dataSource={data} pagination="bottom" />
     </Fragment>
   );
 };

@@ -42,7 +42,9 @@ const DeleteModal = props => {
   };
   return (
     <Fragment>
-      <Button onClick={confirmDel}>删除</Button>
+      <Button type="danger" icon="delete" onClick={confirmDel}>
+        删除
+      </Button>
     </Fragment>
   );
 };

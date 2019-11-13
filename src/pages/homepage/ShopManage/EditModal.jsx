@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 
 import {
   Typography,
@@ -15,15 +15,12 @@ import _ from "lodash";
 import "./style.css";
 const { TextArea } = Input;
 const { Text } = Typography;
+const header = { headers: { "Content-Type": "multipart/form-data" } };
+const token = localStorage.getItem("token");
 
 const EditModal = props => {
-  const header = { headers: { "Content-Type": "multipart/form-data" } };
-  //FIXME: 如果审核模块能成功使用gFD方式处理多图片上传表单域，一定要把这里也搞定
-  console.log(props);
-  const token = localStorage.getItem("token");
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
-
   //商品信息
   const [name, setName] = useState("");
   const [imgLink, setImgLink] = useState([]);
@@ -33,7 +30,6 @@ const EditModal = props => {
   //编辑模态框上传组件的上传列表
   const [coverImgList, setCoverImgList] = useState([]);
   const [detailImgList, setDetailImgList] = useState([]);
-
   useEffect(() => {
     //这个组件的imgLink始终为数组格式，只有在上传时才会转为字符串
     const { productInfo } = props;
@@ -129,7 +125,6 @@ const EditModal = props => {
       });
       let newCoverImgList = _.cloneDeep(coverImgList);
       newCoverImgList.splice(delIdx, 1);
-      console.log(newCoverImgList);
       setCoverImgList(newCoverImgList);
     }
   };
@@ -211,25 +206,27 @@ const EditModal = props => {
     onRemove: handleDetailRemove
   };
   return (
-    <div>
+    <Fragment>
       <Modal
         visible={visible}
-        title='编辑'
+        title="编辑"
         onCancel={() => {
           setVisible(false);
         }}
         footer={[
           <Button
+            icon="close"
             onClick={() => {
               setVisible(false);
             }}
-            key='back'
+            key="back"
           >
             取消
           </Button>,
           <Button
-            key='submit'
-            type='primary'
+            icon="check"
+            key="submit"
+            type="primary"
             loading={loading}
             onClick={handleOk}
           >
@@ -240,35 +237,35 @@ const EditModal = props => {
         <Form.Item>
           <Text strong>商品名称（不可重复）</Text>
           <Input
-            placeholder='名称'
-            className='input'
+            placeholder="名称"
+            className="input"
             value={name}
             onChange={e => {
               setName(e.target.value);
             }}
           />
           <Upload
-            accept='.bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp'
+            accept=".bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp"
             {...coverProps}
           >
             <Button>
-              <Icon type='upload' />
+              <Icon type="upload" />
               上传封面图片(数量限制：5)
             </Button>
           </Upload>
           <Upload
-            accept='.bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp'
+            accept=".bmp,.jpg,.jpeg,.png,.tif,.gif,.fpx,.svg,.webp"
             {...detailProps}
           >
             <Button>
-              <Icon type='upload' />
+              <Icon type="upload" />
               上传详情图片(数量限制：5)
             </Button>
           </Upload>
           <Text strong>价格设置（;相隔）</Text>
           <Input
-            placeholder='价格设置（分号相隔）'
-            className='input'
+            placeholder="价格设置（分号相隔）"
+            className="input"
             defaultValue={price}
             onChange={e => {
               setPrice(e.target.value);
@@ -279,7 +276,7 @@ const EditModal = props => {
           </div>
           <TextArea
             rows={5}
-            placeholder='详细内容'
+            placeholder="详细内容"
             defaultValue={detail}
             onChange={e => {
               setDetail(e.target.value);
@@ -288,15 +285,16 @@ const EditModal = props => {
         </Form.Item>
       </Modal>
       <Button
-        className='EditModleUI'
-        type='primary'
+        icon="edit"
+        className="EditModleUI"
+        type="primary"
         onClick={() => {
           setVisible(true);
         }}
       >
         编辑
       </Button>
-    </div>
+    </Fragment>
   );
 };
 export default EditModal;

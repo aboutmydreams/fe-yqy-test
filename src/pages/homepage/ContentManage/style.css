@@ -6,3 +6,11 @@
 .input-long {
   width: 70%;
 }
+.title {
+  margin-top: 20px;
+}
+.textarea {
+  margin-bottom: 20px;
+  line-height: 25px;
+  width: 85%;
+}

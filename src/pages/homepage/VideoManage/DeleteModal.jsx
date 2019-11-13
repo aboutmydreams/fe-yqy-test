@@ -12,8 +12,8 @@ const DelModal = props => {
       onOk() {
         onDelete(idx);
       },
-      okText:"确认删除",
-      cancelText:"取消",
+      okText: "确认删除",
+      cancelText: "取消",
       onCancel() {
         message.success("取消删除");
       }
@@ -21,7 +21,8 @@ const DelModal = props => {
   };
   return (
     <Button
-      type='danger'
+      icon="delete"
+      type="danger"
       onClick={() => {
         showConfirm();
       }}
