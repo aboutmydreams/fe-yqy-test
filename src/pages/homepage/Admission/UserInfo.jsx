@@ -55,7 +55,8 @@ const InitForm = props => {
           company_address,
           company_detail,
           yyzz_img_link,
-          alibaba_link
+          alibaba_link,
+          money = 0
         } = res.data.company;
 
         setCompanyImg(company_img_link);
@@ -75,6 +76,7 @@ const InitForm = props => {
           {
             name: true_name,
             phone: phone,
+            money: money,
             // role: "user0",
             // myAddr: my_address,
             // myDetail: my_detail,
@@ -124,6 +126,7 @@ const InitForm = props => {
         {
           name: "",
           phone: "",
+          money: 0,
           sfzImg: [],
           companyName: "",
           collect: "",
@@ -208,7 +211,8 @@ const InitForm = props => {
       // myAddr,
       collect,
       alibabaLink,
-      role
+      role,
+      money
       // myDetail
     } = formValues;
 
@@ -221,6 +225,7 @@ const InitForm = props => {
     const newUserInfo = {
       true_name: name,
       phone: phone,
+      money: money,
       // my_address: myAddr,
       // my_detail: myDetail,
       sfz_img_link: sfzImg,
@@ -376,6 +381,12 @@ const InitForm = props => {
         {getFieldDecorator("collect", {
           rules: [{ required: true, message: "收藏数至少为0" }]
         })(<InputNumber min={0} prefix={<Icon type="star" />} />)}
+      </Item>
+
+      <Item label="金额" hasFeedback>
+        {getFieldDecorator("money", {
+          rules: [{ required: true, message: "请输入金额" }]
+        })(<Input prefix={<Icon type="pay-circle" />} placeholder="金额" />)}
       </Item>
 
       <Item label="公司照片" extra="只能上传一张图片，大小不得超过？MB">

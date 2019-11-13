@@ -227,6 +227,7 @@ const AddModal = () => {
           </Upload>
           <Text strong>价格设置（;相隔）</Text>
           <Input
+            prefix={<Icon type="pay-circle" />}
             placeholder="价格设置（分号相隔）"
             className="input"
             defaultValue={price}
