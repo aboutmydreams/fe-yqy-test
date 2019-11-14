@@ -56,7 +56,7 @@ const InitForm = props => {
           company_detail,
           yyzz_img_link,
           alibaba_link,
-          money = 0
+          fund = 0
         } = res.data.company;
 
         setCompanyImg(company_img_link);
@@ -76,7 +76,7 @@ const InitForm = props => {
           {
             name: true_name,
             phone: phone,
-            money: money,
+            fund: fund,
             // role: "user0",
             // myAddr: my_address,
             // myDetail: my_detail,
@@ -126,7 +126,7 @@ const InitForm = props => {
         {
           name: "",
           phone: "",
-          money: 0,
+          fund: 0,
           sfzImg: [],
           companyName: "",
           collect: "",
@@ -212,7 +212,7 @@ const InitForm = props => {
       collect,
       alibabaLink,
       role,
-      money
+      fund
       // myDetail
     } = formValues;
 
@@ -225,7 +225,7 @@ const InitForm = props => {
     const newUserInfo = {
       true_name: name,
       phone: phone,
-      money: money,
+      fund: fund,
       // my_address: myAddr,
       // my_detail: myDetail,
       sfz_img_link: sfzImg,
@@ -384,7 +384,7 @@ const InitForm = props => {
       </Item>
 
       <Item label="金额" hasFeedback>
-        {getFieldDecorator("money", {
+        {getFieldDecorator("fund", {
           rules: [{ required: true, message: "请输入金额" }]
         })(<Input prefix={<Icon type="pay-circle" />} placeholder="金额" />)}
       </Item>
