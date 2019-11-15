@@ -1,9 +1,12 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { Button, Modal, Form, Radio, message } from "antd";
 import { put } from "../../../request/http";
+import PropTypes from "prop-types";
+
 const token = localStorage.getItem("token");
 
 const AuditModal = props => {
+  console.log(props);
   const { info, visi, toggle } = props;
   const { username, role } = info;
 
@@ -46,14 +49,14 @@ const AuditModal = props => {
     <Fragment>
       <Modal
         visible={visible}
-        title='审核选项'
+        title="审核选项"
         onOk={handleOk}
         onCancel={() => {
           setVisible(false);
         }}
         footer={[
           <Button
-            key='back'
+            key="back"
             onClick={() => {
               setVisible(false);
               toggle(false);
@@ -62,8 +65,8 @@ const AuditModal = props => {
             取消
           </Button>,
           <Button
-            key='submit'
-            type='primary'
+            key="submit"
+            type="primary"
             loading={loading}
             onClick={handleOk}
           >
@@ -90,5 +93,13 @@ const AuditModal = props => {
       </Modal>
     </Fragment>
   );
+};
+AuditModal.propTypes = {
+  info: PropTypes.shape({
+    username: PropTypes.string.isRequired,
+    role: PropTypes.string.isRequired
+  }).isRequired,
+  visi: PropTypes.bool.isRequired,
+  toggle: PropTypes.func.isRequired
 };
 export default AuditModal;

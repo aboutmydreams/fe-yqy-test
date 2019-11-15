@@ -14,20 +14,13 @@ import {
   Spin
 } from "antd";
 import { post } from "../../../request/http";
+import PropTypes from "prop-types";
 const { Title } = Typography;
 const token = localStorage.getItem("token");
 const header = { headers: { "Content-Type": "multipart/form-data" } };
 
 const AdsItem = props => {
-  useEffect(() => {
-    setJump(props.jump);
-    setLinkUrl(props.linkUrl);
-    setImgUrl(props.url);
-    setFileName(props.name);
-    return () => {};
-    //eslint-disable-next-line
-  }, []);
-
+  
   const { title, onSubmit, idxInList, keyWord } = props;
   const [imgUrl, setImgUrl] = useState("");
   const [jump, setJump] = useState("");
@@ -46,8 +39,13 @@ const AdsItem = props => {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+    setJump(props.jump);
+    setLinkUrl(props.linkUrl);
+    setImgUrl(props.url);
+    setFileName(props.name);
     setImgLoading(false);
     return () => {};
+    //eslint-disable-next-line
   }, []);
 
   const handleChange = info => {
@@ -116,6 +114,7 @@ const AdsItem = props => {
         <Row>
           <Col span={6}>
             <Button
+              icon="edit"
               type="primary"
               onClick={() => {
                 setVisible(true);
@@ -208,5 +207,17 @@ const AdsItem = props => {
       </div>
     </Fragment>
   );
+};
+
+AdsItem.propTypes = {
+  idx: PropTypes.number.isRequired,
+  idxInList: PropTypes.number.isRequired,
+  jump: PropTypes.bool.isRequired,
+  keyWord: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+  title: PropTypes.string.isRequired,
+  linkUrl: PropTypes.string,
+  url: PropTypes.string.isRequired
 };
 export default AdsItem;

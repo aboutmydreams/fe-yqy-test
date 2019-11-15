@@ -3,6 +3,7 @@ import UserInfo from "./UserInfo";
 import ShopInfo from "./ShopInfo";
 import { Menu, Icon } from "antd";
 import { put, post } from "../../../request/http";
+import PropTypes from "prop-types";
 const { Item } = Menu;
 const token = localStorage.getItem("token");
 
@@ -61,7 +62,7 @@ const EditInterface = props => {
               handleCancel={onCancel}
             />
           ) : (
-            <ShopInfo companyKey={key} type={type} />
+            <ShopInfo companyKey={key} type={type} handleCancel={onCancel} />
           )}
         </Fragment>
       ) : (
@@ -75,5 +76,12 @@ const EditInterface = props => {
       )}
     </Fragment>
   );
+};
+
+EditInterface.propTypes = {
+  companyKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+    .isRequired,
+  onCancel: PropTypes.func.isRequired,
+  type: PropTypes.string.isRequired
 };
 export default EditInterface;

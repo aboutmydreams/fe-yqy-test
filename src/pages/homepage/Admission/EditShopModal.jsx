@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-
+import PropTypes from "prop-types";
 import { message, Input, Button, Icon, Form, Modal, Upload } from "antd";
 import { post } from "../../../request/http";
 import "./style.css";
@@ -113,7 +113,6 @@ const EditShopForm = props => {
       imgFile.append("file", e.file);
       (async () => {
         const res = await post(`/upload?token=${token}`, imgFile, header);
-        console.log(res);
         const [...copy] = state;
         copy.push({
           uid: Math.random() * 100,
@@ -271,4 +270,8 @@ const EditShopModal = Form.create({
   name: "shop_info"
 })(EditShopForm);
 
+EditShopForm.propTypes = {
+  idx: PropTypes.number.isRequired,
+  productInfo: PropTypes.object.isRequired
+};
 export default EditShopModal;

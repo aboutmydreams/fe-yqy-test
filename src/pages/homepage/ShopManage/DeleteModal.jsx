@@ -1,12 +1,12 @@
 import React, { Fragment } from "react";
-
+import PropTypes from "prop-types";
 import { message, Button, Modal } from "antd";
 import { deleteItem } from "../../../request/http";
 import "./style.css";
 const { confirm } = Modal;
 
 const DeleteModal = props => {
-  const delIdx = props.text.key;
+  const { idx: delIdx } = props;
   const token = localStorage.getItem("token");
 
   const deleProduct = () => {
@@ -47,5 +47,8 @@ const DeleteModal = props => {
       </Button>
     </Fragment>
   );
+};
+DeleteModal.propTypes = {
+  idx: PropTypes.number.isRequired
 };
 export default DeleteModal;

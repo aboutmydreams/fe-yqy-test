@@ -14,10 +14,12 @@ import {
   Spin
 } from "antd";
 import { get, post, put } from "../../../request/http";
+import PropTypes from "prop-types";
 
 const { Title } = Typography;
 const token = localStorage.getItem("token");
 const header = { headers: { "Content-Type": "multipart/form-data" } };
+
 const StartPage = props => {
   const { title, keyWord } = props;
   const [startImgInfo, setStartImgInfo] = useState({
@@ -44,11 +46,13 @@ const StartPage = props => {
   useEffect(() => {
     (async () => {
       const res = await get(`/system?key=${keyWord}`);
+      console.log(res);
       setImgLoading(false);
       const startInfo = JSON.parse(res.data.value);
       const copy = Object.assign({}, startImgInfo, startInfo);
       //copy包含的属性：title id（这两个来自于父组件）
       // name url jump linkUrl 这四个来自于服务器上的图片信息
+      console.log(copy);
       setStartImgInfo(copy);
       setImgUrl(copy.url);
       setJump(copy.jump);
@@ -62,7 +66,6 @@ const StartPage = props => {
         }
       ]);
     })();
-
     return () => {};
     // eslint-disable-next-line
   }, []);
@@ -78,6 +81,7 @@ const StartPage = props => {
       return false;
     }
   };
+
   //限制文件数量及改变列表预览
   const handleChange = info => {
     console.log(startImgInfo);
@@ -90,7 +94,8 @@ const StartPage = props => {
     newFileList = fileList.slice(-1);
     setCurrentFileList(newFileList);
   };
-  //由这一部分来处理上传到服务器
+
+  //由这一部分来处理上传图片到服务器
   const beforeUpload = file => {
     if (file.size / 1024 / 1024 > 20) {
       return false;
@@ -105,6 +110,8 @@ const StartPage = props => {
     })();
     return false;
   };
+
+  //将新的信息发送给服务器
   const handleOk = () => {
     setSubmitLoading(true);
     const imgInfo = {
@@ -113,6 +120,7 @@ const StartPage = props => {
       url: imgUrl,
       linkUrl: jump ? linkUrl : null
     };
+    console.log(imgInfo);
     (async () => {
       const res = await put(`/system?key=${keyWord}"`, {
         key: keyWord,
@@ -123,9 +131,9 @@ const StartPage = props => {
         setVisible(false);
         message.success("修改图片信息成功");
       }, 1500);
-      console.log(res);
     })();
   };
+
   const uploadProps = {
     listType: "picture",
     fileList: currentFileList,
@@ -230,5 +238,10 @@ const StartPage = props => {
       </Modal>
     </Fragment>
   );
+};
+StartPage.propTypes = {
+  title: PropTypes.string.isRequired,
+  idx: PropTypes.number.isRequired,
+  keyWord: PropTypes.string.isRequired
 };
 export default StartPage;

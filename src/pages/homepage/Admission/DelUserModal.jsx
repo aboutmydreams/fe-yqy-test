@@ -1,6 +1,8 @@
 import React, { Fragment } from "react";
 import { deleteItem } from "../../../request/http";
 import { message, Button, Modal } from "antd";
+import PropTypes from "prop-types";
+
 const token = localStorage.getItem("token");
 const { confirm } = Modal;
 
@@ -46,5 +48,9 @@ const DelUserModal = props => {
       </Button>
     </Fragment>
   );
+};
+
+DelUserModal.propTypes = {
+  phone: PropTypes.string.isRequired
 };
 export default DelUserModal;

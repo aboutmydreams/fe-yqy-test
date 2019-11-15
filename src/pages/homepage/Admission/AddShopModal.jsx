@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-
+import PropTypes from "prop-types";
 import { message, Input, Button, Icon, Form, Modal, Upload } from "antd";
 import { post, get } from "../../../request/http";
 import "./style.css";
@@ -9,6 +9,7 @@ const header = { headers: { "Content-Type": "multipart/form-data" } };
 const token = localStorage.getItem("token");
 
 const AddShopForm = props => {
+  console.log(props);
   const {
     form: {
       getFieldDecorator,
@@ -254,5 +255,11 @@ const AddShopForm = props => {
 const AddShopModal = Form.create({
   name: "shop_info"
 })(AddShopForm);
+
+AddShopForm.propTypes = {
+  companyKey: PropTypes.number.isRequired,
+  len: PropTypes.number.isRequired,
+  onAdd: PropTypes.func.isRequired
+};
 
 export default AddShopModal;

@@ -11,6 +11,8 @@ import {
   Radio
 } from "antd";
 import { get, post } from "../../../request/http";
+import PropTypes from "prop-types";
+
 const { TextArea } = Input;
 const { Item } = Form;
 const { Group } = Radio;
@@ -33,7 +35,7 @@ const InitForm = props => {
     },
     handleCancel
   } = props;
-
+  console.log(props);
   // const [avatar, setAvatarImg] = useState("");
   const [companyImg, setCompanyImg] = useState("");
   const [sfzImg, setSfzImg] = useState("");
@@ -511,4 +513,12 @@ const InfoForm = Form.create({
   name: "company_info"
 })(InitForm);
 
+InitForm.propTypes = {
+  companyKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+    .isRequired,
+  type: PropTypes.string.isRequired,
+  handleCancel: PropTypes.func.isRequired,
+  onAddUser: PropTypes.func,
+  onEditUser: PropTypes.func
+};
 export default InfoForm;

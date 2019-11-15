@@ -3,12 +3,14 @@ import { get, post, put, deleteItem } from "../../../request/http";
 import { Table, Button, Tag, message, Modal } from "antd";
 import EditShopModal from "./EditShopModal";
 import AddShopModal from "./AddShopModal";
+import PropTypes from "prop-types";
 import _ from "lodash";
 const { confirm } = Modal;
 const token = localStorage.getItem("token");
 
 const ShopInfo = props => {
-  const { companyKey: key, onDeleteShop } = props;
+  console.log(props);
+  const { companyKey: key } = props;
   const [listData, setListData] = useState([]);
   const columns = [
     {
@@ -54,8 +56,8 @@ const ShopInfo = props => {
               idx={idx}
             />
             <Button
-            type="danger"
-            icon="delete"
+              type="danger"
+              icon="delete"
               onClick={() => {
                 confirmDel(id);
               }}
@@ -67,10 +69,6 @@ const ShopInfo = props => {
       }
     }
   ];
-
-  //FIXME: 这里实在太乱了  一边想着抽离一边发现信息和商品处理逻辑 层级不同
-  //如果强行都抽离会很麻烦  props传来传去这种  更别说还要依据返回值做处理了
-  //我会再考虑一下
 
   const handleDeleteShop = productKey => {
     console.log(productKey);
@@ -149,8 +147,6 @@ const ShopInfo = props => {
     })();
   };
 
-  const updateList = () => {};
-
   return (
     <Fragment>
       <AddShopModal
@@ -165,5 +161,11 @@ const ShopInfo = props => {
       ></Table>
     </Fragment>
   );
+};
+ShopInfo.propTypes = {
+  companyKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+    .isRequired,
+  type: PropTypes.string.isRequired,
+  handleCancel: PropTypes.func.isRequired
 };
 export default ShopInfo;

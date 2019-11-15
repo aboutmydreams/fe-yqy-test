@@ -2,6 +2,7 @@ import React, { Fragment, useState, useEffect } from "react";
 import AdsItem from "./AdsItem";
 import { get, put } from "../../../request/http";
 import { Row, Col } from "antd";
+import PropTypes from "prop-types";
 
 const AdsPage = props => {
   const { keyWord, title, idx } = props;
@@ -50,5 +51,11 @@ const AdsPage = props => {
       </Row>
     </Fragment>
   );
+};
+
+AdsPage.propTypes = {
+  title: PropTypes.string.isRequired,
+  idx: PropTypes.number.isRequired,
+  keyWord: PropTypes.string.isRequired
 };
 export default AdsPage;

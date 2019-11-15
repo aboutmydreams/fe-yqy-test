@@ -1,5 +1,6 @@
 import React, { useState, Fragment } from "react";
 import { Typography, Input, Button, Row, Col, message } from "antd";
+import PropTypes from "prop-types";
 import "./style.css";
 import { put } from "../../../request/http";
 
@@ -7,6 +8,7 @@ const { Title, Text } = Typography;
 const { TextArea } = Input;
 
 const ContentItem = props => {
+  console.log(props);
   const { content, saveEdition } = props;
   let { title, key, content: initContent } = content;
   const [edit, setEdit] = useState(true);
@@ -88,5 +90,8 @@ const ContentItem = props => {
     </Fragment>
   );
 };
-
+ContentItem.propTypes = {
+  content: PropTypes.object.isRequired,
+  saveEdition: PropTypes.func.isRequired
+};
 export default ContentItem;

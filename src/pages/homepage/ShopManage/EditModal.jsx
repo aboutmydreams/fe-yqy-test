@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Fragment } from "react";
-
+import PropTypes from "prop-types";
 import {
   Typography,
   message,
@@ -297,5 +297,8 @@ const EditModal = props => {
       </Button>
     </Fragment>
   );
+};
+EditModal.propTypes = {
+  productInfo: PropTypes.object.isRequired
 };
 export default EditModal;

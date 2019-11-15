@@ -82,7 +82,7 @@ const ShopManageUI = props => {
         return (
           <span>
             <EditModal productInfo={text} />
-            <DeleteModal text={text} />
+            <DeleteModal idx={text.key} />
           </span>
         );
       }
@@ -163,5 +163,9 @@ const ShopManageUI = props => {
     </Fragment>
   );
 };
-
+// AddShopForm.propTypes = {
+//   companyKey: PropTypes.number.isRequired,
+//   len: PropTypes.number.isRequired,
+//   onAdd: PropTypes.func.isRequired
+// };
 export default ShopManageUI;

@@ -67,7 +67,7 @@ const AdmissionUI = () => {
               编辑
             </Button>
             {/* FIXME:  这个接口的username得和phone绑定 */}
-            <DelUserModal phone={text.username} info={text} />
+            <DelUserModal phone={text.username} />
           </Fragment>
         );
       }
