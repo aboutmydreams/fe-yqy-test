@@ -14,6 +14,7 @@ import { get, post } from "../../../request/http";
 const { TextArea } = Input;
 const { Item } = Form;
 const { Group } = Radio;
+
 const token = localStorage.getItem("token");
 const header = { headers: { "Content-Type": "multipart/form-data" } };
 
@@ -29,8 +30,10 @@ const InitForm = props => {
       getFieldsValue,
       setFieldsValue,
       validateFields
-    }
+    },
+    handleCancel
   } = props;
+
   // const [avatar, setAvatarImg] = useState("");
   const [companyImg, setCompanyImg] = useState("");
   const [sfzImg, setSfzImg] = useState("");
@@ -176,7 +179,6 @@ const InitForm = props => {
       })();
       return e.fileList.slice(-3);
     } else {
-      //直接reruen 由onRemove处理
       return e.fileList;
     }
   };
@@ -188,7 +190,6 @@ const InitForm = props => {
     let copy = [...yyzzImgList];
     copy.splice(delIdx, 1);
     setYyzzImgList(copy);
-    console.log(copy);
   };
 
   //有任一项没有通过，禁用提交按钮
@@ -238,7 +239,6 @@ const InitForm = props => {
       yyzz_img_link: yyzzImgLinks.join(";"),
       alibaba_link: alibabaLink
     };
-    console.log(newUserInfo, role);
     (async () => {
       try {
         type === "edit"
@@ -257,15 +257,23 @@ const InitForm = props => {
   };
 
   const formItemLayout = {
-    //TODO:上响应式 不然太太太丑了
-    // labelCol: {
-    //   xs: { span: 24 },
-    //   sm: { span: 5 }
-    // },
-    // wrapperCol: {
-    //   xs: { span: 24 },
-    //   sm: { span: 12 }
-    // }
+    labelCol: {
+      xs: { span: 24 },
+      sm: { span: 6 },
+      md: { span: 4 },
+      style: {
+        fontSize: "16px",
+        lineHeight: "26px"
+      }
+    },
+    wrapperCol: {
+      xs: { span: 24 },
+      sm: { span: 16 },
+      md: { span: 16 }
+    },
+    style: {
+      marginTop: "20px"
+    }
   };
 
   return (
@@ -284,8 +292,16 @@ const InitForm = props => {
 
       <Item label="手机号" hasFeedback>
         {getFieldDecorator("phone", {
-          rules: [{ required: true, message: "请输入手机号！" }]
-        })(<Input disabled prefix={<Icon type="mobile" />} />)}
+          rules: [
+            { required: true, message: "请输入手机号！" },
+            {
+              pattern: /^(0|86|17951)?(13[0-9]|15[012356789]|166|17[3678]|18[0-9]|14[57])[0-9]{8}$/,
+              message: "请输入正确的手机号"
+            }
+          ]
+        })(
+          <Input disabled={type === "edit"} prefix={<Icon type="mobile" />} />
+        )}
       </Item>
 
       {/* <Item label='个人住址' hasFeedback>
@@ -385,7 +401,13 @@ const InitForm = props => {
 
       <Item label="金额" hasFeedback>
         {getFieldDecorator("fund", {
-          rules: [{ required: true, message: "请输入金额" }]
+          rules: [
+            { required: true, message: "请输入金额" },
+            {
+              pattern: /^\d+$/,
+              message: "请输入数字"
+            }
+          ]
         })(<Input prefix={<Icon type="pay-circle" />} placeholder="金额" />)}
       </Item>
 
@@ -464,7 +486,14 @@ const InitForm = props => {
       </Item>
 
       <Item>
-        <Button icon="close">取消</Button>
+        <Button
+          icon="close"
+          onClick={() => {
+            handleCancel();
+          }}
+        >
+          取消
+        </Button>
         <Button
           icon="save"
           type="primary"

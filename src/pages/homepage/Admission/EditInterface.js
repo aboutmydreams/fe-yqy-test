@@ -9,7 +9,7 @@ const token = localStorage.getItem("token");
 const EditInterface = props => {
   //从这里就开始分为编辑用界面和新增用界面了
   const [currentPage, setCurrentPage] = useState("userInfo");
-  const { type, companyKey: key } = props;
+  const { type, companyKey: key, onCancel } = props;
 
   const handleEditUser = userInfo => {
     return (async () => {
@@ -58,6 +58,7 @@ const EditInterface = props => {
               type={type}
               onEditUser={handleEditUser}
               onAddUser={handleAddUser}
+              handleCancel={onCancel}
             />
           ) : (
             <ShopInfo companyKey={key} type={type} />
@@ -65,7 +66,12 @@ const EditInterface = props => {
         </Fragment>
       ) : (
         //新增页面只能够新增用户
-        <UserInfo companyKey="" type="add" onAddUser={handleAddUser} />
+        <UserInfo
+          companyKey=""
+          type="add"
+          onAddUser={handleAddUser}
+          handleCancel={onCancel}
+        />
       )}
     </Fragment>
   );
