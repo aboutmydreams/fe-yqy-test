@@ -105,8 +105,9 @@ const StartPage = props => {
     imgFile.append("file", file);
 
     (async () => {
-      const res = await post(`/upload?token= ${token}`, imgFile, header);
+      const res = await post(`/upload?token=${token}`, imgFile, header);
       setImgUrl(res.data.url);
+      console.log(res);
     })();
     return false;
   };
