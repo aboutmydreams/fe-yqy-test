@@ -121,9 +121,8 @@ const StartPage = props => {
       url: imgUrl,
       linkUrl: jump ? linkUrl : null
     };
-    console.log(imgInfo);
     (async () => {
-      const res = await put(`/system?key=${keyWord}"`, {
+      await put(`/system?key=${keyWord}"`, {
         key: keyWord,
         value: JSON.stringify(imgInfo)
       });
@@ -164,7 +163,7 @@ const StartPage = props => {
       ) : (
         <img
           className="startimg"
-          style={{ width: "200px", height: "200px" }}
+          style={{ width: "180px", height: "320px" }}
           src={imgUrl}
           alt="img"
         />
@@ -202,7 +201,7 @@ const StartPage = props => {
         >
           <Button>
             <Icon type="file-image" />
-            上传图片(图片大小不能超过20MB)
+            请上传比例为16：9的图片，图片大小不能超过20MB
           </Button>
         </Upload>
         <br />

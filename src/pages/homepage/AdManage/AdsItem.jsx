@@ -20,7 +20,6 @@ const token = localStorage.getItem("token");
 const header = { headers: { "Content-Type": "multipart/form-data" } };
 
 const AdsItem = props => {
-  
   const { title, onSubmit, idxInList, keyWord } = props;
   const [imgUrl, setImgUrl] = useState("");
   const [jump, setJump] = useState("");
@@ -131,7 +130,7 @@ const AdsItem = props => {
         ) : (
           <img
             className="startimg"
-            style={{ width: "200px", height: "200px" }}
+            style={{ width: "180px", height: "320px" }}
             src={imgUrl}
             alt="img"
           />
@@ -169,7 +168,7 @@ const AdsItem = props => {
           >
             <Button>
               <Icon type="upload" />
-              上传图片
+              请上传比例为16：9的图片，图片大小不能超过20MB
             </Button>
           </Upload>
           <br />
