@@ -53,17 +53,17 @@ const ContentItem = props => {
               编辑内容
             </Button>
           ) : (
-            <Button
-              type="default"
-              onClick={() => {
-                setEdit(!edit);
-                uploadInfo(key);
-              }}
-              icon="check"
-            >
-              保存修改
+              <Button
+                type="default"
+                onClick={() => {
+                  setEdit(!edit);
+                  uploadInfo(key);
+                }}
+                icon="check"
+              >
+                保存修改
             </Button>
-          )}
+            )}
         </Col>
       </Row>
       {edit ? (
@@ -73,20 +73,20 @@ const ContentItem = props => {
           </Col>
         </Row>
       ) : (
-        <Row className="textarea">
-          <Col span={18}>
-            <TextArea
-              rows={6}
-              size="large"
-              prefix="snippets"
-              className="input-long"
-              defaultValue={initContent}
-              autoSize
-              onChange={handleChange}
-            ></TextArea>
-          </Col>
-        </Row>
-      )}
+          <Row className="textarea">
+            <Col span={18}>
+              <TextArea
+                rows={6}
+                size="large"
+                prefix="snippets"
+                className="input-long"
+                defaultValue={initContent}
+                autoSize
+                onChange={handleChange}
+              ></TextArea>
+            </Col>
+          </Row>
+        )}
     </Fragment>
   );
 };
