@@ -86,7 +86,7 @@ const AdmissionUI = () => {
       });
       setListData(user0List);
     })();
-    return () => {};
+    return () => { };
     //eslint-disable-next-line
   }, []);
 
@@ -144,29 +144,29 @@ const AdmissionUI = () => {
           }}
         />
       ) : (
-        <>
-          <Button
-            type="primary"
-            icon="user-add"
-            style={{
-              marginTop: "10px",
-              marginBottom: "5px"
-            }}
-            onClick={() => {
-              setEditType("add");
-              seEditPageVisible(true);
-              setCurrentEditKey("");
-            }}
-          >
-            新增
+          <>
+            <Button
+              type="primary"
+              icon="user-add"
+              style={{
+                marginTop: "10px",
+                marginBottom: "5px"
+              }}
+              onClick={() => {
+                setEditType("add");
+                seEditPageVisible(true);
+                setCurrentEditKey("");
+              }}
+            >
+              新增
           </Button>
-          <Table
-            columns={columns}
-            dataSource={listData}
-            pagination="bottom"
-          ></Table>
-        </>
-      )}
+            <Table
+              columns={columns}
+              dataSource={listData}
+              pagination="bottom"
+            ></Table>
+          </>
+        )}
     </>
   );
 };
