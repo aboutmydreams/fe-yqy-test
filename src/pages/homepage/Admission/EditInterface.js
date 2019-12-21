@@ -14,7 +14,7 @@ const EditInterface = props => {
 
   const handleEditUser = userInfo => {
     return (async () => {
-      const res = await put(`/user/manage?token=${token}`, userInfo);
+      const res = await put(`/user/edit?token=${token}`, userInfo);
       if (res.data.code === 0) {
         return Promise.reject("error");
       }
@@ -62,18 +62,18 @@ const EditInterface = props => {
               handleCancel={onCancel}
             />
           ) : (
-            <ShopInfo companyKey={key} type={type} handleCancel={onCancel} />
-          )}
+              <ShopInfo companyKey={key} type={type} handleCancel={onCancel} />
+            )}
         </Fragment>
       ) : (
-        //新增页面只能够新增用户
-        <UserInfo
-          companyKey=""
-          type="add"
-          onAddUser={handleAddUser}
-          handleCancel={onCancel}
-        />
-      )}
+          //新增页面只能够新增用户
+          <UserInfo
+            companyKey=""
+            type="add"
+            onAddUser={handleAddUser}
+            handleCancel={onCancel}
+          />
+        )}
     </Fragment>
   );
 };

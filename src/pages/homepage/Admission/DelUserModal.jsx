@@ -19,7 +19,7 @@ const DelUserModal = props => {
         const resCode = res.data.code;
         resCode === 1
           ? //这里用刷新影响不大
-            message.success("删除成功") && window.location.reload()
+          message.success("删除成功") && window.location.reload()
           : message.error(`删除失败：${res.data.error}`);
       } catch (err) {
         message.err(`删除失败：${err}`);

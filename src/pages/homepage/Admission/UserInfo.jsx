@@ -45,7 +45,7 @@ const InitForm = props => {
     if (type === "edit") {
       //编辑已有信息
       (async () => {
-        const res = await get(`/user/detail?token=${token}&key=${key}`);
+        const res = await get(`/user/edit?token=${token}&key=${key}`);
         console.log(res);
         const {
           true_name,
@@ -55,7 +55,7 @@ const InitForm = props => {
           sfz_img_link,
           // user_img_link,
           company,
-          collect_count,
+          pre_collect,
           company_img_link,
           company_address,
           company_detail,
@@ -90,12 +90,12 @@ const InitForm = props => {
               sfz_img_link.length === 0
                 ? []
                 : [
-                    {
-                      name: true_name,
-                      uid: -1,
-                      url: sfz_img_link
-                    }
-                  ],
+                  {
+                    name: true_name,
+                    uid: -1,
+                    url: sfz_img_link
+                  }
+                ],
             // avatar:
             //   user_img_link.length === 0
             //     ? []
@@ -107,7 +107,7 @@ const InitForm = props => {
             //         }
             //       ],
             companyName: company,
-            collect: collect_count,
+            collect: pre_collect,
             companyImg: [
               {
                 name: company,
@@ -146,7 +146,7 @@ const InitForm = props => {
         }
       );
     }
-    return () => {};
+    return () => { };
     // eslint-disable-next-line
   }, []);
 
@@ -234,7 +234,7 @@ const InitForm = props => {
       sfz_img_link: sfzImg,
       // user_img_link: avatar,
       company: companyName,
-      collect_count: collect,
+      pre_collect: collect,
       company_img_link: companyImg,
       company_address: addr,
       company_detail: detail,
@@ -246,11 +246,11 @@ const InitForm = props => {
         type === "edit"
           ? await onEditUser(newUserInfo)
           : //添加新用户时需要带上密码
-            await onAddUser(
-              Object.assign({}, newUserInfo, {
-                pwd: pwd
-              })
-            );
+          await onAddUser(
+            Object.assign({}, newUserInfo, {
+              pwd: pwd
+            })
+          );
       } catch (err) {
         message.error("出错了!请稍后再试");
       }
@@ -332,7 +332,7 @@ const InitForm = props => {
             })(<Input prefix={<Icon type="key" />} />)}
           </Item>
 
-          <Item label="初始vip等级">
+          {/* <Item label="初始vip等级">
             {getFieldDecorator("role", {
               rule: [{ required: true, message: "请选择初始vip级别" }],
               initialValue: "user0"
@@ -344,7 +344,7 @@ const InitForm = props => {
                 <Radio value="vip3">vip3</Radio>
               </Group>
             )}
-          </Item>
+          </Item> */}
         </Fragment>
       ) : null}
 
