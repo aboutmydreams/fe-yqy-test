@@ -70,7 +70,7 @@ const AdsItem = props => {
   };
 
   const beforeUpload = file => {
-    if (file.size / 1024 / 1024 > 60) {
+    if (file.size / 1024 / 1024 > 200) {
       return false;
     }
     setFileName(file.name);
