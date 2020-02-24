@@ -107,7 +107,6 @@ const EditModal = props => {
     videoFile.append("file", file);
     (async () => {
       const res = await post(`/upload?token=${token}`, videoFile, header);
-      console.log(res);
       setUrl(res.data.url);
     })();
     return false;

@@ -36,6 +36,7 @@ const VideoManage = () => {
 
   const handleAdd = newInfo => {
     const { title, url, summary } = newInfo;
+    console.log(newInfo);
     if (title === "" || url === "" || summary === "") {
       return Promise.reject("error");
     } else {
@@ -65,7 +66,7 @@ const VideoManage = () => {
       window.location.reload();
     })();
   };
-  
+
   return (
     <VideoManageUI
       videoList={videoList}

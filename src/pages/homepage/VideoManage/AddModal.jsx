@@ -8,13 +8,14 @@ import {
   Col,
   Typography,
   message,
-  Upload
+  Upload,
+  Spin
 } from "antd";
 import { post } from "../../../request/http";
 const { TextArea } = Input;
 const { Text } = Typography;
 
-const EditModal = props => {
+const AddModel = props => {
   const header = { headers: { "Content-Type": "multipart/form-data" } };
   const token = localStorage.getItem("token");
 
@@ -27,6 +28,7 @@ const EditModal = props => {
   const [imgUrl, setImgUrl] = useState("");
   const [imgFileList, setImgFileList] = useState([]);
   const [videoFileList, setVideoFileList] = useState([]);
+  const [spinning, setSpinning] = useState(false);
 
   const { onAdd } = props;
   message.config({
@@ -59,7 +61,8 @@ const EditModal = props => {
     })();
   };
   const beforeImgUpload = file => {
-    if (file.size / 1024 / 1024 > 1) {
+    if (file.size / 1024 / 1024 > 20) {
+      message.error("请上传小于20MB的图片");
       return false;
     }
     let imgFile = new FormData();
@@ -71,23 +74,26 @@ const EditModal = props => {
     return false;
   };
 
-  const beforeVideoUpload = file => {
-    if (file.size / 1024 / 1024 > 1) {
+  const beforeVideoUpload = async file => {
+    if (file.size / 1024 / 1024 > 20) {
+      message.error("请上传小于20MB的视频");
       return false;
     }
+    setSpinning(true);
     let videoFile = new FormData();
     videoFile.append("file", file);
-    (async () => {
-      const res = await post(`/upload?token=${token}`, videoFile, header);
-      setUrl(res.data.url);
-      setVideoFileList([
-        {
-          name: file.name,
-          uid: -1,
-          url: res.data.url
-        }
-      ]);
-    })();
+    console.log(file);
+    const res = await post(`/upload?token=${token}`, videoFile, header);
+    setSpinning(false);
+    setUrl(res.data.url);
+    setVideoFileList([
+      {
+        name: file.name,
+        uid: -1,
+        url: res.data.url
+      }
+    ]);
+
     return false;
   };
 
@@ -101,26 +107,29 @@ const EditModal = props => {
     imgFileList = imgFileList.slice(-1);
     setImgFileList(imgFileList);
   };
+
   const handleVideoChange = info => {
     const { file } = info;
-    console.log(info);
     if (file.size / 1024 / 1024 > 20) {
       message.error("请上传小于20MB的视频");
       return false;
     }
   };
+
   const handleImgRemove = () => {
     if (imgFileList.length === 1) {
       message.error("图片数量必须为1，如果要使用新的图片，请直接上传新的图片");
       return false;
     }
   };
+
   const handleVideoRemove = () => {
     if (videoFileList.length === 1) {
       message.error("视频数量必须为1，如果要修改视频内容，请直接上传新的视频");
       return false;
     }
   };
+
   const imgUploadProps = {
     listType: "picture",
     fileList: imgFileList,
@@ -128,6 +137,7 @@ const EditModal = props => {
     onRemove: handleImgRemove,
     beforeUpload: beforeImgUpload
   };
+
   const videoUploadProps = {
     listType: "text",
     fileList: videoFileList,
@@ -207,6 +217,7 @@ const EditModal = props => {
                 <Icon type="play-square" />
                 上传视频
               </Button>
+              <Spin tip="上传中..." spinning={spinning} />
             </Upload>
           </Col>
         </Row>
@@ -237,4 +248,4 @@ const EditModal = props => {
     </Fragment>
   );
 };
-export default EditModal;
+export default AddModel;
