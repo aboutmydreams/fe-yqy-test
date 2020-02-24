@@ -66,7 +66,7 @@ const StartPage = props => {
         }
       ]);
     })();
-    return () => {};
+    return () => { };
     // eslint-disable-next-line
   }, []);
 
@@ -161,13 +161,13 @@ const StartPage = props => {
       {imgLoading ? (
         <Spin />
       ) : (
-        <img
-          className="startimg"
-          style={{ width: "180px", height: "320px" }}
-          src={imgUrl}
-          alt="img"
-        />
-      )}
+          <img
+            className="startimg"
+            style={{ width: "180px", height: "320px" }}
+            src={imgUrl}
+            alt="img"
+          />
+        )}
       <Modal
         visible={visible}
         title={title}

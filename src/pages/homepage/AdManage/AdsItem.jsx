@@ -43,14 +43,14 @@ const AdsItem = props => {
     setImgUrl(props.url);
     setFileName(props.name);
     setImgLoading(false);
-    return () => {};
+    return () => { };
     //eslint-disable-next-line
   }, []);
 
   const handleChange = info => {
     const { file, fileList } = info;
-    if (file.size / 1024 / 1024 > 20) {
-      message.error("请上传小于20MB的图片");
+    if (file.size / 1024 / 1024 > 10) {
+      message.error("请上传小于10MB的图片");
       return false;
     }
     let newFileList = [...fileList];
@@ -70,7 +70,7 @@ const AdsItem = props => {
   };
 
   const beforeUpload = file => {
-    if (file.size / 1024 / 1024 > 20) {
+    if (file.size / 1024 / 1024 > 60) {
       return false;
     }
     setFileName(file.name);
@@ -128,13 +128,13 @@ const AdsItem = props => {
         {imgLoading ? (
           <Spin />
         ) : (
-          <img
-            className="startimg"
-            style={{ width: "180px", height: "320px" }}
-            src={imgUrl}
-            alt="img"
-          />
-        )}
+            <img
+              className="startimg"
+              style={{ width: "180px", height: "320px" }}
+              src={imgUrl}
+              alt="img"
+            />
+          )}
         <Modal
           visible={visible}
           title={title}
